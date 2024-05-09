@@ -11,14 +11,14 @@ import javafx.beans.property.StringProperty;
  * @author CYTech Student
  */
 
-public class User {
+public class User2 {
 	protected static int MAX_BORROW_NUMBER = 3;
 	protected static int compteurId = 1;
-	protected static List<User> allUser = new ArrayList<>();
+	protected static List<User2> allUser = new ArrayList<>();
 	protected int id;
-	protected String lastname;
-	protected String firstname;
-	protected String email;
+	protected StringProperty lastname;
+	protected StringProperty firstname;
+	protected StringProperty email;
 	protected List<Borrow> borrowHistory = new ArrayList<>();
 
     /**
@@ -27,10 +27,10 @@ public class User {
      * @param firstname the firstname of the user
      * @param email the email of the user
      */
-    public User(String lastname, String firstname, String email) {
-    	this.lastname = lastname;
-        this.firstname = firstname;
-        this.email = email;
+    public User2(String lastname, String firstname, String email) {
+    	this.lastname = new SimpleStringProperty(lastname);
+        this.firstname = new SimpleStringProperty(firstname);
+        this.email = new SimpleStringProperty(email);
         this.id = compteurId++;
         allUser.add(this);
     }
@@ -40,8 +40,8 @@ public class User {
      * @param id the user's id we want to find
      * @return a user if we found it or null if not
      */
-    public static User searchUserWithId(int id) {
-        for (User user : allUser) {
+    public static User2 searchUserWithId(int id) {
+        for (User2 user : allUser) {
             if (user.getId() == id) {
                 return user;
             }
@@ -70,7 +70,7 @@ public class User {
      * @return the user's lastname
      */
     public String getLastname() {
-        return lastname;
+        return lastname.get();
     }
 
     /**
@@ -78,15 +78,17 @@ public class User {
      * @param lastname the user's lastname
      */
     public void setLastname(String lastname) {
-        this.lastname = lastname;
+        this.lastname.set(lastname);
     }
+
+    public StringProperty lastnameProperty() { return lastname; }
     
     /**
      * Get the user's firstname
      * @return the user's firstname
      */
     public String getFirstname() {
-        return firstname;
+        return firstname.get();
     }
 
     /**
@@ -94,23 +96,27 @@ public class User {
      * @param firstname the user's firstname
      */
     public void setFirstname(String firstname) {
-        this.firstname = firstname;
+        this.firstname.set(firstname);
     }
+
+    public StringProperty firstnameProperty() { return firstname; }
     
     /**
      * Get the user's email
      * @return the user's email
      */
     public String getEmail() {
-		return email;
+		return email.get();
 	}
     /**
      * email setter method
      * @param email the user's email
      */
 	public void setEmail(String email) {
-		this.email = email;
+		this.email.set(email);
 	}
+
+    public StringProperty emailProperty() { return email; }
 	
 	/**
      * Get the user's borrow history
@@ -120,7 +126,7 @@ public class User {
 		return borrowHistory;
 	}
 	
-	public static List<User> getAllUser() {
+	public static List<User2> getAllUser() {
 		return allUser;
 	}
 
@@ -144,10 +150,10 @@ public class User {
      */
     @Override
     public boolean equals(Object obj) {
-    	if(!(obj instanceof User)) {
+    	if(!(obj instanceof User2)) {
     		return false;
     	}
-    	User u = (User) obj;
+    	User2 u = (User2) obj;
     	return this.getFirstname().equals(u.getFirstname()) && this.getLastname().equals(u.getLastname()) && this.getEmail().equals(u.getEmail())
     			&& this.getId() == u.getId() && this.getBorrowHistory().equals(u.getBorrowHistory());
     }
