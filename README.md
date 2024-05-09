@@ -7,6 +7,8 @@
 4. [CRÉATEURS](#créateurs)
 
 ## INFORMATIONS GÉNÉRALES
+CY-Books est une application graphique pour les libraires permettant de gérer des utilisateurs, leurs emprunts et des livres. <br />
+L'application utilise l'API de la BNF pour récupérer les informations sur les livres.
 
 ## UTILISATION
 
