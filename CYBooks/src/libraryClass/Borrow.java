@@ -110,7 +110,17 @@ public class Borrow {
 	public void addProblem(String problem) {
 		getProblems().add(problem);
 	}
-
+	
+	/**
+	 * Method to check is a borrow is late
+	 * @return true if the borrow is late and false if not
+	 */
+	public boolean isLate() {
+		LocalDate today = LocalDate.now();
+		
+		return today.isAfter(getReturnDate());
+	}
+	
 	/**
 	 * toString method for Borrow
 	 * @return the string to print a borrow
