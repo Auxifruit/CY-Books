@@ -14,6 +14,7 @@ public class Borrow {
 	protected Book book;
 	protected LocalDate borrowDate;
 	protected LocalDate returnDate;
+	protected boolean late;
 	protected List<String> problems;
     
     /**
@@ -27,6 +28,7 @@ public class Borrow {
         this.book = book;
         this.borrowDate = dateBorrow;
         this.returnDate = borrowDate.plusDays(Book.MAX_BORROW_TIME);
+        this.late = false;
         this.problems = new ArrayList<String>();
         allBorrows.add(this);
     }
@@ -96,6 +98,22 @@ public class Borrow {
     }
     
     /**
+	 * Get the borrow's state : late or not
+	 * @return true if the borrow is late and false if not
+	 */
+	public boolean isLate() {
+		return late;
+	}
+    
+    /**
+     * late setter method
+     * @param late true or false if the borrow is late or not
+     */
+    public void setLate(boolean late) {
+		this.late = late;
+	}
+
+	/**
      * Get the borrow's problems
      * @return the borrow's problems
      */
@@ -112,13 +130,17 @@ public class Borrow {
 	}
 	
 	/**
-	 * Method to check is a borrow is late
+	 * Method to check is a borrow is late, if true, changed the late state to true
 	 * @return true if the borrow is late and false if not
 	 */
-	public boolean isLate() {
+	public boolean isBorrowLate() {
 		LocalDate today = LocalDate.now();
 		
-		return today.isAfter(getReturnDate());
+		if(today.isAfter(getReturnDate())) {
+			this.setLate(true);
+		}
+		
+		return isLate();
 	}
 	
 	/**

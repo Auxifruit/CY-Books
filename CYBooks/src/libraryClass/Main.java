@@ -1,9 +1,6 @@
 package abstraction;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
 	public static void main(String[] args) {
@@ -26,7 +23,7 @@ public class Main {
 		
 		System.out.println("\nBorrow :");
 		System.out.println(borrow1);
-		System.out.println("\nIs the borrow late ? " + borrow1.isLate());
+		System.out.println("\nIs the borrow late ? " + borrow1.isBorrowLate());
 		
 		
 	}
