@@ -15,10 +15,10 @@
 Lien pour la liste des tâches : https://cy-tech-java.atlassian.net/jira/software/projects/KAN/boards/1
 
 ## CRÉATEURS
-Guillaume Barré -> @Auxifruit <br />
-Lucas Bezamat -> @Luczerty <br />
-Clément Durecu -> @shxclem <br />
-Raphaël Sencée -> @gjjoifo <br />
-Augustin Verove -> @Hermeticis
+Guillaume Barré -> Auxifruit <br />
+Lucas Bezamat -> Luczerty <br />
+Clément Durecu -> shxclem <br />
+Raphaël Sencée -> gjjoifo <br />
+Augustin Verove -> Hermeticis
 
 
