@@ -123,7 +123,7 @@ public class User {
 	 */
     @Override
     public String toString() {
-        return "Utilisater: " + 
+        return "User: " + 
         		"\nId : " + getId() +
         		"\nLastname : " + getLastname() +
         		"\nFirstname : "  + getFirstname() +

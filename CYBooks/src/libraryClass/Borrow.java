@@ -127,12 +127,15 @@ public class Borrow {
 	 */
     @Override
     public String toString() {
-        return "Borrow : " +
-        		"\nUser : " + getUser() +
-        		"\nBook : " + getBook() +
+        String text =  "Borrow : " +
+        		"\n"+ getUser() +
+        		"\n\nBook :\n" + getBook() +
         		"\nBorrow date : " + getDateBorrow() +
-        		"\nReturn date : " + getReturnDate() +
-        		"\nProblems : " + getProblems();
+        		"\nReturn date : " + getReturnDate();
+        if(getProblems().size() > 0) {
+        	text += "\nProblems : " + getProblems();
+        }
+        return text;
     }
     
     /**

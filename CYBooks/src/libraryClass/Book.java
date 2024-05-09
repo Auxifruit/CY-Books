@@ -26,11 +26,11 @@ public class Book {
 	 * @param type the book's type
 	 * @param editor the book's editor
 	 */
-	public Book(int isbn, String title, String author, LocalDate publishedDate, String theme, String type, String editor) {
+	public Book(int isbn, String title, String author, String publishedDate, String theme, String type, String editor) {
 		this.isbn = isbn;
 		this.title = title;
 		this.author = author;
-		this.publishedDate = publishedDate;
+		this.publishedDate = LocalDate.parse(publishedDate);
 		this.theme = theme;
 		this.type = type;
 		this.editor = editor;
@@ -154,8 +154,7 @@ public class Book {
 	 */
 	@Override
 	public String toString() {
-		return "Livre : " + 
-				"\nISBN : " + getIsbn() +
+		return "ISBN : " + getIsbn() +
 				"\nTitle : " + getTitle() +
 				"\nAuthor : " + getAuthor() +
 				"\nPublished date : " + getPublishedDate() +
