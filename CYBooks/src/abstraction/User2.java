@@ -3,6 +3,8 @@ package abstraction;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -15,7 +17,7 @@ public class User2 {
 	protected static int MAX_BORROW_NUMBER = 3;
 	protected static int compteurId = 1;
 	protected static List<User2> allUser = new ArrayList<>();
-	protected int id;
+	protected IntegerProperty id;
 	protected StringProperty lastname;
 	protected StringProperty firstname;
 	protected StringProperty email;
@@ -31,7 +33,7 @@ public class User2 {
     	this.lastname = new SimpleStringProperty(lastname);
         this.firstname = new SimpleStringProperty(firstname);
         this.email = new SimpleStringProperty(email);
-        this.id = compteurId++;
+        this.id = new SimpleIntegerProperty(compteurId++);
         allUser.add(this);
     }
 
@@ -54,7 +56,7 @@ public class User2 {
      * @return the user's ID
      */
     public int getId() {
-        return id;
+        return id.get();
     }
 
     /**
@@ -62,7 +64,11 @@ public class User2 {
      * @param id the user's id
      */
     public void setId(int id) {
-        this.id = id;
+        this.id.set(id);;
+    }
+    
+    public IntegerProperty idProperty() {
+        return id;
     }
     
     /**
@@ -81,7 +87,9 @@ public class User2 {
         this.lastname.set(lastname);
     }
 
-    public StringProperty lastnameProperty() { return lastname; }
+    public StringProperty lastnameProperty() { 
+    	return lastname;
+    }
     
     /**
      * Get the user's firstname
@@ -99,7 +107,9 @@ public class User2 {
         this.firstname.set(firstname);
     }
 
-    public StringProperty firstnameProperty() { return firstname; }
+    public StringProperty firstnameProperty() { 
+    	return firstname;
+    }
     
     /**
      * Get the user's email
@@ -116,7 +126,9 @@ public class User2 {
 		this.email.set(email);
 	}
 
-    public StringProperty emailProperty() { return email; }
+    public StringProperty emailProperty() {
+    	return email;
+    }
 	
 	/**
      * Get the user's borrow history
@@ -126,6 +138,10 @@ public class User2 {
 		return borrowHistory;
 	}
 	
+	/**
+	 * Get the list of all the users
+	 * @return the list of all the users
+	 */
 	public static List<User2> getAllUser() {
 		return allUser;
 	}
