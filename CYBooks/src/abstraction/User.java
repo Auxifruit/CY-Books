@@ -13,9 +13,8 @@ import javafx.beans.property.StringProperty;
 
 public class User {
 	protected static int MAX_BORROW_NUMBER = 3;
-	protected static int compteurId = 1;
 	protected static List<User> allUser = new ArrayList<>();
-	protected int id;
+	protected String id;
 	protected String lastname;
 	protected String firstname;
 	protected String email;
@@ -27,11 +26,11 @@ public class User {
      * @param firstname the firstname of the user
      * @param email the email of the user
      */
-    public User(String lastname, String firstname, String email) {
+    public User(String id , String lastname, String firstname, String email) {
     	this.lastname = lastname;
         this.firstname = firstname;
         this.email = email;
-        this.id = compteurId++;
+        this.id = id;
         allUser.add(this);
     }
 
@@ -40,7 +39,7 @@ public class User {
      * @param id the user's id we want to find
      * @return a user if we found it or null if not
      */
-    public static User searchUserWithId(int id) {
+    public static User searchUserWithId(String id) {
         for (User user : allUser) {
             if (user.getId() == id) {
                 return user;
@@ -53,7 +52,7 @@ public class User {
      * Get the user's ID
      * @return the user's ID
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -61,7 +60,7 @@ public class User {
      * id setter method
      * @param id the user's id
      */
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
     
