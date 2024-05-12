@@ -24,7 +24,7 @@ public class User2 {
 	protected List<Borrow> borrowHistory = new ArrayList<>();
 
     /**
-     * User constructor with all fields as parameters
+     * User constructor without the id
      * @param lastname the lastname of the user
      * @param firstname the firstname of the user
      * @param email the email of the user
@@ -35,6 +35,18 @@ public class User2 {
         this.email = new SimpleStringProperty(email);
         this.id = new SimpleIntegerProperty(compteurId++);
         allUser.add(this);
+    }
+    
+    /**
+     * User constructor with all fields as parameters
+     * @param id the id of the user
+     * @param lastname the lastname of the user
+     * @param firstname the firstname of the user
+     * @param email the email of the user
+     */
+    public User2(int id, String lastname, String firstname, String email) {
+    	this(lastname, firstname, email);
+    	this.id = new SimpleIntegerProperty(id);
     }
 
     /**
@@ -67,6 +79,10 @@ public class User2 {
         this.id.set(id);;
     }
     
+    /**
+     * Method to return the IntegerProperty of the user's id for the TableView
+     * @return the IntegerProperty of the user's id 
+     */
     public IntegerProperty idProperty() {
         return id;
     }
@@ -87,6 +103,10 @@ public class User2 {
         this.lastname.set(lastname);
     }
 
+    /**
+     * Method to return the StringProperty of the user's lastname for the TableView
+     * @return the StringProperty of the user's lastname 
+     */
     public StringProperty lastnameProperty() { 
     	return lastname;
     }
@@ -107,6 +127,10 @@ public class User2 {
         this.firstname.set(firstname);
     }
 
+    /**
+     * Method to return the StringProperty of the user's firstname for the TableView
+     * @return the StringProperty of the user's firstname 
+     */
     public StringProperty firstnameProperty() { 
     	return firstname;
     }
@@ -126,6 +150,10 @@ public class User2 {
 		this.email.set(email);
 	}
 
+	/**
+     * Method to return the StringProperty of the user's e-mail for the TableView
+     * @return the StringProperty of the user's e-mail
+     */
     public StringProperty emailProperty() {
     	return email;
     }
