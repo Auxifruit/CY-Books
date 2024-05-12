@@ -7,6 +7,7 @@ import controle.CreateUserButtonHandler;
 import controle.ModificationUserButtonHandler;
 import controle.DeleteUserButtonHandler;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -77,6 +78,7 @@ public class UsersManagment extends Application {
 	    
 	    Button deleteUserButton = new Button("Delete user");
 	    deleteUserButton.setOnAction(new DeleteUserButtonHandler(data, usersTable));
+	    deleteUserButton.disableProperty().bind(Bindings.isEmpty(usersTable.getSelectionModel().getSelectedItems()));
 	    
 	    TextField filteredField = new TextField();
 	    filteredField.setPromptText("Search");
@@ -143,9 +145,9 @@ public class UsersManagment extends Application {
 	    usersModificationPane = new VBox();
 
 	    Label userModificationLabel = new Label("User modification");
-	    Label oldUsersFirstname = new Label();
-	    Label oldUsersLastname = new Label();
-	    Label oldUsersEmail = new Label();
+	    Label oldUsersFirstname = new Label("Firstname : ");
+	    Label oldUsersLastname = new Label("Lastname : ");
+	    Label oldUsersEmail = new Label("E-mail : ");
 
 	    usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 	        if (newSelection != null) {
@@ -153,7 +155,12 @@ public class UsersManagment extends Application {
 	        	oldUsersLastname.setText("Lastname : " + usersTable.getSelectionModel().getSelectedItem().getLastname());
 	        	oldUsersEmail.setText("E-mail : " + usersTable.getSelectionModel().getSelectedItem().getEmail());
 	        }
+	        else {
+	        	
+	        }
 	    });
+	    
+	    usersTable.getSelectionModel().setSelectionMode(null);
 	    
 	    VBox userInfos = new VBox(10);
 	    userInfos.getChildren().addAll(userModificationLabel, oldUsersFirstname, oldUsersLastname, oldUsersEmail);
@@ -166,6 +173,7 @@ public class UsersManagment extends Application {
 	    
 	    Button modifyUserButton = new Button("Modify user");
 	    modifyUserButton.setOnAction(new ModificationUserButtonHandler(oldUsersFirstname, oldUsersLastname, oldUsersEmail, newFirstnameText, newLastnameText, newEmailText, usersTable));
+	    modifyUserButton.disableProperty().bind(Bindings.isEmpty(usersTable.getSelectionModel().getSelectedItems()));
 	    
 	    newUserInfosInput.getChildren().addAll(newFirstnameText, newLastnameText, newEmailText, modifyUserButton);
 	    
