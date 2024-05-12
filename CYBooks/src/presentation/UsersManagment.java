@@ -1,23 +1,21 @@
 package presentation;
 
-import java.util.Optional;
+import java.io.IOException;
 import abstraction.User2;
+import abstraction.UserFile;
+import controle.CreateUserButtonHandler;
+import controle.ModificationUserButtonHandler;
+import controle.DeleteUserButtonHandler;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumnBase;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -27,7 +25,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.ButtonBar;
 
 public class UsersManagment extends Application {
 	private Pane usersTablePane;
@@ -79,25 +76,7 @@ public class UsersManagment extends Application {
 	    label.setFont(new Font("Arial", 20));
 	    
 	    Button deleteUserButton = new Button("Delete user");
-	    
-	    deleteUserButton.setOnAction(e -> {
-	    	ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-	    	ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-	    	Alert deleteUserAlert = new Alert(AlertType.WARNING, "Are you sure to delete this user ?",
-	    			yesButton, cancelButton);
-	    	
-	    	deleteUserAlert.setTitle("Delete user warning");
-	    	Optional<ButtonType> result = deleteUserAlert.showAndWait();
-	    	
-	    	if(result.get().equals(yesButton)) {
-	    		User2.getAllUser().remove(usersTable.getSelectionModel().getSelectedItem());
-		    	data.remove(usersTable.getSelectionModel().getSelectedItem());
-
-		    	Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted", ButtonType.OK);
-	    		deletedUserAlert.setTitle("User deleted");
-	    		deletedUserAlert.showAndWait();
-	    	}
-	    });
+	    deleteUserButton.setOnAction(new DeleteUserButtonHandler(data, usersTable));
 	    
 	    TextField filteredField = new TextField();
 	    filteredField.setPromptText("Search");
@@ -110,8 +89,10 @@ public class UsersManagment extends Application {
 	    		}
 	    		
 	    		String lowerCaseFilter = newValue.toLowerCase();
-	    		
-	    		if(user.getFirstname().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+	    		if(String.valueOf(user.getId()).toLowerCase().indexOf(lowerCaseFilter)  != -1) {
+	    			return true;
+	    		}
+	    		else if(user.getFirstname().toLowerCase().indexOf(lowerCaseFilter) != -1) {
 	    			return true;
 	    		}
 	    		else if(user.getLastname().toLowerCase().indexOf(lowerCaseFilter) != -1) {
@@ -128,12 +109,10 @@ public class UsersManagment extends Application {
 	    });
 	    
 	    SortedList<User2> sortedData = new SortedList<>(filteredData);
-	    
 	    sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
-	    
 	    usersTable.setItems(sortedData);
 	    
-	    final VBox vbox = new VBox();
+	    VBox vbox = new VBox();
 	    vbox.setSpacing(5);
 	    vbox.setPadding(new Insets(10, 0, 0, 10));
 	    vbox.getChildren().addAll(label, filteredField, usersTable, deleteUserButton);
@@ -143,7 +122,7 @@ public class UsersManagment extends Application {
 	    // Users Creation
 	    usersCreationPane = new VBox();
 	    HBox userInfoInput = new HBox(10);
-	    Button createUserButton = new Button("Create new user");
+	    
 	    TextField firstnameText = new TextField();
 	    TextField lastnameText = new TextField();
 	    TextField emailText = new TextField();
@@ -155,42 +134,38 @@ public class UsersManagment extends Application {
 	    
 	    userInfoInput.getChildren().addAll(firstnameText, lastnameText, emailText);
 	    
-	    createUserButton.setOnAction(e -> {
-	    	if((firstnameText.getText().equals(null) || firstnameText.getText().isEmpty()) || (lastnameText.getText().equals(null) || lastnameText.getText().isEmpty()) || (emailText.getText().equals(null) || emailText.getText().isEmpty())) {
-	    		Alert errorCreateUserAlert = new Alert(AlertType.WARNING, "You need to fill all the field", ButtonType.OK);
-	    		errorCreateUserAlert.setTitle("Empty field(s)");
-	    		errorCreateUserAlert.showAndWait();
-	    	}
-	    	else {
-	    		Alert createUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been created", ButtonType.OK);
-	    		createUserAlert.setTitle("User createed");
-	    		createUserAlert.showAndWait();
-	    		
-	    		data.add(new User2(firstnameText.getText(), lastnameText.getText(), emailText.getText()));
-	    		
-	    		firstnameText.setText("");
-	    	    lastnameText.setText("");
-	    	    emailText.setText("");
-	    	}
-	    });
+	    Button createUserButton = new Button("Create new user");
+	    createUserButton.setOnAction(new CreateUserButtonHandler(data, firstnameText, lastnameText, emailText));
 
 	    usersCreationPane.getChildren().addAll(userCreationLabel, userInfoInput, createUserButton);
 
 	    // Users Modification
 	    usersModificationPane = new VBox();
+
 	    Label userModificationLabel = new Label("User modification");
-	    Label usersFirstname = new Label("Firstname : " + usersTable.getSelectionModel().getSelectedItem().getFirstname());
-	    Label usersLastname = new Label("Lastname : " + usersTable.getSelectionModel().getSelectedItem().getLastname());
-	    Label usersEmail = new Label("E-mail : " + usersTable.getSelectionModel().getSelectedItem().getEmail());
+	    Label oldUsersFirstname = new Label();
+	    Label oldUsersLastname = new Label();
+	    Label oldUsersEmail = new Label();
+
+	    usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+	        if (newSelection != null) {
+	        	oldUsersFirstname.setText("Firstname : " + usersTable.getSelectionModel().getSelectedItem().getFirstname());
+	        	oldUsersLastname.setText("Lastname : " + usersTable.getSelectionModel().getSelectedItem().getLastname());
+	        	oldUsersEmail.setText("E-mail : " + usersTable.getSelectionModel().getSelectedItem().getEmail());
+	        }
+	    });
 	    
 	    VBox userInfos = new VBox(10);
-	    userInfos.getChildren().addAll(userModificationLabel, usersFirstname, usersLastname, usersEmail);
+	    userInfos.getChildren().addAll(userModificationLabel, oldUsersFirstname, oldUsersLastname, oldUsersEmail);
 	    
 	    HBox newUserInfosInput = new HBox(10);
-	    Button modifyUserButton = new Button("Modify user");
+	    
 	    TextField newFirstnameText = new TextField();
 	    TextField newLastnameText = new TextField();
 	    TextField newEmailText = new TextField();
+	    
+	    Button modifyUserButton = new Button("Modify user");
+	    modifyUserButton.setOnAction(new ModificationUserButtonHandler(oldUsersFirstname, oldUsersLastname, oldUsersEmail, newFirstnameText, newLastnameText, newEmailText, usersTable));
 	    
 	    newUserInfosInput.getChildren().addAll(newFirstnameText, newLastnameText, newEmailText, modifyUserButton);
 	    
@@ -200,45 +175,6 @@ public class UsersManagment extends Application {
 	    
 	    usersModificationPane.getChildren().addAll(userInfos, newUserInfosInput);
 	    
-	    modifyUserButton.setOnAction(e -> {
-	    	String newFirstname = newFirstnameText.getText();
-    		String newlastname = newLastnameText.getText();
-    		String newEmail = newEmailText.getText();
-    		if((newFirstname.equals(null) || newFirstname.isEmpty()) && (newlastname.equals(null) || newlastname.isEmpty()) && (newEmail.equals(null) || newEmail.isEmpty())) {
-    			Alert errormodificationUserAlert = new Alert(AlertType.WARNING, "You need to fill at least one field", ButtonType.OK);
-	    		errormodificationUserAlert.setTitle("Empty fields");
-	    		errormodificationUserAlert.showAndWait();
-    		}
-    		else {
-    			ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-    	    	ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-    	    	Alert modificationUserAlert  = new Alert(AlertType.WARNING, "Are you sure to modify this user ?",
-    	    			yesButton, cancelButton);
-    	    	
-    	    	modificationUserAlert.setTitle("Modify user warning");
-    	    	Optional<ButtonType> result = modificationUserAlert.showAndWait();
-    	    	
-    	    	if(result.get().equals(yesButton)) {	    		
-    	    		if(!(newFirstname.equals(null) || newFirstname.isEmpty())) {
-    	    			usersTable.getSelectionModel().getSelectedItem().setFirstname(newFirstname);
-    	    			usersFirstname.setText("Firstname : " + newFirstname);
-    	    		}
-    	    		if(!(newlastname.equals(null) || newlastname.isEmpty())) {
-    	    			usersTable.getSelectionModel().getSelectedItem().setLastname(newlastname);
-    	    			usersLastname.setText("Lastname : " + newlastname);
-    	    		}
-    	    		if(!(newEmail.equals(null) || newEmail.isEmpty())) {
-    	    			usersTable.getSelectionModel().getSelectedItem().setEmail(newEmail);
-    	    			usersEmail.setText("E-mail : " + newEmail);
-    	    		}
-    	    	}
-    	    	
-    	    	modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been modified", ButtonType.OK);
-    	    	modificationUserAlert.setTitle("User modified");
-        		modificationUserAlert.showAndWait();
-    		}
-	    });
-	    
 	    // Scene
 	    usersBorderPane.setCenter(usersTablePane);
 	    usersBorderPane.setBottom(hboxButton);
@@ -246,15 +182,20 @@ public class UsersManagment extends Application {
 	    stage.show();
 	}
 	
-	public void initializeCol() {
+	public void initializeCol() throws IOException {
 		usersBorderPane = new BorderPane();
 		
-	    User2 user1 = new User2("Mark", "Evans", "Mark@gmail.com");
-		User2 user2 = new User2("Axel", "Blaze", "Axel@gmail.com");
-		User2 user3 = new User2("Shawn", "Froste", "Shawn@gmail.com");
-		User2 user4 = new User2("Jude", "Sharp", "Jude@gmail.com");
-		
-		data.addAll(user1, user2, user3, user4);
+	    try {
+	    	UserFile.readUsersFromAFileTXT();
+	    	
+	    	for(User2 u : User2.getAllUser()) {
+	    		if(!(u.equals(null))) {
+	    			data.add(u);
+	    		}
+			}
+	    } catch (Exception e) {
+			System.err.println("File not found. (initializeCol)");
+		}
 		
 		idCol = new TableColumn<>("ID");
 		idCol.setMinWidth(100);
