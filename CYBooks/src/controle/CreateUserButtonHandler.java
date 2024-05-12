@@ -33,7 +33,7 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
             createUserAlert.setTitle("User created");
             createUserAlert.showAndWait();
 
-            User2 userToCreate = new User2(firstnameText.getText(), lastnameText.getText(), emailText.getText());
+            User2 userToCreate = new User2(lastnameText.getText(), firstnameText.getText(), emailText.getText());
             data.add(userToCreate);
 
             UserFile.addUserInAFileTXT(userToCreate);
