@@ -1,6 +1,7 @@
 package abstraction;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +11,11 @@ import java.util.List;
  */
 public class Borrow {
 	protected static List<Borrow> allBorrows = new ArrayList<>();
-	protected User user;
-	protected Book book;
-	protected LocalDate borrowDate;
-	protected LocalDate returnDate;
+	protected String usersID;
+	protected String booksISBN;
+	protected String borrowDate;
+	protected String returnDate;
+	protected String effectiveReturnDate;
 	protected boolean late;
 	protected List<String> problems;
     
@@ -24,68 +26,69 @@ public class Borrow {
      * @param dateBorrow the borrow's date
      */
     public Borrow(User user, Book book, LocalDate dateBorrow) {
-        this.user = user;
-        this.book = book;
-        this.borrowDate = dateBorrow;
-        this.returnDate = borrowDate.plusDays(Book.MAX_BORROW_TIME);
+        this.usersID = String.valueOf(user.getId());
+        this.booksISBN = String.valueOf(book.getIsbn());
+        this.borrowDate = dateBorrow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        this.returnDate = dateBorrow.plusDays(Book.MAX_BORROW_TIME).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));;
+        this.effectiveReturnDate = "";
         this.late = false;
         this.problems = new ArrayList<String>();
         allBorrows.add(this);
     }
 
     /**
-     * Get the user who borrowed the book
-     * @return the user who borrowed the book
+     * Get the id of the user who borrowed the book
+     * @return the id of the user who borrowed the book
      */
-    public User getUser() {
-        return user;
+    public String getUsersID() {
+        return usersID;
     }
 
     /**
      * user setter method
      * @param user the user who borrowed the book
      */
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsersID(User user) {
+        this.usersID = String.valueOf(user.getId());
     }
 
     /**
-     * Get the borrowed book
-     * @return the borrowed book
+     * Get the ISBN of the borrowed book
+     * @return the ISBN of the borrowed book
      */
-    public Book getBook() {
-        return book;
+    public String getBooksISBN() {
+        return booksISBN;
     }
 
     /**
-     * Book setter method
-     * @param book the borrowed book
+     * Book's ISBN setter method
+     * @param book new the borrowed book
      */
     public void setBook(Book book) {
-        this.book = book;
+        this.booksISBN = String.valueOf(book.getIsbn());
     }
 
     /**
      * Get the borrow's date
      * @return the borrow's date
      */
-    public LocalDate getDateBorrow() {
+    public String getDateBorrow() {
         return borrowDate;
     }
 
     /**
      * borrowDate setter method
-     * @param borrowDate
+     * @param borrowDate the date of the creation of the borrow
      */
     public void setDateBorrow(LocalDate borrowDate) {
-        this.borrowDate = borrowDate;
+        this.borrowDate = borrowDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     }
 
     /**
      * Get the borrow's return date
-     * @return returnDate
+     * @return returnDate the date of which the book need to be return
      */
-    public LocalDate getReturnDate() {
+    public String getReturnDate() {
         return returnDate;
     }
 
@@ -94,10 +97,26 @@ public class Borrow {
      * @param return the borrow's return date
      */
     public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
+        this.returnDate = returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     }
     
+    
     /**
+     * Get the borrow's effective return date
+     * @return effectiveReturnDate
+     */
+    public String getEffectiveReturnDate() {
+		return effectiveReturnDate;
+	}
+
+    /**
+     * effectiveReturnDate setter method
+     */
+	public void setEffectiveReturnDate(LocalDate effectiveReturnDate) {
+		this.effectiveReturnDate = effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+	}
+
+	/**
 	 * Get the borrow's state : late or not
 	 * @return true if the borrow is late and false if not
 	 */
@@ -119,8 +138,8 @@ public class Borrow {
      */
     public List<String> getProblems() {
 		return problems;
-	}
-
+    }
+    
     /**
      * Method to add a problem to the borrow
      * @param problem the problem we need to add
@@ -130,13 +149,21 @@ public class Borrow {
 	}
 	
 	/**
+	 * Get the list of all the users
+	 * @return the list of all the users
+	 */
+	public static List<Borrow> getAllBorrow() {
+		return allBorrows;
+	}
+	
+	/**
 	 * Method to check is a borrow is late, if true, changed the late state to true
 	 * @return true if the borrow is late and false if not
 	 */
 	public boolean isBorrowLate() {
 		LocalDate today = LocalDate.now();
 		
-		if(today.isAfter(getReturnDate())) {
+		if(today.isAfter(LocalDate.parse(getReturnDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
 			this.setLate(true);
 		}
 		
@@ -150,8 +177,8 @@ public class Borrow {
     @Override
     public String toString() {
         String text =  "Borrow : " +
-        		"\n"+ getUser() +
-        		"\n\nBook :\n" + getBook() +
+        		"\nUser's ID : "+ getUsersID() +
+        		"\nBook's ISBN : " + getBooksISBN() +
         		"\nBorrow date : " + getDateBorrow() +
         		"\nReturn date : " + getReturnDate();
         if(getProblems().size() > 0) {
@@ -171,7 +198,7 @@ public class Borrow {
     		return false;
     	}
     	Borrow b = (Borrow) obj;
-    	return this.getUser().equals(b.getUser()) && this.getBook().equals(b.getBook()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
+    	return this.getUsersID().equals(b.getUsersID()) && this.getBooksISBN().equals(b.getBooksISBN()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
     			this.getReturnDate().equals(b.getReturnDate()) && this.getProblems().equals(b.getProblems());
     }
   
