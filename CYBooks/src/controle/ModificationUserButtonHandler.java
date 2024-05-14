@@ -82,15 +82,15 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
 	    		// If we have a new value we update the information
 	    		if(!(newlastname.equals(null) || newlastname.isEmpty())) {
 	    			userToModify.setLastname(newlastname);
-	    			oldUsersLastname.setText("Lastname : " + newlastname);
+	    			oldUsersLastname.setText(newlastname);
 	    		}
 	    		if(!(newFirstname.equals(null) || newFirstname.isEmpty())) {
 	    			userToModify.setFirstname(newFirstname);
-	    			oldUsersFirstname.setText("Firstname : " + newFirstname);
+	    			oldUsersFirstname.setText(newFirstname);
 	    		}
 	    		if(!(newEmail.equals(null) || newEmail.isEmpty())) {
 	    			userToModify.setEmail(newEmail);
-	    			oldUsersEmail.setText("E-mail : " + newEmail);
+	    			oldUsersEmail.setText(newEmail);
 	    		}
 	    		
 	    		try {
