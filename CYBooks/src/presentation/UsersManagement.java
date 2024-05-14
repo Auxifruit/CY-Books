@@ -102,6 +102,10 @@ public class UsersManagement extends Application {
 	    stage.show();
 	}
 
+	/**
+	 * Method to create a pane for the users table
+	 * @return the pane for the users table
+	 */
 	private Pane createUsersTablePane() {
 		// VBox containing all the node for the users table expect the main label
 		VBox searchTableButtonVBox = new VBox(20);
@@ -172,6 +176,10 @@ public class UsersManagement extends Application {
 		return usersTableVBox;
 	}
 	
+	/**
+	 * Method to create a pane to create an user
+	 * @return the pane to create an user
+	 */
 	private Pane createUserCreationPane() {
 		// HBox containing the input for the user's information
 	    VBox userInfoInput = new VBox(25);
@@ -226,6 +234,10 @@ public class UsersManagement extends Application {
 		return userCreationVBox;
 	}
 	
+	/**
+	 * Method to create a pane to modify an user
+	 * @return the pane to modify an user
+	 */
 	private Node createUserModificationPane() {
 		// VBox containing all the old user's informations
 	    VBox usersOldInfos = new VBox(15);
