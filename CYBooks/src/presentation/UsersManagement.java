@@ -1,7 +1,7 @@
 package presentation;
 
 import java.io.IOException;
-import abstraction.User2;
+import abstraction.User;
 import abstraction.UserFile;
 import controle.CreateUserButtonHandler;
 import controle.ModificationUserButtonHandler;
@@ -39,12 +39,12 @@ public class UsersManagement extends Application {
 	
 	private BorderPane usersBorderPane;
 	
-	private TableView<User2> usersTable = new TableView<>();
-	private TableColumn<User2, Integer> idCol;
-	private TableColumn<User2, String> firstNameCol;
-	private TableColumn<User2, String> lastNameCol;
-	private TableColumn<User2, String> emailCol;
-	private final ObservableList<User2> data = FXCollections.observableArrayList(User2.getAllUser());
+	private TableView<User> usersTable = new TableView<>();
+	private TableColumn<User, Integer> idCol;
+	private TableColumn<User, String> firstNameCol;
+	private TableColumn<User, String> lastNameCol;
+	private TableColumn<User, String> emailCol;
+	private final ObservableList<User> data = FXCollections.observableArrayList(User.getAllUser());
 	
 	/**
 	 * Method to start the application
@@ -110,7 +110,7 @@ public class UsersManagement extends Application {
 		// VBox containing all the node for the users table expect the main label
 		VBox searchTableButtonVBox = new VBox(20);
 		
-	    Label labelUserTable = new Label("USERS TABLE: ");
+	    Label labelUserTable = new Label("USERS TABLE :");
 		labelUserTable.setFont(new Font("Arial", 24));
 		labelUserTable.setUnderline(true);
 		labelUserTable.setStyle("-fx-font-weight: bold;");
@@ -126,7 +126,7 @@ public class UsersManagement extends Application {
 	    TextField filteredField = new TextField();
 	    filteredField.setPromptText("Search");
 	    
-	    FilteredList<User2> filteredData = new FilteredList<>(data, b -> true);
+	    FilteredList<User> filteredData = new FilteredList<>(data, b -> true);
 	    filteredField.textProperty().addListener((observalble, oldValue, newValue) -> {
 	    	filteredData.setPredicate(user ->  {
 	    		if(newValue == null || newValue.isEmpty()) {
@@ -161,7 +161,7 @@ public class UsersManagement extends Application {
 	    });
 	    
 	    // We get the result in a sorted list, compare it the the table and update the values
-	    SortedList<User2> sortedData = new SortedList<>(filteredData);
+	    SortedList<User> sortedData = new SortedList<>(filteredData);
 	    sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
 	    usersTable.setItems(sortedData);
 	    
@@ -337,7 +337,7 @@ public class UsersManagement extends Application {
 	    	UserFile.readUsersFromAFileTXT();
 	    	
 	    	// We add the users to our data
-	    	for(User2 u : User2.getAllUser()) {
+	    	for(User u : User.getAllUser()) {
 	    		if(!(u.equals(null))) {
 	    			data.add(u);
 	    		}
@@ -349,22 +349,22 @@ public class UsersManagement extends Application {
 	    // Column for the user's ID
 		idCol = new TableColumn<>("ID");
 		idCol.setMinWidth(100);
-		idCol.setCellValueFactory(new PropertyValueFactory<User2, Integer>("id"));
+		idCol.setCellValueFactory(new PropertyValueFactory<User, Integer>("id"));
 		
 		// Column for the user's firstname
 	    firstNameCol = new TableColumn<>("First name");
 	    firstNameCol.setMinWidth(100);
-	    firstNameCol.setCellValueFactory(new PropertyValueFactory<User2, String>("firstname"));
+	    firstNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("firstname"));
 
 	    // Column for the user's lastnale
 	    lastNameCol = new TableColumn<>("Last name");
 	    lastNameCol.setMinWidth(100);
-	    lastNameCol.setCellValueFactory(new PropertyValueFactory<User2, String>("lastname"));
+	    lastNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("lastname"));
 
 	    // Column for the user's e-mail
 	    emailCol = new TableColumn<>("E-mail");
 	    emailCol.setMinWidth(200);
-	    emailCol.setCellValueFactory(new PropertyValueFactory<User2, String>("email"));
+	    emailCol.setCellValueFactory(new PropertyValueFactory<User, String>("email"));
 
 	    // We set the item of our table to our list of user and add the column to our table
 	    usersTable.setItems(data);
