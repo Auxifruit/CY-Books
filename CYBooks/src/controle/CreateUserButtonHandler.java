@@ -6,14 +6,14 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-import abstraction.User2;
+import abstraction.User;
 import abstraction.UserFile;
 
 /**
  * The class to handle the event of the button creating an user
  */
 public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
-    private ObservableList<User2> data;
+    private ObservableList<User> data;
     private TextField firstnameText;
     private TextField lastnameText;
     private TextField emailText;
@@ -25,7 +25,7 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
      * @param lastnameText the new user's last name
      * @param emailText the new user's first name
      */
-    public CreateUserButtonHandler(ObservableList<User2> data, TextField firstnameText, TextField lastnameText, TextField emailText) {
+    public CreateUserButtonHandler(ObservableList<User> data, TextField firstnameText, TextField lastnameText, TextField emailText) {
         this.data = data;
         this.firstnameText = firstnameText;
         this.lastnameText = lastnameText;
@@ -45,7 +45,7 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
             createUserAlert.showAndWait();
 
             // We create an user and add it in our data
-            User2 userToCreate = new User2(lastnameText.getText(), firstnameText.getText(), emailText.getText());
+            User userToCreate = new User(lastnameText.getText(), firstnameText.getText(), emailText.getText());
             data.add(userToCreate);
 
             // We add our user in our text file

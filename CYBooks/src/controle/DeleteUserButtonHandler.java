@@ -12,22 +12,22 @@ import javafx.scene.control.Alert.AlertType;
 import java.io.IOException;
 import java.util.Optional;
 
-import abstraction.User2;
+import abstraction.User;
 import abstraction.UserFile;
 
 /**
  * The class to handle the event of the button deleting an user
  */
 public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
-    private ObservableList<User2> data;
-    private TableView<User2> usersTable = new TableView<User2>();
+    private ObservableList<User> data;
+    private TableView<User> usersTable = new TableView<User>();
 
     /**
      * DeleteUserButtonHandler constructor
      * @param data the list of all the users
      * @param usersTable the table of all the users
      */
-    public DeleteUserButtonHandler(ObservableList<User2> data, TableView<User2> usersTable) {
+    public DeleteUserButtonHandler(ObservableList<User> data, TableView<User> usersTable) {
         this.data = data;
         this.usersTable = usersTable;
         
@@ -48,10 +48,10 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     	
     	if(result.get().equals(yesButton)) {
     		// We get the selected user to delete
-    		User2 userToDelete = usersTable.getSelectionModel().getSelectedItem();
+    		User userToDelete = usersTable.getSelectionModel().getSelectedItem();
     		
     		// We remove it from the list of all the users, the data and the text file
-    		User2.getAllUser().remove(userToDelete);
+    		User.getAllUser().remove(userToDelete);
 	    	data.remove(userToDelete);
 	    	try {
 				UserFile.deleteUserInAFileTXT(userToDelete);

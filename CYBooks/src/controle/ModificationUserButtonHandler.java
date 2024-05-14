@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import abstraction.User2;
+import abstraction.User;
 import abstraction.UserFile;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
     private TextField newLastnameText;
     private TextField newEmailText;
     
-    private TableView<User2> usersTable = new TableView<User2>();
+    private TableView<User> usersTable = new TableView<User>();
 
     /**
      * ModificationUserButtonHandler constructor
@@ -39,7 +39,7 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
      * @param newEmailText the new user's e-mail
      * @param usersTable the table of all the users
      */
-    public ModificationUserButtonHandler(Label oldUsersFirstname, Label oldUsersLastname, Label oldUsersEmail, TextField newFirstnameText, TextField newLastnameText, TextField newEmailText, TableView<User2> usersTable) {
+    public ModificationUserButtonHandler(Label oldUsersFirstname, Label oldUsersLastname, Label oldUsersEmail, TextField newFirstnameText, TextField newLastnameText, TextField newEmailText, TableView<User> usersTable) {
     	this.oldUsersFirstname = oldUsersFirstname;
     	this.oldUsersLastname = oldUsersLastname;
     	this.oldUsersEmail = oldUsersEmail;
@@ -76,7 +76,7 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
 	    	
 	    	if(result.get().equals(yesButton)) {
 	    		// We get the selected user to modify
-	    		User2 userToModify = usersTable.getSelectionModel().getSelectedItem();
+	    		User userToModify = usersTable.getSelectionModel().getSelectedItem();
 	    		
 	    		// For each information we check if we have a new value or not
 	    		// If we have a new value we update the information
