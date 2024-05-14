@@ -13,10 +13,10 @@ import javafx.beans.property.StringProperty;
  * @author CYTech Student
  */
 
-public class User2 {
+public class User {
 	protected static int MAX_BORROW_NUMBER = 3;
 	protected static int compteurId = 1;
-	protected static List<User2> allUser = new ArrayList<>();
+	protected static List<User> allUser = new ArrayList<>();
 	protected IntegerProperty id;
 	protected StringProperty lastname;
 	protected StringProperty firstname;
@@ -29,7 +29,7 @@ public class User2 {
      * @param firstname the firstname of the user
      * @param email the email of the user
      */
-    public User2(String lastname, String firstname, String email) {
+    public User(String lastname, String firstname, String email) {
     	this.lastname = new SimpleStringProperty(lastname);
         this.firstname = new SimpleStringProperty(firstname);
         this.email = new SimpleStringProperty(email);
@@ -44,7 +44,7 @@ public class User2 {
      * @param firstname the firstname of the user
      * @param email the email of the user
      */
-    public User2(int id, String lastname, String firstname, String email) {
+    public User(int id, String lastname, String firstname, String email) {
     	this(lastname, firstname, email);
     	this.id = new SimpleIntegerProperty(id);
     }
@@ -54,8 +54,8 @@ public class User2 {
      * @param id the user's id we want to find
      * @return a user if we found it or null if not
      */
-    public static User2 searchUserWithId(int id) {
-        for (User2 user : allUser) {
+    public static User searchUserWithId(int id) {
+        for (User user : allUser) {
             if (user.getId() == id) {
                 return user;
             }
@@ -170,7 +170,7 @@ public class User2 {
 	 * Get the list of all the users
 	 * @return the list of all the users
 	 */
-	public static List<User2> getAllUser() {
+	public static List<User> getAllUser() {
 		return allUser;
 	}
 
@@ -194,10 +194,10 @@ public class User2 {
      */
     @Override
     public boolean equals(Object obj) {
-    	if(!(obj instanceof User2)) {
+    	if(!(obj instanceof User)) {
     		return false;
     	}
-    	User2 u = (User2) obj;
+    	User u = (User) obj;
     	return this.getFirstname().equals(u.getFirstname()) && this.getLastname().equals(u.getLastname()) && this.getEmail().equals(u.getEmail())
     			&& this.getId() == u.getId() && this.getBorrowHistory().equals(u.getBorrowHistory());
     }
