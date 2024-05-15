@@ -14,7 +14,7 @@ public class UserFile {
      * Method to add an user to the text file where we store all the users
      * @param user the user to add 
      */
-	public static void addUserInAFileTXT(User2 user) {
+	public static void addUserInAFileTXT(User user) {
 		try {
 	        // Créer un objet FileWriter avec le chemin du fichier et en mode append
 	        FileWriter fileWriter = new FileWriter(FILE_PATH, true);
@@ -44,7 +44,7 @@ public class UserFile {
 	 * @param userToDelete the user to delete
 	 * @throws IOException if the file isn't found
 	 */
-	public static void deleteUserInAFileTXT(User2 userToDelete) throws IOException {
+	public static void deleteUserInAFileTXT(User userToDelete) throws IOException {
 		try {
 			File inputFile = new File(FILE_PATH);
 	        File tempFile = new File("temp" + FILE_PATH);
@@ -81,7 +81,7 @@ public class UserFile {
 	 * @param newEmail the user's new e-mail
 	 * @throws IOException if the file isn't found
 	 */
-	public static void modifyUserInAFileTXT(User2 userToModify, String newLastname, String newFirstname, String newEmail) throws IOException {
+	public static void modifyUserInAFileTXT(User userToModify, String newLastname, String newFirstname, String newEmail) throws IOException {
 		try {
 			File inputFile = new File(FILE_PATH);
 	        File tempFile = new File("temp" + FILE_PATH);
@@ -146,14 +146,14 @@ public class UserFile {
 	            String userFirstname = userInfos[2];
 	            String userEmail = userInfos[3];
 	            
-	            new User2(userID, userLastname, userFirstname, userEmail);
+	            new User(userID, userLastname, userFirstname, userEmail);
 	            
 				line = reader.readLine();
 			}
 
 			reader.close();
 			
-			User2.compteurId = User2.getAllUser().get(User2.getAllUser().size() - 1).getId() + 1;
+			User.compteurId = User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1;
 		} catch (IOException e) {
 			System.err.println("File not found. (readUsersFromAFileTXT)");
 		}
