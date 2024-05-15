@@ -1,30 +1,118 @@
 package abstraction;
 
-import java.time.LocalDate;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Scanner;
 
 public class Main {
-	public static void main(String[] args) {
-		User user1 = new User("Mark", "Evans", "Mark@gmail.com");
-		User user2 = new User("Axel", "Blaze", "Axel@gmail.com");
-		
-		Book book1 = new Book(123, "Les misÈrables", "Victor Hugo", "1862-01-01", "TragÈdie", "Roman", "Albert Lacroix");
-		Book book2 = new Book(123, "Les misÈrables", "Victor Hugo", "1862-01-01", "TragÈdie", "Roman", "Albert Lacroix");
-		
-		Borrow borrow1 = new Borrow(user1, book1, LocalDate.now());
-		
-		System.out.println("Users :");
-		System.out.println("\n" + user1);
-		System.out.println("\n" + user2);
-		System.out.println("\nuser1.equals(user2) : " + user1.equals(user2));
-		
-		System.out.println("\nBook :");
-		System.out.println(book1);
-		System.out.println("\nbook1.equals(book2) : " + book1.equals(book2));
-		
-		System.out.println("\nBorrow :");
-		System.out.println(borrow1);
-		System.out.println("\nIs the borrow late ? " + borrow1.isBorrowLate());
-		
-		
-	}
+
+    public static void UserMenu() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Que voulez-vous faire ?");
+            System.out.println("1) Arreter tout  2) Ajouter un utilisateur 3) Verifier la liste des utilisateurs 4) Modifier un utilisateur 5) Supprimer un User");
+            int wdyw = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (wdyw) {
+                case 1:
+                    System.out.print("Fin du prog");
+                    return; // Sort de la m√©thode
+
+                case 2:
+                    System.out.print("Pr√©nom ? ");
+                    String firstnameText = scanner.nextLine();
+                    System.out.print("Nom de famille ? ");
+                    String lastnameText = scanner.nextLine();
+                    System.out.print("Email ? ");
+                    String emailText = scanner.nextLine();
+                    User userToCreate = new User(lastnameText, firstnameText, emailText);
+                    UserFile.addUserInAFileTXT(userToCreate);
+                    break;
+
+                case 3:
+                    for (User u : User.getAllUser()) {
+                        System.out.println(u.toString());
+                        }
+                    
+                    
+                    break;
+
+                case 4:
+                    System.out.println("What is the id of the user that you want to modify?");
+                    int idTomodify = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline left-over
+
+                    System.out.print("Pr√©nom ? ");
+                    String firstnameNew = scanner.nextLine();
+                    System.out.print("Nom de famille ? ");
+                    String lastnameNew = scanner.nextLine();
+                    System.out.print("Email ? ");
+                    String emailNew = scanner.nextLine();
+
+                    for (User u : User.getAllUser()) {
+                        if (u.getId() == idTomodify) {
+                        	u.setEmail(emailNew);
+                        	u.setFirstname(firstnameNew);
+                        	u.setLastname(lastnameNew);
+                            UserFile.modifyUserInAFileTXT(u, lastnameNew, firstnameNew, emailNew);
+                            break; // Once modified, no need to continue looping
+                        }
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("Quel est son id ?");
+                    int id1 = scanner.nextInt();
+                    Iterator<User> iterator = User.getAllUser().iterator();
+                    while (iterator.hasNext()) {
+                        User u = iterator.next();
+                        if (u.getId() == id1) {
+                            iterator.remove();
+                            UserFile.deleteUserInAFileTXT(u);
+                        }
+                    }
+                    break;
+
+                default:
+                    System.out.println("Option invalide. Veuillez r√©essayer.");
+                    break;
+            }
+        }
+    }
+
+    public static void Commandline() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        UserFile.readUsersFromAFileTXT();
+
+        while (true) {
+            System.out.println("Que voulez-vous faire ?");
+            System.out.println(" 1) User 2) Borrow 3) Book ");
+            int wdyw = scanner.nextInt();
+            scanner.nextLine(); 
+
+            switch (wdyw) {
+                case 1:
+                    UserMenu();
+                    break;
+
+                case 2:
+                    System.out.println(" Borrow ");
+                    break;
+
+                case 3:
+                    System.out.println(" Book ");
+                    break;
+
+                default:
+                    System.out.println("Option invalide. Veuillez r√©essayer.");
+                    break;
+            }
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        Commandline();
+    }
 }
