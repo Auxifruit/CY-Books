@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -39,38 +40,38 @@ public class UsersManagement extends Application {
 	
 	private BorderPane usersBorderPane;
 	
-	private TableView<User> usersTable = new TableView<>();
+	private Pagination usersTablePagination;
+	public final static int ROWS_PER_PAGE = 15;
+	
+	private TableView<User> usersTable = createTable();
 	private TableColumn<User, Integer> idCol;
 	private TableColumn<User, String> firstNameCol;
 	private TableColumn<User, String> lastNameCol;
 	private TableColumn<User, String> emailCol;
-	private final ObservableList<User> data = FXCollections.observableArrayList(User.getAllUser());
+	private final ObservableList<User> data = FXCollections.observableArrayList();
+	private FilteredList<User> filteredData;
 	
 	/**
 	 * Method to start the application
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
+		usersBorderPane = new BorderPane();
+		
 		// We initialize the values of all the columns
-	    initializeCol();
+	    initializeData();
 		
 		stage.setTitle("Users table view");
 	    stage.setWidth(800);
 	    
 		// Users Table pane
-	    usersTablePane = new VBox();
-	    
-	    usersTablePane.getChildren().add(createUsersTablePane());
+	    usersTablePane = createUsersTablePane();
 	    
 	    // Users Creation pane
-	    usersCreationPane = new VBox();
-	    
-	    usersCreationPane.getChildren().addAll(createUserCreationPane());
+	    usersCreationPane = createUserCreationPane();
 
 	    // Users Modification pane
-	    usersModificationPane = new VBox();
-	    
-	    usersModificationPane.getChildren().addAll(createUserModificationPane());
+	    usersModificationPane = createUserModificationPane();
 	    
     	// HBox containing all the button to change scene
  		HBox hboxButtonChangeScene = new HBox(50);
@@ -107,8 +108,11 @@ public class UsersManagement extends Application {
 	 * @return the pane for the users table
 	 */
 	private Pane createUsersTablePane() {
+		usersTablePagination = new Pagination((data.size() / ROWS_PER_PAGE + 1), 0);
+		usersTablePagination.setPageFactory(this::createPage);
+	    
 		// VBox containing all the node for the users table expect the main label
-		VBox searchTableButtonVBox = new VBox(20);
+		VBox searchTableVBox = new VBox(20);
 		
 	    Label labelUserTable = new Label("USERS TABLE :");
 		labelUserTable.setFont(new Font("Arial", 24));
@@ -117,7 +121,7 @@ public class UsersManagement extends Application {
 	    
 	    // Button to delete an user
 	    Button deleteUserButton = new Button("Delete user");
-	    deleteUserButton.setOnAction(new DeleteUserButtonHandler(data, usersTable));
+	    deleteUserButton.setOnAction(new DeleteUserButtonHandler(data, usersTable, usersTablePagination));
 	    
 	    // If no user is selected, the button is disable
 	    deleteUserButton.disableProperty().bind(Bindings.isEmpty(usersTable.getSelectionModel().getSelectedItems()));
@@ -126,7 +130,7 @@ public class UsersManagement extends Application {
 	    TextField filteredField = new TextField();
 	    filteredField.setPromptText("Search");
 	    
-	    FilteredList<User> filteredData = new FilteredList<>(data, b -> true);
+	    filteredData = new FilteredList<>(data, b -> true);
 	    filteredField.textProperty().addListener((observalble, oldValue, newValue) -> {
 	    	filteredData.setPredicate(user ->  {
 	    		if(newValue == null || newValue.isEmpty()) {
@@ -158,23 +162,38 @@ public class UsersManagement extends Application {
 	    		}
 	    		
 	    	});
+	    	changeTableView(usersTablePagination.getCurrentPageIndex(), ROWS_PER_PAGE);
 	    });
 	    
-	    // We get the result in a sorted list, compare it the the table and update the values
-	    SortedList<User> sortedData = new SortedList<>(filteredData);
-	    sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
-	    usersTable.setItems(sortedData);
+	    searchTableVBox.getChildren().addAll(filteredField, usersTablePagination, deleteUserButton);
 	    
-	    searchTableButtonVBox.getChildren().addAll(filteredField, usersTable, deleteUserButton);
+	    int totalPage = (int) (Math.ceil(data.size() * 1.0 / ROWS_PER_PAGE));
+	    usersTablePagination.setPageCount(totalPage);
+	    usersTablePagination.setCurrentPageIndex(0);
+        changeTableView(0, ROWS_PER_PAGE);
+        usersTablePagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> changeTableView(newValue.intValue(), ROWS_PER_PAGE));
 	    
 	    // VBox containing the nodes for the users table
 	    VBox usersTableVBox = new VBox(20);
 	    usersTableVBox.setPadding(new Insets(10, 10, 10, 10));
-	    usersTableVBox.getChildren().addAll(labelUserTable, searchTableButtonVBox);
-	    usersTableVBox.setAlignment(Pos.CENTER);
+	    usersTableVBox.getChildren().addAll(labelUserTable, searchTableVBox);
+	    usersTableVBox.setAlignment(Pos.TOP_CENTER);
 	    
 		return usersTableVBox;
 	}
+	
+	private void changeTableView(int index, int limit) {
+
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, data.size());
+
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<User> sortedData = new SortedList<>(FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
+
+        usersTable.setItems(sortedData);
+
+    }
 	
 	/**
 	 * Method to create a pane to create an user
@@ -220,7 +239,7 @@ public class UsersManagement extends Application {
 	    
 	    // Button for creating an user
 	    Button createUserButton = new Button("Create new user");
-	    createUserButton.setOnAction(new CreateUserButtonHandler(data, firstnameText, lastnameText, emailText));
+	    createUserButton.setOnAction(new CreateUserButtonHandler(data, usersTablePagination, firstnameText, lastnameText, emailText));
 	    
 	    // We add all the node necessary to create an user 
 	    userInfoInput.getChildren().addAll(userCreationExplanation, firstnameHBox, lastnameHBox, emailHBox, createUserButton);
@@ -229,16 +248,25 @@ public class UsersManagement extends Application {
 	    VBox userCreationVBox = new VBox(20);
 	    userCreationVBox.setPadding(new Insets(10, 10, 10, 10));
 	    userCreationVBox.getChildren().addAll(userCreationLabel, userInfoInput);
-	    userCreationVBox.setAlignment(Pos.CENTER);
+	    userCreationVBox.setAlignment(Pos.TOP_CENTER);
 	    
 		return userCreationVBox;
 	}
+	
+	private Node createPage(int pageIndex) {
+
+        int fromIndex = pageIndex * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, data.size());
+        usersTable.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
+
+        return new BorderPane(usersTable);
+    }
 	
 	/**
 	 * Method to create a pane to modify an user
 	 * @return the pane to modify an user
 	 */
-	private Node createUserModificationPane() {
+	private Pane createUserModificationPane() {
 		// VBox containing all the old user's informations
 	    VBox usersOldInfos = new VBox(15);
 	    
@@ -320,18 +348,12 @@ public class UsersManagement extends Application {
 	    VBox usersModificationVBox = new VBox(25);
 	    usersModificationVBox.setPadding(new Insets(10, 10, 10, 10));
 	    usersModificationVBox.getChildren().addAll(userModificationLabel, usersOldInfos, usersNewInfos);
-	    usersModificationVBox.setAlignment(Pos.CENTER);
+	    usersModificationVBox.setAlignment(Pos.TOP_CENTER);
 		
 	    return usersModificationVBox;
 	}
 
-	/**
-	 * Method to initialize the table's column with the user's values
-	 * @throws IOException
-	 */
-	private void initializeCol() throws IOException {
-		usersBorderPane = new BorderPane();
-		
+	private void initializeData() throws IOException {
 		// We load the values of the users from the text file
 	    try {
 	    	UserFile.readUsersFromAFileTXT();
@@ -345,8 +367,14 @@ public class UsersManagement extends Application {
 	    } catch (Exception e) {
 			System.err.println("File not found. (initializeCol)");
 		}
+	   
+	}
+	
+	private TableView<User> createTable() {
 		
-	    // Column for the user's ID
+        TableView<User> table = new TableView<>();
+		
+		 // Column for the user's ID
 		idCol = new TableColumn<>("ID");
 		idCol.setMinWidth(100);
 		idCol.setCellValueFactory(new PropertyValueFactory<User, Integer>("id"));
@@ -356,7 +384,7 @@ public class UsersManagement extends Application {
 	    firstNameCol.setMinWidth(100);
 	    firstNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("firstname"));
 
-	    // Column for the user's lastnale
+	    // Column for the user's lastname
 	    lastNameCol = new TableColumn<>("Last name");
 	    lastNameCol.setMinWidth(100);
 	    lastNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("lastname"));
@@ -367,11 +395,13 @@ public class UsersManagement extends Application {
 	    emailCol.setCellValueFactory(new PropertyValueFactory<User, String>("email"));
 
 	    // We set the item of our table to our list of user and add the column to our table
-	    usersTable.setItems(data);
-	    usersTable.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
+	    //usersTable.setItems(data);
+	    table.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
 	    
 	    // The columns take up all the table space
-	    usersTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    
+	    return table;
 	}
 
 	public static void main(String[] args) {						
