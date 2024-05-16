@@ -6,8 +6,10 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
+import presentation.UsersManagement;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -21,16 +23,17 @@ import abstraction.UserFile;
 public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     private ObservableList<User> data;
     private TableView<User> usersTable = new TableView<User>();
+    private Pagination pagination;
 
     /**
      * DeleteUserButtonHandler constructor
      * @param data the list of all the users
      * @param usersTable the table of all the users
      */
-    public DeleteUserButtonHandler(ObservableList<User> data, TableView<User> usersTable) {
+    public DeleteUserButtonHandler(ObservableList<User> data, TableView<User> usersTable, Pagination pagination) {
         this.data = data;
         this.usersTable = usersTable;
-        
+        this.pagination = pagination;
     }
 
     @Override
@@ -48,11 +51,16 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     	
     	if(result.get().equals(yesButton)) {
     		// We get the selected user to delete
-    		User userToDelete = usersTable.getSelectionModel().getSelectedItem();
+    		User userToDelete = usersTable.getSelectionModel().getSelectedItem();		
     		
     		// We remove it from the list of all the users, the data and the text file
     		User.getAllUser().remove(userToDelete);
 	    	data.remove(userToDelete);
+	    	usersTable.setItems(data);
+	    	
+	    	pagination.setPageCount((int) Math.ceil((double) data.size() / UsersManagement.ROWS_PER_PAGE));
+            pagination.setCurrentPageIndex(0);
+            
 	    	try {
 				UserFile.deleteUserInAFileTXT(userToDelete);
 			} catch (IOException e1) {
