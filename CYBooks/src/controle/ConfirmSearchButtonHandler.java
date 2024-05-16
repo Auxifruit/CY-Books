@@ -5,9 +5,12 @@ import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * The class to handle the event of the button to search a book
@@ -101,30 +104,69 @@ public class ConfirmSearchButtonHandler implements EventHandler<ActionEvent> {
 
 	@Override
     public void handle(ActionEvent event) {
+		// We get the value for each TextField
+		String titleText = getTitleTextField().getText();
+		String authorText = getAuthorTextField().getText();
+		String typeText = getTypeTextField().getText();
+		String dateText = getDateTextField().getText();
+		String languageText = getLanguageTextField().getText();
+		String identifierText = getIdentifierTextField().getText();
 		
-		String titleRadio = ((RadioButton) getAnyOrAllTitle().getSelectedToggle()).getText();
-		String authorRadio = ((RadioButton) getAnyOrAllAuthor().getSelectedToggle()).getText();
-		String typeRadio = ((RadioButton) getAnyOrAllType().getSelectedToggle()).getText();
-		String dateRadio = ((RadioButton) getAnyOrAllDate().getSelectedToggle()).getText();
-		String languageRadio = ((RadioButton) getAnyOrAllLanguage().getSelectedToggle()).getText();
-		String identifierRadio = ((RadioButton) getAnyOrAllIdentifier().getSelectedToggle()).getText();
-		
-    	String title = "dc.title " + titleRadio + " \"" + getTitleTextField().getText() + "\"";
-    	String author = "dc.creator " + authorRadio + " \""  + getAuthorTextField().getText() + "\"";    	
-    	String type = "dc.type " + typeRadio + " \""  + getTypeTextField().getText() + "\"";    	
-    	String date = "dc.date " + dateRadio + " \""  + getDateTextField().getText() + "\"";    	
-    	String language = "dc.language "  + languageRadio + " \""  + getLanguageTextField().getText() + "\"";    	
-    	String identifier = "dc.identifier "  + identifierRadio + " \""  + getIdentifierTextField().getText() + "\"";
-    	
-    	List<String> query = new ArrayList<>();
-    	
-    	query.add(title);
-    	query.add(author);
-    	query.add(type);
-    	query.add(date);
-    	query.add(language);
-    	query.add(identifier);
-    	
-    	System.out.println(query);
+		// We check if at least one field is filled
+		if (titleText.isEmpty() && authorText.isEmpty() && typeText.isEmpty() && dateText.isEmpty() && languageText.isEmpty() && identifierText.isEmpty()) {
+			Alert errormodificationUserAlert = new Alert(AlertType.WARNING, "You need to fill at least one field", ButtonType.OK);
+    		errormodificationUserAlert.setTitle("Empty fields");
+    		errormodificationUserAlert.showAndWait();
+    	}
+		else {
+			// We get the value for each RadioButton
+			String titleRadio = ((RadioButton) getAnyOrAllTitle().getSelectedToggle()).getText();
+			String authorRadio = ((RadioButton) getAnyOrAllAuthor().getSelectedToggle()).getText();
+			String typeRadio = ((RadioButton) getAnyOrAllType().getSelectedToggle()).getText();
+			String dateRadio = ((RadioButton) getAnyOrAllDate().getSelectedToggle()).getText();
+			String languageRadio = ((RadioButton) getAnyOrAllLanguage().getSelectedToggle()).getText();
+			String identifierRadio = ((RadioButton) getAnyOrAllIdentifier().getSelectedToggle()).getText();
+
+			// We instantiate the Strings value for the query
+	    	String title = "dc.title " + titleRadio + " \"" + titleText + "\"";
+	    	String author = "dc.creator " + authorRadio + " \""  + authorText + "\"";    	
+	    	String type = "dc.type " + typeRadio + " \""  + typeText + "\"";    	
+	    	String date = "dc.date " + dateRadio + " \""  + dateText + "\"";    	
+	    	String language = "dc.language "  + languageRadio + " \""  + languageText + "\"";    	
+	    	String identifier = "dc.identifier "  + identifierRadio + " \""  + identifierText + "\"";
+	    	
+	    	// query will stock the values
+	    	List<String> query = new ArrayList<>();
+	    	
+	    	// If certain fields are empty we don't add them to the query
+	    	if (!titleText.isEmpty()) {
+	    		query.add(title);
+	    	}
+	    	if (!authorText.isEmpty()) {
+	    		query.add(author);
+	    	}
+	    	if (!typeText.isEmpty()) {
+	    		query.add(type);
+	    	}
+	    	if (!dateText.isEmpty()) {
+	    		query.add(date);
+	    	}
+	    	if (!languageText.isEmpty()) {
+	    		query.add(language);
+	    	}
+	    	if (!identifierText.isEmpty()) {
+	    		query.add(identifier);
+	    	}
+	    	
+	    	// We reset the TextFields value after the query
+	    	getTitleTextField().setText("");
+	    	getAuthorTextField().setText("");
+	    	getTypeTextField().setText("");
+	    	getDateTextField().setText("");
+	    	getLanguageTextField().setText("");
+	    	getIdentifierTextField().setText("");
+	    	
+	    	System.out.println(query);
+		}
 	}
 }
