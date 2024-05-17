@@ -99,10 +99,14 @@ public class DBConnect {
 	public static void readUsersTable() throws SQLException {
 		try {
 			Connection co = quickconnect();
+
+			// Allow us to call the query
 			Statement smt = co.createStatement();
 			
+			// Allow us to store the result of the query 
 			ResultSet res = smt.executeQuery("SELECT * FROM users");
 			
+			// While we have a row
 			while(res.next()) {
 				
 				int usersID = res.getInt(ID);
@@ -128,10 +132,13 @@ public class DBConnect {
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void addUserInTable(User userToAdd) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
 		final String query = "INSERT INTO users VALUES(?,?,?,?)";
 		
 		try {
-			Connection co = quickconnect();			
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
 			PreparedStatement ps = co.prepareStatement(query);
 
 			int usersID = userToAdd.getId();
@@ -139,6 +146,7 @@ public class DBConnect {
 			String lastname = userToAdd.getLastname();
 			String email = userToAdd.getEmail();
 
+			// We set the values of the query
 			ps.setInt(1, usersID);
 			ps.setString(2, firstname);
 			ps.setString(3, lastname);
@@ -159,10 +167,13 @@ public class DBConnect {
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void deleteUserInTable(User userToAdd) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
 		final String query = "DELETE FROM users WHERE " + ID + " = ? and " + NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
 		
 		try {
-			Connection co = quickconnect();			
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
 			PreparedStatement ps = co.prepareStatement(query);
 
 			int usersID = userToAdd.getId();
@@ -170,6 +181,7 @@ public class DBConnect {
 			String lastname = userToAdd.getLastname();
 			String email = userToAdd.getEmail();
 
+			// We set the values of the query
 			ps.setInt(1, usersID);
 			ps.setString(2, firstname);
 			ps.setString(3, lastname);
@@ -191,13 +203,17 @@ public class DBConnect {
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void modifyUserInTable(int userToModifysID, String oldLastname, String oldFirstname, String oldEmail, String newLastname, String newFirstname, String newEmail) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
 		final String query = "UPDATE " + USER_TABLE + " SET " + LAST_NAME + " = ?, " + NAME + " = ?, " + EMAIL + " = ?  "
 				+ "WHERE " + ID + " = ? and " + LAST_NAME + " = ? and " + NAME + " = ? and " + EMAIL + " = ?";
 		
 		try {
-			Connection co = quickconnect();			
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
 			PreparedStatement ps = co.prepareStatement(query);
 
+			// We set the values of the query
 			ps.setString(1, newLastname);
 			ps.setString(2, newFirstname);
 			ps.setString(3, newEmail);
