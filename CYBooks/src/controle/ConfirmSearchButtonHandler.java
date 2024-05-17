@@ -102,6 +102,9 @@ public class ConfirmSearchButtonHandler implements EventHandler<ActionEvent> {
 		return anyOrAllIdentifier;
 	}
 
+	/**
+     * Method to handle the reception of the informations
+     */
 	@Override
     public void handle(ActionEvent event) {
 		// We get the value for each TextField

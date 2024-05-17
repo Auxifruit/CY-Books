@@ -1,5 +1,9 @@
 package controle;
 
+
+import abstraction.User;
+import abstraction.db.DBConnect;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -9,10 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import abstraction.User;
-import abstraction.UserFile;
-
-import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 /**
@@ -49,16 +50,19 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
         this.usersTable = usersTable;
     }
 
+    /**
+     * Method to handle the modification of an user
+     */
     @Override
     public void handle(ActionEvent event) {
     	// We get the new user's informations
     	String newFirstname = newFirstnameText.getText();
-		String newlastname = newLastnameText.getText();
+		String newLastname = newLastnameText.getText();
 		String newEmail = newEmailText.getText();
 		
 		// We check if at least one field is filled
-		if((newFirstname.equals(null) || newFirstname.isEmpty()) && (newlastname.equals(null) || newlastname.isEmpty()) && (newEmail.equals(null) || newEmail.isEmpty())) {
-			Alert errormodificationUserAlert = new Alert(AlertType.WARNING, "You need to fill at least one field", ButtonType.OK);
+		if((newFirstname.equals(null) || newFirstname.isEmpty()) && (newLastname.equals(null) || newLastname.isEmpty()) && (newEmail.equals(null) || newEmail.isEmpty())) {
+			Alert errormodificationUserAlert = new Alert(AlertType.WARNING, "You need to fill at least one field if you want to modify an user", ButtonType.OK);
     		errormodificationUserAlert.setTitle("Empty fields");
     		errormodificationUserAlert.showAndWait();
 		}
@@ -78,32 +82,44 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
 	    		// We get the selected user to modify
 	    		User userToModify = usersTable.getSelectionModel().getSelectedItem();
 	    		
-	    		// For each information we check if we have a new value or not
-	    		// If we have a new value we update the information
-	    		if(!(newlastname.equals(null) || newlastname.isEmpty())) {
-	    			userToModify.setLastname(newlastname);
-	    			oldUsersLastname.setText(newlastname);
-	    		}
-	    		if(!(newFirstname.equals(null) || newFirstname.isEmpty())) {
-	    			userToModify.setFirstname(newFirstname);
-	    			oldUsersFirstname.setText(newFirstname);
-	    		}
-	    		if(!(newEmail.equals(null) || newEmail.isEmpty())) {
-	    			userToModify.setEmail(newEmail);
-	    			oldUsersEmail.setText(newEmail);
-	    		}
+	    		String oldLastname = userToModify.getLastname();
+	    		String oldFirstname = userToModify.getFirstname();
+	    		String oldEmail = userToModify.getEmail();
 	    		
 	    		try {
 	    			// We modify the user's informations in the text file
-					UserFile.modifyUserInAFileTXT(userToModify, newlastname, newFirstname, newEmail);
-				} catch (IOException e) {
-					System.err.println("File not found.");
+	    			DBConnect.modifyUserInTable(userToModify.getId(), oldLastname, oldFirstname, oldEmail, newLastname, newFirstname, newEmail);
+	    			
+	    			// For each information we check if we have a new value or not
+		    		// If we have a new value we update the information
+		    		if(!(newLastname.equals(null) || newLastname.isEmpty())) {
+		    			userToModify.setLastname(newLastname);
+		    			oldUsersLastname.setText(newLastname);
+		    		}
+		    		if(!(newFirstname.equals(null) || newFirstname.isEmpty())) {
+		    			userToModify.setFirstname(newFirstname);
+		    			oldUsersFirstname.setText(newFirstname);
+		    		}
+		    		if(!(newEmail.equals(null) || newEmail.isEmpty())) {
+		    			userToModify.setEmail(newEmail);
+		    			oldUsersEmail.setText(newEmail);
+		    		}
+		    		
+		    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been modified", ButtonType.OK);
+			    	modificationUserAlert.setTitle("User modified");
+		    		modificationUserAlert.showAndWait();
+		    		
+				} catch (SQLException e) {
+					System.err.println("Fail to modify an user in the database");
+					Alert errorAlert = new Alert(Alert.AlertType.ERROR, "An error occurred while modifying the user.", ButtonType.OK);
+			        errorAlert.showAndWait();
 				}
+	    		
+	    		// We reset the text in our text fields
+	    		newFirstnameText.clear();
+	    		newLastnameText.clear();
+	    		newEmailText.clear();
 	    	}
-	    	
-	    	modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been modified", ButtonType.OK);
-	    	modificationUserAlert.setTitle("User modified");
-    		modificationUserAlert.showAndWait();
 		}
     }
 }

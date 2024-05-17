@@ -1,5 +1,8 @@
 package controle;
 
+import abstraction.User;
+import abstraction.db.DBConnect;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,19 +13,16 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
 import presentation.UsersManagement;
-
-import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
-import abstraction.User;
-import abstraction.UserFile;
 
 /**
  * The class to handle the event of the button deleting an user
  */
 public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     private ObservableList<User> data;
-    private TableView<User> usersTable = new TableView<User>();
+    private TableView<User> usersTable;
     private Pagination pagination;
 
     /**
@@ -36,6 +36,9 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
         this.pagination = pagination;
     }
 
+    /**
+     * Method to handle the deletion of an user
+     */
     @Override
     public void handle(ActionEvent event) {
     	// Set the "yes" / "cancel" button for the alert
@@ -50,26 +53,30 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     	Optional<ButtonType> result = deleteUserAlert.showAndWait();
     	
     	if(result.get().equals(yesButton)) {
-    		// We get the selected user to delete
+    		// We get the selected user we want to delete
     		User userToDelete = usersTable.getSelectionModel().getSelectedItem();		
     		
-    		// We remove it from the list of all the users, the data and the text file
-    		User.getAllUser().remove(userToDelete);
-	    	data.remove(userToDelete);
-	    	usersTable.setItems(data);
-	    	
-	    	pagination.setPageCount((int) Math.ceil((double) data.size() / UsersManagement.ROWS_PER_PAGE));
-            pagination.setCurrentPageIndex(0);
-            
 	    	try {
-				UserFile.deleteUserInAFileTXT(userToDelete);
-			} catch (IOException e1) {
-				System.out.println("File not found");
-			}
-
-	    	Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted", ButtonType.OK);
-    		deletedUserAlert.setTitle("User deleted");
-    		deletedUserAlert.showAndWait();
+	    		DBConnect.deleteUserInTable(userToDelete);
+	    		
+	    		// We remove it from the list of all the users, the data and the text file
+	    		User.getAllUser().remove(userToDelete);
+		    	data.remove(userToDelete);
+		    	usersTable.setItems(data);
+		    	
+		    	// We update the pagination to see if we need to remove a new page or not
+		    	pagination.setPageCount((int) Math.ceil((double) data.size() / UsersManagement.ROWS_PER_PAGE));
+	            pagination.setCurrentPageIndex(0);
+	            
+	            Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted", ButtonType.OK);
+	    		deletedUserAlert.setTitle("User deleted");
+	    		deletedUserAlert.showAndWait();
+	    		
+			} catch (SQLException e) {
+				System.err.println("Fail to delete an user from the database");
+				Alert errorAlert = new Alert(Alert.AlertType.ERROR, "An error occurred while deleting the user.", ButtonType.OK);
+				errorAlert.showAndWait();
+			}	
     	}
     }
 }
