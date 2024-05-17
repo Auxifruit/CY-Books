@@ -3,9 +3,12 @@ package abstraction.db;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import abstraction.User;
 
 public class DBConnect {
 	// Constants declared to save the tables names
@@ -88,7 +91,132 @@ public class DBConnect {
 			throw new SQLException("Problem while creating the tables");
 		}
 	}
+	
+	/**
+	 * Method to read all the values of the table users
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void readUsersTable() throws SQLException {
+		try {
+			Connection co = quickconnect();
+			Statement smt = co.createStatement();
+			
+			ResultSet res = smt.executeQuery("SELECT * FROM users");
+			
+			while(res.next()) {
+				
+				int usersID = res.getInt(ID);
+				String firstname = res.getString(NAME);
+				String lastname = res.getString(LAST_NAME);
+				String email = res.getString(EMAIL);
+				
+				new User(usersID, lastname, firstname, email);
+			}
+			
+			co.close();
+			
+			User.compteurId = User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+	/**
+	 * Method to add an User to the database
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void addUserInTable(User userToAdd) throws SQLException {
+		final String query = "INSERT INTO users VALUES(?,?,?,?)";
+		
+		try {
+			Connection co = quickconnect();			
+			PreparedStatement ps = co.prepareStatement(query);
 
+			int usersID = userToAdd.getId();
+			String firstname = userToAdd.getFirstname();
+			String lastname = userToAdd.getLastname();
+			String email = userToAdd.getEmail();
+
+			ps.setInt(1, usersID);
+			ps.setString(2, firstname);
+			ps.setString(3, lastname);
+			ps.setString(4, email);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+	/**
+	 * Method to delete an User to the database
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void deleteUserInTable(User userToAdd) throws SQLException {
+		final String query = "DELETE FROM users WHERE " + ID + " = ? and " + NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
+		
+		try {
+			Connection co = quickconnect();			
+			PreparedStatement ps = co.prepareStatement(query);
+
+			int usersID = userToAdd.getId();
+			String firstname = userToAdd.getFirstname();
+			String lastname = userToAdd.getLastname();
+			String email = userToAdd.getEmail();
+
+			ps.setInt(1, usersID);
+			ps.setString(2, firstname);
+			ps.setString(3, lastname);
+			ps.setString(4, email);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+
+	/**
+	 * Method to delete an User to the database
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void modifyUserInTable(int userToModifysID, String oldLastname, String oldFirstname, String oldEmail, String newLastname, String newFirstname, String newEmail) throws SQLException {
+		final String query = "UPDATE " + USER_TABLE + " SET " + LAST_NAME + " = ?, " + NAME + " = ?, " + EMAIL + " = ?  "
+				+ "WHERE " + ID + " = ? and " + LAST_NAME + " = ? and " + NAME + " = ? and " + EMAIL + " = ?";
+		
+		try {
+			Connection co = quickconnect();			
+			PreparedStatement ps = co.prepareStatement(query);
+
+			ps.setString(1, newLastname);
+			ps.setString(2, newFirstname);
+			ps.setString(3, newEmail);
+			
+			ps.setInt(4, userToModifysID);
+			ps.setString(5, oldLastname);
+			ps.setString(6, oldFirstname);
+			ps.setString(7, oldEmail);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
 	public static void main(String[] args) throws SQLException {
 		System.out.println(BORROW_TABLE_STRUCTURE);
 		createTables();
