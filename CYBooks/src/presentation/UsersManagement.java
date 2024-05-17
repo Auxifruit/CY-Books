@@ -150,10 +150,17 @@ public class UsersManagement extends Application {
 	    
 	    searchTableVBox.getChildren().addAll(filteredField, usersTablePagination, deleteUserButton);
 	    
+	    // We calculate the numbers of pages needed
 	    int totalPage = (int) (Math.ceil(data.size() * 1.0 / ROWS_PER_PAGE));
+	    
+	    // We set the numbers of page for the pagination and go to the first page
 	    usersTablePagination.setPageCount(totalPage);
 	    usersTablePagination.setCurrentPageIndex(0);
+	    
+	    // We update the tableView to display 15 users starting from index 0
         changeTableView(0, ROWS_PER_PAGE);
+        
+        // If we go to page n, it will display 15 users starting from index n
         usersTablePagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> changeTableView(newValue.intValue(), ROWS_PER_PAGE));
 	    
 	    // VBox containing the nodes for the users table
@@ -165,17 +172,27 @@ public class UsersManagement extends Application {
 		return usersTableVBox;
 	}
 	
+	/**
+	 * Method to change with a certain index and limit in order to display the right element
+	 * @param index represent the index of the current page
+	 * @param limit correspond the limit of element to display
+	 */
 	private void changeTableView(int index, int limit) {
 
+		// We calculate the starting index and check if we don't try to access an element outside the list limits
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, data.size());
 
+        // Ensure that we don't take more elements than are available in filteredData
         int minIndex = Math.min(toIndex, filteredData.size());
+        
+        // We use a SortedList to keep the order of the element of the subList
         SortedList<User> sortedData = new SortedList<>(FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        
+        // We link the element to allow the update of usersTable
         sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
 
         usersTable.setItems(sortedData);
-
     }
 	
 	/**
@@ -236,10 +253,18 @@ public class UsersManagement extends Application {
 		return userCreationVBox;
 	}
 	
+	/**
+	 * Method to create pages
+	 * @param pageIndex the index of the page
+	 * @return the BorderPane containing the usersTable with the correct items 
+	 */
 	private Node createPage(int pageIndex) {
-
+		// We calculate the first index and the last index a the page 
         int fromIndex = pageIndex * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, data.size());
+        
+        // We use a sublist and set it to the table view
+        // It allows us to display only the users between the corresponding index
         usersTable.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
 
         return new BorderPane(usersTable);
@@ -336,6 +361,9 @@ public class UsersManagement extends Application {
 	    return usersModificationVBox;
 	}
 
+	/**
+	 * Method to initialize the ObservableList data
+	 */
 	private void initializeData() {
 		// We load the values of the users from the text file
 	    try {
@@ -353,8 +381,13 @@ public class UsersManagement extends Application {
 		}
 	}
 	
+	/**
+	 * Method to initialize the TableView userTable
+	 */
 	private void initializeTable() {
+		// We initialize the ObservableList data
 		initializeData();
+		
 		usersTable = new TableView<>();
 		
 		 // Column for the user's ID
@@ -387,6 +420,10 @@ public class UsersManagement extends Application {
 	    usersTable.setItems(data);
 	}
 	
+	/**
+	 * Method to create a HBox containing the buttons to change between scenes
+	 * @return the HBox with the buttons to change scenes
+	 */
 	private HBox createButtoChangeSceneUser() {
 	 	HBox hbox= new HBox(50);
 	 	hbox.setAlignment(Pos.CENTER);
@@ -411,7 +448,7 @@ public class UsersManagement extends Application {
  	   hbox.getChildren().addAll(goToUsersTableButton, goToUserCreationButton, goToUserModificationButton);
  	   
  	   return hbox;
-}
+	}
 
 	public static void main(String[] args) {						
 		launch(args);
