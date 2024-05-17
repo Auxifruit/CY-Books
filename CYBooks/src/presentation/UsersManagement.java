@@ -1,11 +1,12 @@
 package presentation;
 
-import java.io.IOException;
+
 import abstraction.User;
-import abstraction.UserFile;
 import controle.CreateUserButtonHandler;
 import controle.ModificationUserButtonHandler;
 import controle.DeleteUserButtonHandler;
+import abstraction.db.DBConnect;
+
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -29,6 +30,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import java.sql.SQLException;
+
 
 /**
  * The class of the users management application
@@ -37,13 +40,13 @@ public class UsersManagement extends Application {
 	private Pane usersTablePane;
 	private Pane usersCreationPane;
 	private Pane usersModificationPane;
-	
+	private HBox hboxButtonChangeSceneUser;
 	private BorderPane usersBorderPane;
 	
 	private Pagination usersTablePagination;
 	public final static int ROWS_PER_PAGE = 15;
 	
-	private TableView<User> usersTable = createTable();
+	private TableView<User> usersTable;
 	private TableColumn<User, Integer> idCol;
 	private TableColumn<User, String> firstNameCol;
 	private TableColumn<User, String> lastNameCol;
@@ -58,9 +61,9 @@ public class UsersManagement extends Application {
 	public void start(Stage stage) throws Exception {
 		usersBorderPane = new BorderPane();
 		
-		// We initialize the values of all the columns
-	    initializeData();
-		
+		// We initialize the table view with all the values
+		initializeTable();
+	    		
 		stage.setTitle("Users table view");
 	    stage.setWidth(800);
 	    
@@ -74,34 +77,14 @@ public class UsersManagement extends Application {
 	    usersModificationPane = createUserModificationPane();
 	    
     	// HBox containing all the button to change scene
- 		HBox hboxButtonChangeScene = new HBox(50);
- 		hboxButtonChangeScene.setAlignment(Pos.CENTER);
- 		hboxButtonChangeScene.setPrefHeight(50);
- 		
- 		// Buttons to change scene
- 		Button goToUsersTableButton = new Button("Users table");
- 		goToUsersTableButton.setOnAction(e -> {
- 			usersBorderPane.setCenter(usersTablePane);
- 	    });
- 		
- 		Button goToUserCreationButton = new Button("Create an user");
- 	    goToUserCreationButton.setOnAction(e -> {
- 	    	usersBorderPane.setCenter(usersCreationPane);
- 	    });
- 	    
- 	    Button goToUserModificationButton = new Button("Modify the user");
- 	    goToUserModificationButton.setOnAction(e -> {
- 	    	usersBorderPane.setCenter(usersModificationPane);
- 	    });
-
- 	    hboxButtonChangeScene.getChildren().addAll(goToUsersTableButton, goToUserCreationButton, goToUserModificationButton);
+ 		hboxButtonChangeSceneUser = createButtoChangeSceneUser();
 	    
 	    // Main scene of the application
 	    usersBorderPane.setCenter(usersTablePane);
-	    usersBorderPane.setBottom(hboxButtonChangeScene);
+	    usersBorderPane.setBottom(hboxButtonChangeSceneUser);
 	    stage.setScene(new Scene(usersBorderPane));
 	    stage.show();
-	}
+	}	
 
 	/**
 	 * Method to create a pane for the users table
@@ -239,7 +222,7 @@ public class UsersManagement extends Application {
 	    
 	    // Button for creating an user
 	    Button createUserButton = new Button("Create new user");
-	    createUserButton.setOnAction(new CreateUserButtonHandler(data, usersTablePagination, firstnameText, lastnameText, emailText));
+	    createUserButton.setOnAction(new CreateUserButtonHandler(data, usersTable, usersTablePagination, firstnameText, lastnameText, emailText));
 	    
 	    // We add all the node necessary to create an user 
 	    userInfoInput.getChildren().addAll(userCreationExplanation, firstnameHBox, lastnameHBox, emailHBox, createUserButton);
@@ -353,10 +336,10 @@ public class UsersManagement extends Application {
 	    return usersModificationVBox;
 	}
 
-	private void initializeData() throws IOException {
+	private void initializeData() {
 		// We load the values of the users from the text file
 	    try {
-	    	UserFile.readUsersFromAFileTXT();
+	    	DBConnect.readUsersTable();
 	    	
 	    	// We add the users to our data
 	    	for(User u : User.getAllUser()) {
@@ -364,15 +347,15 @@ public class UsersManagement extends Application {
 	    			data.add(u);
 	    		}
 			}
-	    } catch (Exception e) {
-			System.err.println("File not found. (initializeCol)");
+	    	
+	    } catch (SQLException e) {
+			System.err.println("Error BDD. (initializeData)");
 		}
-	   
 	}
 	
-	private TableView<User> createTable() {
-		
-        TableView<User> table = new TableView<>();
+	private void initializeTable() {
+		initializeData();
+		usersTable = new TableView<>();
 		
 		 // Column for the user's ID
 		idCol = new TableColumn<>("ID");
@@ -394,15 +377,41 @@ public class UsersManagement extends Application {
 	    emailCol.setMinWidth(200);
 	    emailCol.setCellValueFactory(new PropertyValueFactory<User, String>("email"));
 
-	    // We set the item of our table to our list of user and add the column to our table
-	    //usersTable.setItems(data);
-	    table.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
+	    // We add the column to our table
+	    usersTable.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
 	    
 	    // The columns take up all the table space
-	    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    usersTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 	    
-	    return table;
+	    // We set the item of our table to our list of user and 
+	    usersTable.setItems(data);
 	}
+	
+	private HBox createButtoChangeSceneUser() {
+	 	HBox hbox= new HBox(50);
+	 	hbox.setAlignment(Pos.CENTER);
+	 	hbox.setPrefHeight(50);
+ 		
+ 		// Buttons to change scene
+ 		Button goToUsersTableButton = new Button("Users table");
+ 		goToUsersTableButton.setOnAction(e -> {
+ 			usersBorderPane.setCenter(usersTablePane);
+ 	    });
+ 		
+ 		Button goToUserCreationButton = new Button("Create an user");
+ 	    goToUserCreationButton.setOnAction(e -> {
+ 	    	usersBorderPane.setCenter(usersCreationPane);
+ 	    });
+ 	    
+ 	    Button goToUserModificationButton = new Button("Modify the user");
+ 	    goToUserModificationButton.setOnAction(e -> {
+ 	    	usersBorderPane.setCenter(usersModificationPane);
+ 	    });
+
+ 	   hbox.getChildren().addAll(goToUsersTableButton, goToUserCreationButton, goToUserModificationButton);
+ 	   
+ 	   return hbox;
+}
 
 	public static void main(String[] args) {						
 		launch(args);
