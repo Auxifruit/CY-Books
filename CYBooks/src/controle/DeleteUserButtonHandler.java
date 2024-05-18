@@ -12,7 +12,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
-import presentation.UsersManagement;
+import presentation.UsersTable;
+
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -57,15 +58,20 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     		User userToDelete = usersTable.getSelectionModel().getSelectedItem();		
     		
 	    	try {
+	    		// We remove it from our database, the list of all the users and the data 
 	    		DBConnect.deleteUserInTable(userToDelete);
-	    		
-	    		// We remove it from the list of all the users, the data and the text file
 	    		User.getAllUser().remove(userToDelete);
 		    	data.remove(userToDelete);
+
 		    	usersTable.setItems(data);
 		    	
 		    	// We update the pagination to see if we need to remove a new page or not
-		    	pagination.setPageCount((int) Math.ceil((double) data.size() / UsersManagement.ROWS_PER_PAGE));
+	            int numberOfPages = (int) Math.ceil((double) data.size() / UsersTable.ROWS_PER_PAGE);
+	            pagination.setPageCount(numberOfPages);
+	            
+	            if(numberOfPages > 1) {
+	            	pagination.setCurrentPageIndex(1);
+	            }
 	            pagination.setCurrentPageIndex(0);
 	            
 	            Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted", ButtonType.OK);

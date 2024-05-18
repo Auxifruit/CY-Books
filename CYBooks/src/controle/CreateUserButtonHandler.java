@@ -1,6 +1,6 @@
 package controle;
 
-import presentation.UsersManagement;
+import presentation.UsersTable;
 import abstraction.User;
 import abstraction.db.DBConnect;
 
@@ -65,9 +65,15 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
 	            usersTable.setItems(data);
 	            
 	            // We update the pagination to see if we need to add a new page or not
-	            pagination.setPageCount((int) Math.ceil((double) data.size() / UsersManagement.ROWS_PER_PAGE));
+	            int numberOfPages = (int) Math.ceil((double) data.size() / UsersTable.ROWS_PER_PAGE);
+	            pagination.setPageCount(numberOfPages);
+	            
+	            if(numberOfPages > 1) {
+	            	pagination.setCurrentPageIndex(1);
+	            }
 	            pagination.setCurrentPageIndex(0);
 	            
+	            	            
 	            Alert createUserAlert = new Alert(Alert.AlertType.CONFIRMATION, "The user has been created", ButtonType.OK);
 	            createUserAlert.setTitle("User created");
 	            createUserAlert.showAndWait();
