@@ -5,18 +5,24 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * The class Borrow represents a borrow made by the user
  * @author CYTech Student
  */
 public class Borrow {
 	protected static List<Borrow> allBorrows = new ArrayList<>();
-	protected String usersID;
-	protected String booksISBN;
-	protected String borrowDate;
-	protected String returnDate;
-	protected String effectiveReturnDate;
-	protected boolean late;
+	protected IntegerProperty usersID;
+	protected StringProperty booksISBN;
+	protected StringProperty borrowDate;
+	protected StringProperty returnDate;
+	protected StringProperty effectiveReturnDate;
+	protected SimpleBooleanProperty late;
 	protected List<String> problems;
     
     /**
@@ -26,12 +32,12 @@ public class Borrow {
      * @param dateBorrow the borrow's date
      */
     public Borrow(User user, Book book, LocalDate dateBorrow) {
-        this.usersID = String.valueOf(user.getId());
-        this.booksISBN = String.valueOf(book.getIsbn());
-        this.borrowDate = dateBorrow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        this.returnDate = dateBorrow.plusDays(Book.MAX_BORROW_TIME).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));;
-        this.effectiveReturnDate = "";
-        this.late = false;
+        this.usersID = new SimpleIntegerProperty(user.getId());
+        this.booksISBN =new SimpleStringProperty(String.valueOf(book.getIsbn()));
+        this.borrowDate = new SimpleStringProperty(dateBorrow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.MAX_BORROW_TIME).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.effectiveReturnDate = new SimpleStringProperty("");
+        this.late = new SimpleBooleanProperty(false);
         this.problems = new ArrayList<String>();
         allBorrows.add(this);
     }
@@ -40,8 +46,8 @@ public class Borrow {
      * Get the id of the user who borrowed the book
      * @return the id of the user who borrowed the book
      */
-    public String getUsersID() {
-        return usersID;
+    public int getUsersID() {
+        return usersID.get();
     }
 
     /**
@@ -49,7 +55,15 @@ public class Borrow {
      * @param user the user who borrowed the book
      */
     public void setUsersID(User user) {
-        this.usersID = String.valueOf(user.getId());
+        this.usersID.set(user.getId());
+    }
+    
+    /**
+     * Method to return the IntegerProperty of the user's id for the TableView
+     * @return the IntegerProperty of the user's id that borrowed a book
+     */
+    public IntegerProperty idProperty() {
+        return usersID;
     }
 
     /**
@@ -57,7 +71,7 @@ public class Borrow {
      * @return the ISBN of the borrowed book
      */
     public String getBooksISBN() {
-        return booksISBN;
+        return booksISBN.get();
     }
 
     /**
@@ -65,7 +79,15 @@ public class Borrow {
      * @param book new the borrowed book
      */
     public void setBook(Book book) {
-        this.booksISBN = String.valueOf(book.getIsbn());
+        this.booksISBN.set(String.valueOf(book.getIsbn()));
+    }
+    
+    /**
+     * Method to return the StringProperty of the book's ISBN for the TableView
+     * @return the IntegerProperty of the book's ISBN that been borrowed
+     */
+    public StringProperty isbnProperty() {
+        return booksISBN;
     }
 
     /**
@@ -73,7 +95,7 @@ public class Borrow {
      * @return the borrow's date
      */
     public String getDateBorrow() {
-        return borrowDate;
+        return borrowDate.get();
     }
 
     /**
@@ -81,7 +103,15 @@ public class Borrow {
      * @param borrowDate the date of the creation of the borrow
      */
     public void setDateBorrow(LocalDate borrowDate) {
-        this.borrowDate = borrowDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        this.borrowDate.set(borrowDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+    }
+    
+    /**
+     * Method to return the StringProperty of the borrow's date for the TableView
+     * @return the StringProperty of the borrow's date
+     */
+    public StringProperty borrowDateProperty() {
+        return borrowDate;
     }
 
     /**
@@ -89,7 +119,7 @@ public class Borrow {
      * @return returnDate the date of which the book need to be return
      */
     public String getReturnDate() {
-        return returnDate;
+        return returnDate.get();
     }
 
     /**
@@ -97,31 +127,46 @@ public class Borrow {
      * @param return the borrow's return date
      */
     public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        this.returnDate.set(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
     
+    /**
+     * Method to return the StringProperty of the borrow's return date for the TableView
+     * @return the StringProperty of the borrow's return date
+     */
+    public StringProperty returnDateProperty() {
+        return returnDate;
+    }
     
     /**
      * Get the borrow's effective return date
      * @return effectiveReturnDate
      */
     public String getEffectiveReturnDate() {
-		return effectiveReturnDate;
+		return effectiveReturnDate.get();
 	}
 
     /**
      * effectiveReturnDate setter method
      */
 	public void setEffectiveReturnDate(LocalDate effectiveReturnDate) {
-		this.effectiveReturnDate = effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		this.effectiveReturnDate.set(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 	}
+
+	/**
+     * Method to return the StringProperty of the borrow's effective return date for the TableView
+     * @return the StringProperty of the borrow's effective return date
+     */
+    public StringProperty effectiveReturnDateProperty() {
+        return effectiveReturnDate;
+    }
 
 	/**
 	 * Get the borrow's state : late or not
 	 * @return true if the borrow is late and false if not
 	 */
 	public boolean isLate() {
-		return late;
+		return late.get();
 	}
     
     /**
@@ -129,8 +174,16 @@ public class Borrow {
      * @param late true or false if the borrow is late or not
      */
     public void setLate(boolean late) {
-		this.late = late;
+		this.late.set(late);
 	}
+    
+    /**
+     * Method to return the StringProperty of the borrow's effective return date for the TableView
+     * @return the StringProperty of the borrow's effective return date
+     */
+    public SimpleBooleanProperty lateProperty() {
+        return late;
+    }
 
 	/**
      * Get the borrow's problems
@@ -198,7 +251,7 @@ public class Borrow {
     		return false;
     	}
     	Borrow b = (Borrow) obj;
-    	return this.getUsersID().equals(b.getUsersID()) && this.getBooksISBN().equals(b.getBooksISBN()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
+    	return this.getUsersID() == b.getUsersID() && this.getBooksISBN().equals(b.getBooksISBN()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
     			this.getReturnDate().equals(b.getReturnDate()) && this.getProblems().equals(b.getProblems());
     }
   
