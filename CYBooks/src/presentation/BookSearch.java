@@ -1,8 +1,7 @@
 package presentation;
 
 import controle.ConfirmSearchButtonHandler;
-import javafx.application.Application;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -10,13 +9,23 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.text.Font;
 
-public class BookSearch extends Application {
+public class BookSearch {
+	private VBox commandContainer;
 
-	@Override
-	public void start(Stage stage) throws Exception {
-		VBox commandContainer = new VBox(10);
+	public BookSearch() {
+		createBookSearch();
+	}
+	
+	public void createBookSearch() {
+		commandContainer = new VBox(10);
+		commandContainer.setAlignment(Pos.TOP_CENTER);
+		
+		Label bookSearchLabel = new Label("SEARCH BOOK :");
+		bookSearchLabel.setFont(new Font("Arial", 24));
+		bookSearchLabel.setUnderline(true);
+		bookSearchLabel.setStyle("-fx-font-weight: bold;");
 		
 		// Title 
 		HBox titleCommand = new HBox(10);
@@ -118,14 +127,20 @@ public class BookSearch extends Application {
 		
 		Button confirmButton = new Button("Confirm");
 		confirmButton.setOnAction(new ConfirmSearchButtonHandler(titleTextField, authorTextField, typeTextField, dateTextField, languageTextField, identifierTextField, anyOrAllTitle, anyOrAllAuthor, anyOrAllType, anyOrAllDate, anyOrAllLanguage, anyOrAllIdentifier));
-				
-		commandContainer.getChildren().addAll(titleCommand, authorCommand, typeCommand, dateCommand, languageCommand, identifierCommand, confirmButton);
 		
-		stage.setScene(new Scene(commandContainer));
-		stage.show();
+		VBox vbox = new VBox(10);
+		vbox.getChildren().addAll(bookSearchLabel, titleCommand, authorCommand, typeCommand, dateCommand, languageCommand, identifierCommand, confirmButton);
+		
+		commandContainer.getChildren().addAll(bookSearchLabel, vbox, confirmButton);
+		
+	}
+	
+	/**
+	 * Getter to get the VBox containing all the element for searching a book
+	 * @return the the VBox containing all the element for searching a book
+	 */
+	public VBox getCommandContainer() {
+		return commandContainer;
 	}
 
-	public static void main(String[] args) {
-		launch(args);
-	}
 }
