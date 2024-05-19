@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
+import abstraction.Borrow;
 import abstraction.User;
 
 public class DBConnect {
@@ -29,6 +31,8 @@ public class DBConnect {
 	public final static String BOOK_ID = "book_id";
 	public final static String BORROW_START = "borrow_start";
 	public final static String BORROW_END = "borrow_end";
+	public final static String BORROW_REAL_END = "borrow_real_end";
+	public final static String BORROW_LATE = "late";
 
 	// Constants declared to form the tables structure
 	public final static String USER_TABLE_STRUCTURE = "CREATE TABLE " + USER_TABLE + " (\r\n" + ID
@@ -37,7 +41,8 @@ public class DBConnect {
 
 	public final static String BORROW_TABLE_STRUCTURE = "CREATE TABLE " + BORROW_TABLE + " (\r\n" + ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" + USER_ID + " INTEGER NOT NULL,\r\n" + BOOK_ID
-			+ " INTEGER NOT NULL,\r\n" + BORROW_START + " DATE NOT NULL,\r\n" + BORROW_END + " DATE,\r\n"
+			+ " INTEGER NOT NULL,\r\n" + BORROW_START + " TEXT NOT NULL,\r\n" + BORROW_END + " TEXT,\r\n"
+			+ BORROW_REAL_END + " TEXT,\r\n" + BORROW_LATE + " TEXT, \r\n"
 			+ "FOREIGN KEY (" + USER_ID + ") REFERENCES " + USER_TABLE + "(" + ID + "));";
 
 	// Regroup all of these constants into variables
@@ -104,11 +109,11 @@ public class DBConnect {
 			Statement smt = co.createStatement();
 			
 			// Allow us to store the result of the query 
-			ResultSet res = smt.executeQuery("SELECT * FROM users");
+			ResultSet res = smt.executeQuery("SELECT * FROM " + USER_TABLE);
 			
 			// While we have a row
 			while(res.next()) {
-				
+				// We get the users's informations
 				int usersID = res.getInt(ID);
 				String firstname = res.getString(NAME);
 				String lastname = res.getString(LAST_NAME);
@@ -119,7 +124,8 @@ public class DBConnect {
 			
 			co.close();
 			
-			User.compteurId = User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1;
+			// We update the User's class counterId to note have duplicate id
+			User.counterId = User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1;
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -128,12 +134,13 @@ public class DBConnect {
 	}
 	
 	/**
-	 * Method to add an User to the database
+	 * Method to add an User in the database
+	 * @param userToAdd the user we want to add
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void addUserInTable(User userToAdd) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "INSERT INTO users VALUES(?,?,?,?)";
+		final String query = "INSERT INTO " + USER_TABLE + " VALUES(?,?,?,?)";
 		
 		try {
 			Connection co = quickconnect();
@@ -163,12 +170,13 @@ public class DBConnect {
 	}
 	
 	/**
-	 * Method to delete an User to the database
+	 * Method to delete an User from the database
+	 * @param userToDelete the user we want to delete
 	 * @throws SQLException if we have an exception about SQL
 	 */
-	public static void deleteUserInTable(User userToAdd) throws SQLException {
+	public static void deleteUserInTable(User userToDelete) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "DELETE FROM users WHERE " + ID + " = ? and " + NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
+		final String query = "DELETE FROM " + USER_TABLE + " WHERE " + ID + " = ? and " + NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
 		
 		try {
 			Connection co = quickconnect();
@@ -176,10 +184,10 @@ public class DBConnect {
 			// Allow us to prepare the query to execute it later
 			PreparedStatement ps = co.prepareStatement(query);
 
-			int usersID = userToAdd.getId();
-			String firstname = userToAdd.getFirstname();
-			String lastname = userToAdd.getLastname();
-			String email = userToAdd.getEmail();
+			int usersID = userToDelete.getId();
+			String firstname = userToDelete.getFirstname();
+			String lastname = userToDelete.getLastname();
+			String email = userToDelete.getEmail();
 
 			// We set the values of the query
 			ps.setInt(1, usersID);
@@ -199,7 +207,14 @@ public class DBConnect {
 	
 
 	/**
-	 * Method to delete an User to the database
+	 * Method to modify an User in the database
+	 * @param userToModifysID the id of the user we want to modify
+	 * @param oldLastname the user's old last name
+	 * @param oldFirstname the user's old first name
+	 * @param oldEmail the user's old e-mail
+	 * @param newLastname the user's new last name
+	 * @param newFirstname the user's new first name
+	 * @param newEmail the user's new email
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void modifyUserInTable(int userToModifysID, String oldLastname, String oldFirstname, String oldEmail, String newLastname, String newFirstname, String newEmail) throws SQLException {
@@ -233,9 +248,200 @@ public class DBConnect {
 		}
 	}
 	
+	/**
+	 * Method to read all the values of the table borrows
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void readBorrowsTable() throws SQLException {
+		try {
+			Connection co = quickconnect();
+
+			// Allow us to call the query
+			Statement smt = co.createStatement();
+			
+			// Allow us to store the result of the query 
+			ResultSet res = smt.executeQuery("SELECT * FROM " + BORROW_TABLE);
+			
+			// While we have a row
+			while(res.next()) {
+				// We get the borrow's informations
+				int borrowsID = res.getInt(ID);
+				int usersID = res.getInt(USER_ID);
+				String booksID = res.getString(BOOK_ID);
+				boolean borrowsStatue = Boolean.parseBoolean(res.getString(BORROW_LATE));
+				
+				String borrowDateString = res.getString(BORROW_START);
+				// We split the date's String to get the day, month and year
+				String[] date1 = borrowDateString.split("-");
+				// We use these element for our LocalDate
+				LocalDate borrowDate = LocalDate.of(Integer.valueOf(date1[2]), Integer.valueOf(date1[1]), Integer.valueOf(date1[0]));
+				
+				String returnDateString = res.getString(BORROW_END);
+				// We split the date's String to get the day, month and year
+				String[] date2 = returnDateString.split("-");
+				// We use these element for our LocalDate
+				LocalDate returnDate = LocalDate.of(Integer.valueOf(date2[2]), Integer.valueOf(date2[1]), Integer.valueOf(date2[0]));
+				
+				String effectiveReturnDateString = res.getString(BORROW_REAL_END);
+				// We split the date's String to get the day, month and year
+				String[] date3 = effectiveReturnDateString.split("-");
+
+				if(date3.length > 1) {
+					// We use these element for our LocalDate
+					LocalDate effectiveReturnDate = LocalDate.of(Integer.valueOf(date3[2]), Integer.valueOf(date3[1]), Integer.valueOf(date3[0]));
+					
+					new Borrow(borrowsID, usersID, booksID, borrowDate, returnDate, effectiveReturnDate, borrowsStatue);
+				}
+				else {
+					new Borrow(borrowsID, usersID, booksID, borrowDate, returnDate, borrowsStatue);
+				}
+				
+			}
+			
+			co.close();
+			
+			// We update the Borrow's class counterId to note have duplicate id
+			Borrow.counterId = Borrow.getAllBorrow().get(Borrow.getAllBorrow().size() - 1).getId() + 1;
+
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+	/**
+	 * Method to add a Borrow to the database
+	 * @param borrowToAdd the Borrow we want to add
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void addBorrowInTable(Borrow borrowToAdd) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
+		final String query = "INSERT INTO " + BORROW_TABLE + " VALUES(?,?,?,?,?,?,?)";
+		
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
+			PreparedStatement ps = co.prepareStatement(query);
+
+			int id = borrowToAdd.getId();
+			int usersID = borrowToAdd.getUsersID();
+			String booksID = borrowToAdd.getBooksISBN();
+			String borrowDate = borrowToAdd.getDateBorrow();
+			String returnDate = borrowToAdd.getReturnDate();
+			String effectiveReturnDate = borrowToAdd.getEffectiveReturnDate();
+			String late = String.valueOf(borrowToAdd.isLate());
+
+			// We set the values of the query
+			ps.setInt(1, id);
+			ps.setInt(2, usersID);
+			ps.setString(3, booksID);
+			ps.setString(4, borrowDate);
+			ps.setString(5, returnDate);
+			ps.setString(6, effectiveReturnDate);
+			ps.setString(7, late);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+	/**
+	 * Method to delete a Borrow from the database
+	 * @param borrowToDelete the Borrow we want to delete
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void deleteBorrowInTable(Borrow borrowToDelete) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
+		final String query = "DELETE FROM " + BORROW_TABLE + " WHERE " + ID + " = ? and " + USER_ID + " = ? and " + BOOK_ID + " = ? and " + BORROW_START + " = ?"
+				+ "and " + BORROW_END + " = ? and " + BORROW_REAL_END + " = ? and " + BORROW_LATE + " = ?";
+
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
+			PreparedStatement ps = co.prepareStatement(query);
+
+			int id = borrowToDelete.getId();
+			int usersID = borrowToDelete.getUsersID();
+			String booksID = borrowToDelete.getBooksISBN();
+			String borrowDate = borrowToDelete.getDateBorrow();
+			String returnDate = borrowToDelete.getReturnDate();
+			String effectiveReturnDate = borrowToDelete.getEffectiveReturnDate();
+			String late = String.valueOf(borrowToDelete.isLate());
+
+			// We set the values of the query
+			ps.setInt(1, id);
+			ps.setInt(2, usersID);
+			ps.setString(3, booksID);
+			ps.setString(4, borrowDate);
+			ps.setString(5, returnDate);
+			ps.setString(6, effectiveReturnDate);
+			ps.setString(7, late);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+
+	/**
+	 * Method to modify a Borrow in the database
+	 * @param borrowToModifysID the id of the borrow we want to modify
+	 * @param oldBorrowDate the borrow's old date
+	 * @param oldReturnDate the borrow's old return date
+	 * @param oldEffectiveReturnDate the borrow's old effective return date
+	 * @param newBorrowDate the borrow's new date
+	 * @param newReturnDate the borrow's new return date
+	 * @param newEffectiveReturnDate the borrow's new effective return date
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void modifyBorrowInTable(int borrowToModifysID, String oldBorrowDate, String oldReturnDate, String oldEffectiveReturnDate, String newBorrowDate, String newReturnDate, String newEffectiveReturnDate) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
+		final String query = "UPDATE " + BORROW_TABLE + " SET " + BORROW_START + " = ?, " + BORROW_END + " = ?, " + BORROW_REAL_END + " = ?  "
+				+ "WHERE " + ID + " = ? and " + BORROW_START + " = ? and " + BORROW_END + " = ? and " + BORROW_REAL_END + " = ?";
+		
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
+			PreparedStatement ps = co.prepareStatement(query);
+
+			// We set the values of the query
+			ps.setString(1, newBorrowDate);
+			ps.setString(2, newReturnDate);
+			ps.setString(3, newEffectiveReturnDate);
+			
+			ps.setInt(4, borrowToModifysID);
+			ps.setString(5, oldBorrowDate);
+			ps.setString(6, oldReturnDate);
+			ps.setString(7, oldEffectiveReturnDate);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
 	public static void main(String[] args) throws SQLException {
-		System.out.println(BORROW_TABLE_STRUCTURE);
-		createTables();
+		//System.out.println(BORROW_TABLE_STRUCTURE);
+		//createTables();
+
 		/*
 		 * try { Connection co = DriverManager.getConnection("jdbc:sqlite:cybase.db");
 		 * Statement smt = co.createStatement(); System.out.println(co);
