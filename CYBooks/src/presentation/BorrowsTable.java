@@ -1,11 +1,7 @@
 package presentation;
 
 
-import java.time.LocalDate;
-
-import abstraction.Book;
 import abstraction.Borrow;
-import abstraction.User;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,6 +19,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -36,8 +33,11 @@ public class BorrowsTable {
 	public final static int ROWS_PER_PAGE = 15;
 	
 	private CheckBox lateBorrowCheckBox;
+	private CheckBox onGoingBorrowCheckBox;
+	private CheckBox finishedBorrowCheckBox;
 	
 	private TableView<Borrow> borrowsTable;
+	private TableColumn<Borrow, Integer> idCol;
 	private TableColumn<Borrow, Integer> usersIdCol;
 	private TableColumn<Borrow, String> booksISBNCol;
 	private TableColumn<Borrow, String> borrowsDateCol;
@@ -46,7 +46,14 @@ public class BorrowsTable {
 	private TableColumn<Borrow, Boolean> borrowsLate;
 	private final ObservableList<Borrow> data = FXCollections.observableArrayList();
 	
+	/**
+	 * Constructor of the BorrowsTable class
+	 */
 	public BorrowsTable() {
+		lateBorrowCheckBox = new CheckBox("Late borrows");
+        onGoingBorrowCheckBox = new CheckBox("On going borrows");
+        finishedBorrowCheckBox = new CheckBox("Finished borrows");
+        
         initializeTable();
         createBorrowsTablePane();
     }
@@ -66,48 +73,36 @@ public class BorrowsTable {
 		labelUserTable.setFont(new Font("Arial", 24));
 		labelUserTable.setUnderline(true);
 		labelUserTable.setStyle("-fx-font-weight: bold;");
-		
-		// CheckBox to display only the late borrows
-	    lateBorrowCheckBox = new CheckBox("Only late borrow");
-	    
-	    // If we check it we display the late borrows and if not we display all the borrows
-	    ChangeListener<Boolean> lateBorrowCheckChange = new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-				if(newValue) {
-					// We update the data
-					dataWithLateBorrows();
-					
-					// We update the number of pages necessary to display all the late borrows
-					changingNumberOfPages();
-					
-					changeTableView(borrowsTablePagination.getCurrentPageIndex(), ROWS_PER_PAGE);
-				}
-				else {
-					// We update the data
-					dataWithAllValues();
-					
-					// We update the number of pages necessary to display all the borrows
-					changingNumberOfPages();
-					
-					changeTableView(borrowsTablePagination.getCurrentPageIndex(), ROWS_PER_PAGE);
-				}
-			}
-	    };
-	    
-	    // We link the ChangeListener with our CheckBox
-	    lateBorrowCheckBox.selectedProperty().addListener(lateBorrowCheckChange);
 	    
 	    // We change the number of pages
 	    changingNumberOfPages();
 	    
 	    // We update the tableView to display 15 users starting from index 0
         changeTableView(0, ROWS_PER_PAGE);
+        
+        // If we check it we display the late borrows and if not we display all the borrows
+	    ChangeListener<Boolean> borrowCheckChange = new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+				filterData();
+		        changingNumberOfPages();
+		        changeTableView(borrowsTablePagination.getCurrentPageIndex(), ROWS_PER_PAGE);
+			}
+	    };
+	    
+	    // We link the ChangeListener with all of our CheckBoxes
+	    lateBorrowCheckBox.selectedProperty().addListener(borrowCheckChange);
+	    onGoingBorrowCheckBox.selectedProperty().addListener(borrowCheckChange);
+	    finishedBorrowCheckBox.selectedProperty().addListener(borrowCheckChange);
+	    
+	    // The HBox containing all of our CheckBoxes
+	    HBox checkBoxContainer = new HBox(10);
+	    checkBoxContainer.getChildren().addAll(lateBorrowCheckBox, onGoingBorrowCheckBox, finishedBorrowCheckBox);
 	    
 	    // VBox containing the nodes for the users table
         borrowsTableVBox = new VBox(20);
         borrowsTableVBox.setPadding(new Insets(10, 10, 10, 10));
-        borrowsTableVBox.getChildren().addAll(labelUserTable, lateBorrowCheckBox, borrowsTablePagination, searchTableVBox);
+        borrowsTableVBox.getChildren().addAll(labelUserTable, checkBoxContainer, borrowsTablePagination, searchTableVBox);
         borrowsTableVBox.setAlignment(Pos.TOP_CENTER);
     }
 	
@@ -162,42 +157,20 @@ public class BorrowsTable {
 	    borrowsTablePagination.setPageCount(totalPage);
 	    borrowsTablePagination.setCurrentPageIndex(0);
 	}
-
-	/**
-	 * Method to initialize the ObservableList data
-	 */
-	private void dataWithAllValues() {
-		// We reset the data
-		data.clear();
-		
-    	// We add all the borrows to our data
-    	for(Borrow b : Borrow.getAllBorrow()) {
-    		if(!(b.equals(null))) {
-    			data.add(b);
-    		}
-		}
-	}
-	
-	private void dataWithLateBorrows() {
-		// We reset the data
-		data.clear();
-
-    	// We add only the late borrows to our data
-    	for(Borrow b : Borrow.getAllBorrow()) {
-    		if(!(b.equals(null)) && b.isLate()) {
-    			data.add(b);
-    		}
-		}
-	}
 	
 	/**
 	 * Method to initialize the TableView userTable
 	 */
 	private void initializeTable() {
 		// We initialize the ObservableList data
-		dataWithAllValues();
+		dataWithAllBorrow();
 		
 		borrowsTable = new TableView<>();
+		
+		// Column for the borrow's ID
+		idCol = new TableColumn<>("Borrow's ID");
+		idCol.setMinWidth(100);
+		idCol.setCellValueFactory(new PropertyValueFactory<Borrow, Integer>("id"));
 		
 		// Column for the user's ID
 		usersIdCol = new TableColumn<>("User's ID");
@@ -244,7 +217,7 @@ public class BorrowsTable {
 	    borrowsLate.setCellValueFactory(new PropertyValueFactory<Borrow, Boolean>("late"));
 
 	    // We add the column to our table
-	    borrowsTable.getColumns().addAll(usersIdCol, booksISBNCol, borrowsDateCol, borrowsReturnDateCol, borrowsEffectiveReturnDateCol,borrowsLate);
+	    borrowsTable.getColumns().addAll(idCol, usersIdCol, booksISBNCol, borrowsDateCol, borrowsReturnDateCol, borrowsEffectiveReturnDateCol,borrowsLate);
 	    
 	    // The columns take up all the table space
 	    borrowsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -253,22 +226,158 @@ public class BorrowsTable {
 	    borrowsTable.setItems(data);
 	}
 	
+	/**
+	 * Method to filter the user's borrows
+	 */
+	private void filterData() {
+	    boolean late = lateBorrowCheckBox.isSelected();
+	    boolean onGoing = onGoingBorrowCheckBox.isSelected();
+	    boolean finished = finishedBorrowCheckBox.isSelected();
+
+	    if(late == true && onGoing == false && finished == false) {
+	    	dataWithLateBorrows();
+	    }
+	    else if(late == false && onGoing == true && finished == false) {
+	    	dataWithOnGoingBorrows();
+	    }
+	    else if(late == false && onGoing == false && finished == true) {
+	    	dataWithFinishedBorrows();
+	    }
+	    else if(late == true && onGoing == true && finished == false) {
+	    	dataWithLateOnGoingBorrows();
+	    }
+	    else if(late == true && onGoing == false && finished == true) {
+	    	dataWithLateFinishedBorrows();
+	    }
+	    else if(late == true && onGoing == true && finished == true) {
+	    	dataWithLateBorrows();
+	    }
+	    else {
+	    	dataWithAllBorrow();
+	    }
+	} 
+	
+	/**
+	 * Method to initialize the ObservableList data with all the user's borrows
+	 */
+	private void dataWithAllBorrow() {
+		// We reset the data
+		data.clear();
+        	
+    	// We add all the user's borrows to our data
+    	for(Borrow b : Borrow.getAllBorrow()) {
+    		if(!(b.equals(null))) {
+    			data.add(b);
+    		}
+		}
+	}
+	
+	/**
+	 * Method to initialize the ObservableList data with the late user's borrow
+	 */
+	private void dataWithLateBorrows() {
+		// We reset the data
+		data.clear();
+
+		// We add only the late borrows to our data
+    	for(Borrow b : Borrow.getAllBorrow()) {
+    		if(!(b.equals(null)) && b.isLate()) {
+    			data.add(b);
+    		}
+		}
+	}
+	
+	/**
+	 * Method to initialize the ObservableList data with the on going user's borrow
+	 */
+	private void dataWithOnGoingBorrows() {
+		// We reset the data
+		data.clear();
+		        	
+    	// We add the on going user's borrows to our data
+    	for(Borrow b : Borrow.getAllBorrow()) {
+    		if(!(b.equals(null)) && b.getEffectiveReturnDate().equals("")) {
+    			data.add(b);
+    		}
+		}
+	}
+	
+	/**
+	 * Method to initialize the ObservableList data with the finished user's borrow
+	 */
+	private void dataWithFinishedBorrows() {
+		// We reset the data
+		data.clear();
+		
+    	// We add the on going user's borrows to our data
+    	for(Borrow b : Borrow.getAllBorrow()) {
+    		if(!(b.equals(null)) && !(b.getEffectiveReturnDate().equals(""))) {
+    			data.add(b);
+    		}
+		}
+	}
+	
+	/**
+	 * Method to initialize the ObservableList data with the late and on going user's borrow
+	 */
+	private void dataWithLateOnGoingBorrows() {
+		// We reset the data
+		data.clear();
+		
+    	// We add the on going user's borrows to our data
+    	for(Borrow b : Borrow.getAllBorrow()) {
+    		if(!(b.equals(null)) && b.getEffectiveReturnDate().equals("") && b.isLate()) {
+    			b.checkBorrowLate();
+    			data.add(b);
+    		}
+		}
+	}
+	
+	/**
+	 * Method to initialize the ObservableList data with the late and finished user's borrow
+	 */
+	private void dataWithLateFinishedBorrows() {
+		// We reset the data
+		data.clear();
+		
+    	// We add the on going user's borrows to our data
+    	for(Borrow b : Borrow.getAllBorrow()) {
+    		if(!(b.equals(null)) && (!(b.getEffectiveReturnDate().equals("")) && b.isLate())) {
+    			data.add(b);
+    		}
+		}
+	}
+	
+	/**
+	 * Getter to get the data containing the borrows
+	 * @return the data containing the borrows
+	 */
 	public ObservableList<Borrow> getData() {
         return data;
     }
 
+	/**
+	 * Getter to get the table view displaying the borrows
+	 * @return the table view displaying the borrows
+	 */
     public TableView<Borrow> getUsersTable() {
         return borrowsTable;
     }
 
+    /**
+	 * Getter to get the pagination for the table view of borrows
+	 * @return the pagination for the table view of borrows
+	 */
     public Pagination getBorrowsTablePagination() {
         return borrowsTablePagination;
     }
     
+    /**
+	 * Getter to get the VBox containing all the element for the borrows table
+	 * @return the the VBox containing all the element for the borrows table
+	 */
     public VBox getBorrowsTableVBox() {
     	return borrowsTableVBox;
     }
-    
-    public static void main(String[] args) {
-	}
+
 }

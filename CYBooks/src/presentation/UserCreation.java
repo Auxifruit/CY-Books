@@ -21,6 +21,12 @@ public class UserCreation {
     private TableView<User> usersTable;
     private Pagination usersTablePagination;
 
+    /**
+     * Constructor of the UserCreation class
+     * @param data the list containing all the informations
+     * @param usersTable the table view displaying the informations
+     * @param usersTablePagination the pagination of the table view
+     */
     public UserCreation(ObservableList<User> data, TableView<User> usersTable, Pagination usersTablePagination) {
         this.data = data;
         this.usersTable = usersTable;
