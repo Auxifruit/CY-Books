@@ -154,7 +154,8 @@ public class Book {
 	 */
 	@Override
 	public String toString() {
-		return "ISBN : " + getIsbn() +
+		return "Book : " +
+				"\nISBN : " + getIsbn() +
 				"\nTitle : " + getTitle() +
 				"\nAuthor : " + getAuthor() +
 				"\nPublished date : " + getPublishedDate() +

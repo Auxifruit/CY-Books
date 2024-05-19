@@ -16,7 +16,9 @@ import javafx.beans.property.StringProperty;
  * @author CYTech Student
  */
 public class Borrow {
+	public static int counterId = 1;
 	protected static List<Borrow> allBorrows = new ArrayList<>();
+	protected IntegerProperty id;
 	protected IntegerProperty usersID;
 	protected StringProperty booksISBN;
 	protected StringProperty borrowDate;
@@ -27,21 +29,78 @@ public class Borrow {
     
     /**
      * Borrow constructor with all fields as parameters
-     * @param user the user who borrowed the book
-     * @param book the borrowed book
+     * @param userID the ID of the user who borrowed the book
+     * @param bookISBN the ISBN of the borrowed book
      * @param dateBorrow the borrow's date
      */
-    public Borrow(User user, Book book, LocalDate dateBorrow) {
-        this.usersID = new SimpleIntegerProperty(user.getId());
-        this.booksISBN =new SimpleStringProperty(String.valueOf(book.getIsbn()));
+    public Borrow(int usersID, String booksISBN, LocalDate dateBorrow) {
+        this.usersID = new SimpleIntegerProperty(usersID);
+        this.booksISBN =new SimpleStringProperty(booksISBN);
         this.borrowDate = new SimpleStringProperty(dateBorrow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.MAX_BORROW_TIME).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.effectiveReturnDate = new SimpleStringProperty("");
         this.late = new SimpleBooleanProperty(false);
         this.problems = new ArrayList<String>();
+        this.id = new SimpleIntegerProperty(counterId++);
         allBorrows.add(this);
     }
+    
+    /**
+     * Borrow constructor with all fields as parameters except the effectiveReturnDate
+     * @param userID the ID of the user who borrowed the book
+     * @param bookISBN the ISBN of the borrowed book
+     * @param dateBorrow the borrow's date
+     * @param returnDate the borrow's return date
+     * @param late the statue of the borrow
+     */
+    public Borrow(int id, int usersID, String booksISBN, LocalDate dateBorrow, LocalDate returnDate, boolean late) {
+        this(usersID, booksISBN, dateBorrow);
+        this.returnDate = new SimpleStringProperty(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.late = new SimpleBooleanProperty(late);
+        this.id = new SimpleIntegerProperty(id);
+    }
+    
+    /**
+     * Borrow constructor with all fields as parameters
+     * @param userID the ID of the user who borrowed the book
+     * @param bookISBN the ISBN of the borrowed book
+     * @param dateBorrow the borrow's date
+     * @param returnDate the borrow's return date
+     * @param effectiveReturnDate the borrow's effective return date
+     * @param late the statue of the borrow
+     */
+    public Borrow(int id, int usersID, String booksISBN, LocalDate dateBorrow, LocalDate returnDate, LocalDate effectiveReturnDate, boolean late) {
+        this(usersID, booksISBN, dateBorrow);
+        this.returnDate = new SimpleStringProperty(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.effectiveReturnDate = new SimpleStringProperty(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.late = new SimpleBooleanProperty(late);
+        this.id = new SimpleIntegerProperty(id);
+    }
 
+    /**
+     * Get the borrow's ID
+     * @return the borrow's ID
+     */
+    public int getId() {
+        return id.get();
+    }
+
+    /**
+     * id setter method
+     * @param id the borrow's id
+     */
+    public void setId(int id) {
+        this.id.set(id);;
+    }
+    
+    /**
+     * Method to return the IntegerProperty of the borrow's id for the TableView
+     * @return the IntegerProperty of the borrow's id 
+     */
+    public IntegerProperty idProperty() {
+        return id;
+    }
+    
     /**
      * Get the id of the user who borrowed the book
      * @return the id of the user who borrowed the book
@@ -62,7 +121,7 @@ public class Borrow {
      * Method to return the IntegerProperty of the user's id for the TableView
      * @return the IntegerProperty of the user's id that borrowed a book
      */
-    public IntegerProperty idProperty() {
+    public IntegerProperty userIDProperty() {
         return usersID;
     }
 
@@ -213,14 +272,12 @@ public class Borrow {
 	 * Method to check is a borrow is late, if true, changed the late state to true
 	 * @return true if the borrow is late and false if not
 	 */
-	public boolean isBorrowLate() {
+	public void checkBorrowLate() {
 		LocalDate today = LocalDate.now();
 		
 		if(today.isAfter(LocalDate.parse(getReturnDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
 			this.setLate(true);
 		}
-		
-		return isLate();
 	}
 	
 	/**
@@ -230,6 +287,7 @@ public class Borrow {
     @Override
     public String toString() {
         String text =  "Borrow : " +
+        		"\nID: " + getId() +
         		"\nUser's ID : "+ getUsersID() +
         		"\nBook's ISBN : " + getBooksISBN() +
         		"\nBorrow date : " + getDateBorrow() +
