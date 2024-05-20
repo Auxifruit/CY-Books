@@ -180,6 +180,34 @@ public class User {
 	public static void setCounterId(int newCounterId) {
 		counterId = newCounterId;
 	}
+	
+	/**
+	 * Method to check if an user exist by its id
+	 * @param id the user's id
+	 * @return true if the user exist and false if not
+	 */
+	public static boolean IsExisting(int id) {
+		for(User u : User.getAllUser()) {
+			if (u.getId() == id){
+				return true ; 
+			}
+		}
+		return false ;
+	}
+		
+	/**
+	 * Method to check if an user exist
+	 * @param user the user we want to check its existing
+	 * @return true if the user exist and false if not
+	 */
+	public static boolean IsExisting(User user) {
+		for(User u : User.getAllUser()) {
+			if (u.equals(user)){
+				return true ; 
+			}
+		}
+		return false ;
+	}
 
 	/**
 	 * toString method for User
