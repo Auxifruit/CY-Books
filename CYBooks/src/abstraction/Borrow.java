@@ -150,11 +150,28 @@ public class Borrow {
     }
 
     /**
-     * Get the borrow's date
-     * @return the borrow's date
+     * Get the borrow's date in String
+     * @return the borrow's date in String
      */
     public String getDateBorrow() {
         return borrowDate.get();
+    }
+    
+    /**
+     * Get the borrow's date in LocalDate
+     * @return the borrow's date in LocalDate
+     */
+    public LocalDate getDateBorrowLocalDate() {
+    	// We get the date in a string
+    	String borrowDateString = this.getDateBorrow();
+    	
+		// We split the date's String to get the day, month and year
+		String[] date = borrowDateString.split("-");
+		
+		// We use these element for our LocalDate
+		LocalDate borrowDateLocalDate = LocalDate.of(Integer.valueOf(date[2]), Integer.valueOf(date[1]), Integer.valueOf(date[0]));
+		
+		return borrowDateLocalDate;
     }
 
     /**
@@ -174,11 +191,28 @@ public class Borrow {
     }
 
     /**
-     * Get the borrow's return date
-     * @return returnDate the date of which the book need to be return
+     * Get the borrow's return date in String
+     * @return returnDate the date of which the book need to be return in String
      */
     public String getReturnDate() {
         return returnDate.get();
+    }
+    
+    /**
+     * Get the borrow's return date in LocalDate
+     * @return the borrow's return date in LocalDate
+     */
+    public LocalDate getReturnDateLocalDate() {
+    	// We get the return date in a string
+    	String returnDateString = this.getReturnDate();
+    	
+		// We split the return date's String to get the day, month and year
+		String[] date = returnDateString.split("-");
+		
+		// We use these element for our LocalDate
+		LocalDate returnDateLocalDate = LocalDate.of(Integer.valueOf(date[2]), Integer.valueOf(date[1]), Integer.valueOf(date[0]));
+		
+		return returnDateLocalDate;
     }
 
     /**
@@ -198,18 +232,44 @@ public class Borrow {
     }
     
     /**
-     * Get the borrow's effective return date
-     * @return effectiveReturnDate
+     * Get the borrow's effective return date in String
+     * @return effectiveReturnDate the date of which the book have been returned in String
      */
     public String getEffectiveReturnDate() {
 		return effectiveReturnDate.get();
 	}
+    
+    /**
+     * Get the borrow's effective return date in LocalDate
+     * @return the borrow's effective return date in LocalDate
+     */
+    public LocalDate getEffectiveReturnDateLocalDate() {
+    	// We get the return date in a string
+    	String effectiveReturnDateString = this.getEffectiveReturnDate();
+    	
+    	if(!(effectiveReturnDateString.equals(""))) {
+    		// We split the return date's String to get the day, month and year
+    		String[] date = effectiveReturnDateString.split("-");
+    		
+    		// We use these element for our LocalDate
+    		LocalDate effectiveReturnDateLocalDate = LocalDate.of(Integer.valueOf(date[2]), Integer.valueOf(date[1]), Integer.valueOf(date[0]));
+    		
+    		return effectiveReturnDateLocalDate;
+    	}
+		
+		return null;
+    }
 
     /**
      * effectiveReturnDate setter method
      */
 	public void setEffectiveReturnDate(LocalDate effectiveReturnDate) {
-		this.effectiveReturnDate.set(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		if(effectiveReturnDate != null) {
+			this.effectiveReturnDate.set(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		}
+		else {
+			this.effectiveReturnDate.set(""); ;
+		}
 	}
 
 	/**
@@ -289,8 +349,12 @@ public class Borrow {
 	public void checkBorrowLate() {
 		LocalDate today = LocalDate.now();
 		
-		if(today.isAfter(LocalDate.parse(getReturnDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
+		if((this.getEffectiveReturnDateLocalDate() == null && today.isAfter(this.getReturnDateLocalDate())
+				|| (this.getEffectiveReturnDateLocalDate() != null && this.getEffectiveReturnDateLocalDate().isAfter(this.getReturnDateLocalDate())))) {
 			this.setLate(true);
+		}
+		else {
+			this.setLate(false);
 		}
 	}
 	
