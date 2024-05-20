@@ -96,8 +96,8 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
                 emailText.clear();
             }
             else {
-            	Alert emailAlert = new Alert(Alert.AlertType.WARNING, "Please enter a valid E-mail.", ButtonType.OK);
-            	emailAlert.setTitle("E-mail format warning");
+            	Alert emailAlert = new Alert(Alert.AlertType.ERROR, "Please enter a valid E-mail.", ButtonType.OK);
+            	emailAlert.setTitle("E-mail format error");
             	emailAlert.showAndWait();
             }
         }

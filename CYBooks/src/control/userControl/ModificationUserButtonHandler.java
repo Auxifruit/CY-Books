@@ -108,7 +108,7 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
 			    			email = newEmail;
 			    		}
 			    		
-			    		// We modify the user's informations in the text file
+			    		// We modify the user's informations in the database
 		    			DBConnect.modifyUserInTable(userToModify, lastname, firstname, email);
 			    		
 			    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been modified.", ButtonType.OK);
@@ -129,8 +129,8 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
 		    	}
 			}
 			else {
-				Alert emailAlert = new Alert(Alert.AlertType.WARNING, "Please enter a valid E-mail.", ButtonType.OK);
-	        	emailAlert.setTitle("E-mail format warning");
+				Alert emailAlert = new Alert(Alert.AlertType.ERROR, "Please enter a valid E-mail.", ButtonType.OK);
+	        	emailAlert.setTitle("E-mail format error");
 	        	emailAlert.showAndWait();
 			}
 		}
