@@ -23,7 +23,7 @@ public class DBConnect {
 
 	// USED BY USERS
 	public final static String LAST_NAME = "lastname";
-	public final static String NAME = "name";
+	public final static String FIRST_NAME = "firstname";
 	public final static String EMAIL = "email";
 
 	// USED BY BORROW
@@ -36,12 +36,12 @@ public class DBConnect {
 
 	// Constants declared to form the tables structure
 	public final static String USER_TABLE_STRUCTURE = "CREATE TABLE " + USER_TABLE + " (\r\n" + ID
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" + LAST_NAME + " TEXT NOT NULL,\r\n" + NAME
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" + LAST_NAME + " TEXT NOT NULL,\r\n" + FIRST_NAME
 			+ " TEXT NOT NULL,\r\n" + EMAIL + " TEXT UNIQUE NOT NULL);";
 
 	public final static String BORROW_TABLE_STRUCTURE = "CREATE TABLE " + BORROW_TABLE + " (\r\n" + ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" + USER_ID + " INTEGER NOT NULL,\r\n" + BOOK_ID
-			+ " INTEGER NOT NULL,\r\n" + BORROW_START + " TEXT NOT NULL,\r\n" + BORROW_END + " TEXT,\r\n"
+			+ " TEXT NOT NULL,\r\n" + BORROW_START + " TEXT NOT NULL,\r\n" + BORROW_END + " TEXT,\r\n"
 			+ BORROW_REAL_END + " TEXT,\r\n" + BORROW_LATE + " TEXT, \r\n"
 			+ "FOREIGN KEY (" + USER_ID + ") REFERENCES " + USER_TABLE + "(" + ID + "));";
 
@@ -115,7 +115,7 @@ public class DBConnect {
 			while(res.next()) {
 				// We get the users's informations
 				int usersID = res.getInt(ID);
-				String firstname = res.getString(NAME);
+				String firstname = res.getString(FIRST_NAME);
 				String lastname = res.getString(LAST_NAME);
 				String email = res.getString(EMAIL);
 				
@@ -124,8 +124,11 @@ public class DBConnect {
 			
 			co.close();
 			
-			// We update the User's class counterId to note have duplicate id
-			User.counterId = User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1;
+			// We update the User's class counterId to note have duplicate id if we have at least 2 element
+			if(User.getAllUser().size() > 1) {
+				User.setCounterId(User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1);
+			}
+			
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -140,8 +143,8 @@ public class DBConnect {
 	 */
 	public static void addUserInTable(User userToAdd) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "INSERT INTO " + USER_TABLE + " VALUES(?,?,?,?)";
-		
+				final String query = "INSERT INTO " + USER_TABLE + " (" + ID + ", " + LAST_NAME + ", " + FIRST_NAME + ", " 
+			            + EMAIL + ") " + "VALUES (?, ?, ?, ?)";
 		try {
 			Connection co = quickconnect();
 			
@@ -176,7 +179,7 @@ public class DBConnect {
 	 */
 	public static void deleteUserInTable(User userToDelete) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "DELETE FROM " + USER_TABLE + " WHERE " + ID + " = ? and " + NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
+		final String query = "DELETE FROM " + USER_TABLE + " WHERE " + ID + " = ? and " + FIRST_NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
 		
 		try {
 			Connection co = quickconnect();
@@ -219,8 +222,8 @@ public class DBConnect {
 	 */
 	public static void modifyUserInTable(int userToModifysID, String oldLastname, String oldFirstname, String oldEmail, String newLastname, String newFirstname, String newEmail) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "UPDATE " + USER_TABLE + " SET " + LAST_NAME + " = ?, " + NAME + " = ?, " + EMAIL + " = ?  "
-				+ "WHERE " + ID + " = ? and " + LAST_NAME + " = ? and " + NAME + " = ? and " + EMAIL + " = ?";
+		final String query = "UPDATE " + USER_TABLE + " SET " + LAST_NAME + " = ?, " + FIRST_NAME + " = ?, " + EMAIL + " = ?  "
+				+ "WHERE " + ID + " = ? and " + LAST_NAME + " = ? and " + FIRST_NAME + " = ? and " + EMAIL + " = ?";
 		
 		try {
 			Connection co = quickconnect();
@@ -300,8 +303,11 @@ public class DBConnect {
 			
 			co.close();
 			
-			// We update the Borrow's class counterId to note have duplicate id
-			Borrow.counterId = Borrow.getAllBorrow().get(Borrow.getAllBorrow().size() - 1).getId() + 1;
+
+			// We update the Borrow's class counterId to note have duplicate id if we have at least 2 element
+			if(Borrow.getAllBorrow().size() > 1) {
+				Borrow.setCounterId(Borrow.getAllBorrow().get(Borrow.getAllBorrow().size() - 1).getId() + 1);
+			}
 
 		}
 		catch(SQLException e) {
@@ -317,13 +323,15 @@ public class DBConnect {
 	 */
 	public static void addBorrowInTable(Borrow borrowToAdd) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "INSERT INTO " + BORROW_TABLE + " VALUES(?,?,?,?,?,?,?)";
+		final String query = "INSERT INTO " + BORROW_TABLE + " (" + ID + ", " + USER_ID + ", " + BOOK_ID + ", " 
+	            + BORROW_START + ", " + BORROW_END + ", " + BORROW_REAL_END + ", " + BORROW_LATE + ") "
+	            + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 		
 		try {
 			Connection co = quickconnect();
 			
 			// Allow us to prepare the query to execute it later
-			PreparedStatement ps = co.prepareStatement(query);
+			PreparedStatement ps = co.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
 			int id = borrowToAdd.getId();
 			int usersID = borrowToAdd.getUsersID();
@@ -341,10 +349,12 @@ public class DBConnect {
 			ps.setString(5, returnDate);
 			ps.setString(6, effectiveReturnDate);
 			ps.setString(7, late);
+		
 			
 			ps.executeUpdate();
 			
 			co.close();
+			
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -440,8 +450,30 @@ public class DBConnect {
 	
 	public static void main(String[] args) throws SQLException {
 		//System.out.println(BORROW_TABLE_STRUCTURE);
-		//createTables();
+		createTables();
+		
+		//readUsersTable();
 
+		/*
+		User user2 = new User(0, "TEST", "TEST", "TEST@gmail.com");
+		Borrow b2 = new Borrow(user2.getId(), "2", LocalDate.now());
+		b2.setLate(true);
+		Borrow b1 = new Borrow(user2.getId(), "3", LocalDate.now());
+		Borrow b3 = new Borrow(user2.getId(), "4", LocalDate.now());
+		b3.setEffectiveReturnDate(LocalDate.now().plusDays(35));
+		Borrow b = new Borrow(user2.getId(), "5", LocalDate.now());
+		b.setEffectiveReturnDate(LocalDate.now().plusDays(35));
+		b.setLate(true);
+		
+		for(Borrow bo : Borrow.getAllBorrow()) {
+			try {
+				DBConnect.addBorrowInTable(bo);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
+		
 		/*
 		 * try { Connection co = DriverManager.getConnection("jdbc:sqlite:cybase.db");
 		 * Statement smt = co.createStatement(); System.out.println(co);
