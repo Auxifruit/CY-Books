@@ -433,33 +433,44 @@ public class DBConnect {
 		}
 	}
 	
-	
+	/**
+	 * Method to modify a Borrow in the database
+	 * @param borrowToModifythe borrow we want to modify
+	 * @param oldBorrowDate the borrow's old date
+	 * @param oldReturnDate the borrow's old return date
+	 * @param newBorrowDate the borrow's new date
+	 * @param newReturnDate the borrow's new return date
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void modifyBorrowInTable(Borrow borrowToModify, String newBorrowDate, String newReturnDate) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
+		final String query = "UPDATE " + BORROW_TABLE + " SET " + BORROW_START + " = ?, " + BORROW_END + " = ? "
+				+ "WHERE " + ID + " = ?";
+		
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
+			PreparedStatement ps = co.prepareStatement(query);
+
+			// We set the values of the query
+			ps.setString(1, newBorrowDate);
+			ps.setString(2, newReturnDate);
+			ps.setInt(3, borrowToModify.getId());
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
 	
 	public static void main(String[] args) throws SQLException {
 		//System.out.println(BORROW_TABLE_STRUCTURE);
-		createTables();
-		
-		//readUsersTable();
-		
-		/*
-		User user2 = new User(0, "TEST", "TEST", "TEST@gmail.com");
-		Borrow b2 = new Borrow(user2.getId(), "2", LocalDate.now());
-		b2.setLate(true);
-		Borrow b1 = new Borrow(user2.getId(), "3", LocalDate.now());
-		Borrow b3 = new Borrow(user2.getId(), "4", LocalDate.now());
-		b3.setEffectiveReturnDate(LocalDate.now().plusDays(35));
-		Borrow b = new Borrow(user2.getId(), "5", LocalDate.now());
-		b.setEffectiveReturnDate(LocalDate.now().plusDays(35));
-		b.setLate(true);
-		
-		for(Borrow bo : Borrow.getAllBorrow()) {
-			try {
-				DBConnect.addBorrowInTable(bo);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
+		// createTables();
 		
 		/*
 		 * try { Connection co = DriverManager.getConnection("jdbc:sqlite:cybase.db");
