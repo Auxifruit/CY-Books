@@ -32,7 +32,8 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
     /**
      * CreateUserButtonHandler constructor
      * @param data the list of all the users
-     * @param pagination the pagination containing the users' data
+     * @param usersTable the table of all the users
+     * @param pagination the TableView's pagination
      * @param firstnameText the new user's first name
      * @param lastnameText the new user's last name
      * @param emailText the new user's first name
@@ -53,8 +54,8 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent event) {
     	// We check if all the field are filled
         if (firstnameText.getText().isEmpty() || lastnameText.getText().isEmpty() || emailText.getText().isEmpty()) {
-            Alert errorCreateUserAlert = new Alert(Alert.AlertType.WARNING, "You need to fill all the fields if you want to create an user", ButtonType.OK);
-            errorCreateUserAlert.setTitle("Empty field(s)");
+            Alert errorCreateUserAlert = new Alert(Alert.AlertType.WARNING, "You need to fill all the fields if you want to create an user.", ButtonType.OK);
+            errorCreateUserAlert.setTitle("Empty field(s) warning");
             errorCreateUserAlert.showAndWait();
         } else {
             // We verify is the e-mail format is correct
@@ -79,12 +80,13 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
     	            pagination.setCurrentPageIndex(0);
     	            
     	            	            
-    	            Alert createUserAlert = new Alert(Alert.AlertType.CONFIRMATION, "The user has been created", ButtonType.OK);
-    	            createUserAlert.setTitle("User created");
+    	            Alert createUserAlert = new Alert(Alert.AlertType.CONFIRMATION, "The user has been created.", ButtonType.OK);
+    	            createUserAlert.setTitle("User created confirmation");
     	            createUserAlert.showAndWait();
     			} catch (SQLException e) {
     				System.err.println("Fail to add an user in the database");
     				Alert errorAlert = new Alert(Alert.AlertType.ERROR, "An error occurred while creating the user.", ButtonType.OK);
+    				errorAlert.setTitle("User creation error");
     		        errorAlert.showAndWait();
     			}
 
@@ -95,6 +97,7 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
             }
             else {
             	Alert emailAlert = new Alert(Alert.AlertType.WARNING, "Please enter a valid E-mail.", ButtonType.OK);
+            	emailAlert.setTitle("E-mail format warning");
             	emailAlert.showAndWait();
             }
         }

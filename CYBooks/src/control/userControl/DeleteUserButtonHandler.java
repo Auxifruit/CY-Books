@@ -30,6 +30,7 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
      * DeleteUserButtonHandler constructor
      * @param data the list of all the users
      * @param usersTable the table of all the users
+     * @param pagination the TableView's pagination 
      */
     public DeleteUserButtonHandler(ObservableList<User> data, TableView<User> usersTable, Pagination pagination) {
         this.data = data;
@@ -58,7 +59,8 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     		User userToDelete = usersTable.getSelectionModel().getSelectedItem();		
     		
 	    	try {
-	    		// We remove it from our database, the list of all the users and the data 
+	    		// We remove it from our database, the list of all the users and the data
+	    		
 	    		DBConnect.deleteUserInTable(userToDelete);
 	    		User.getAllUser().remove(userToDelete);
 		    	data.remove(userToDelete);
@@ -74,13 +76,14 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
 	            }
 	            pagination.setCurrentPageIndex(0);
 	            
-	            Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted", ButtonType.OK);
-	    		deletedUserAlert.setTitle("User deleted");
+	            Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted.", ButtonType.OK);
+	    		deletedUserAlert.setTitle("User deleted confirmation");
 	    		deletedUserAlert.showAndWait();
 	    		
 			} catch (SQLException e) {
 				System.err.println("Fail to delete an user from the database");
 				Alert errorAlert = new Alert(Alert.AlertType.ERROR, "An error occurred while deleting the user.", ButtonType.OK);
+				errorAlert.setTitle("User deletion error");
 				errorAlert.showAndWait();
 			}	
     	}
