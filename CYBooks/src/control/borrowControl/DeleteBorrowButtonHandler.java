@@ -28,6 +28,7 @@ public class DeleteBorrowButtonHandler implements EventHandler<ActionEvent> {
      * DeleteBorrowButtonHandler constructor
      * @param data the list of all the borrows
      * @param borrowsTable the table of all the borrows
+     * @param pagination the TableView's pagination
      */
     public DeleteBorrowButtonHandler(ObservableList<Borrow> data, TableView<Borrow> borrowsTable, Pagination pagination) {
         this.data = data;
@@ -72,8 +73,8 @@ public class DeleteBorrowButtonHandler implements EventHandler<ActionEvent> {
 	            }
 	            pagination.setCurrentPageIndex(0);
 	            
-	            Alert deletedBorrowAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been deleted", ButtonType.OK);
-	    		deletedBorrowAlert.setTitle("Borrow deleted");
+	            Alert deletedBorrowAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been deleted.", ButtonType.OK);
+	    		deletedBorrowAlert.setTitle("Borrow deleted confirmation");
 	    		deletedBorrowAlert.showAndWait();
 	    		
 			} catch (SQLException e) {
