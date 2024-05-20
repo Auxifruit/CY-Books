@@ -115,7 +115,7 @@ public class Main {
                     System.out.println("What is the user ID?");
                     int userId = scanner.nextInt();
                     scanner.nextLine(); 
-                    while (!User.getExist(userId)) {
+                    while (!User.IsExisting(userId)) {
                     	 System.out.println("This user doesn't exist ,What is the user ID?");
                     	userId = scanner.nextInt();
                     	scanner.nextLine(); 
@@ -179,7 +179,7 @@ public class Main {
 
         while (true) {
             System.out.println("What would you like to do?");
-            System.out.println("1) User 2) Book and Borrow Management");
+            System.out.println("1) User 2) Book and Borrow Management 3) Finish the program");
             int wdyw = scanner.nextInt();
             scanner.nextLine(); 
 
@@ -191,7 +191,8 @@ public class Main {
                 case 2:
                     BorrowMenu();
                     break;
-
+                case 3:
+                	return ; 
                 default:
                     System.out.println("Invalid option. Please try again.");
                     break;
@@ -202,7 +203,7 @@ public class Main {
     public static void main(String[] args) throws IOException, SQLException {
     	try {
     		DBConnect.readUsersTable();
-		DBConnect.readBorrowsTable();
+			DBConnect.readBorrowsTable();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
