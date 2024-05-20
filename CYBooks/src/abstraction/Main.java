@@ -34,7 +34,7 @@ public class Main {
                     System.out.print("Email? ");
                     String emailText = scanner.nextLine();
                     User userToCreate = new User(lastnameText, firstnameText, emailText);
-                   // DBConnect.addUserInTable(userToCreate);
+                    DBConnect.addUserInTable(userToCreate);
                     
                     System.out.println("User added: " + userToCreate.toString());
                     break;
@@ -126,7 +126,7 @@ public class Main {
 
                     LocalDate dateBorrow = LocalDate.now();
                     Borrow newBorrow = new Borrow(userId, bookISBN, dateBorrow);
-                   // DBConnect.addBorrowInTable(newBorrow);
+                    DBConnect.addBorrowInTable(newBorrow);
                     System.out.println("Borrow added: " + newBorrow.toString());
                 	}
                 	else {
