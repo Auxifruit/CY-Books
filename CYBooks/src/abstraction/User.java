@@ -165,8 +165,12 @@ public class User {
 	public static List<User> getAllUser() {
 		return allUser;
 	}
-
-	public static boolean getExist(int id ) {
+/**
+ * 
+ * @param int id
+ * @return if the user exist
+ */
+	public static boolean IsExisting(int id ) {
 		for(User u : User.getAllUser()) {
 			if (u.getId() == id){
 				return true ; 
@@ -175,7 +179,12 @@ public class User {
 		return false ;
 	}
 	
-	public static boolean getExist(User k) {
+	/**
+	 * 
+	 * @param a user 
+	 * @return if the user exist
+	 */
+	public static boolean IsExisting(User k) {
 		for(User u : User.getAllUser()) {
 			if (u.equals(k)){
 				return true ; 
