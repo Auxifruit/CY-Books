@@ -180,12 +180,24 @@ public final class API {
 		}
 
 		return returnedBooks;
-
+	}
+	
+	
+	/** Check if the document identifier exist
+	 * 
+	 * @param identifier The identifier used for the search
+	 * @return boolean expression (Whether or not the book document exist)
+	 */
+	public static boolean checkIdentifierExistance(String identifier) {
+		String[] query = { "dc.identifier all \""+identifier+"\""};
+		List<Book> book = searchBook(query, 15);
+		return book.size() > 0;
 	}
 
 	public static void main(String[] args) {
-		String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };
-		searchBook(a, 70);
+		//String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };
+		//searchBook(a, 70);
+		System.out.println(checkIdentifierExistance("bpt6k1194845g"));
 		// String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor
 		// Hugo\"" };
 		// System.out.println(normalizeQuery(executeQuery(a)));
