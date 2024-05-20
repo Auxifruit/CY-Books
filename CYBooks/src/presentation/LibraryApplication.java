@@ -1,10 +1,5 @@
 package presentation;
 
-import abstraction.Book;
-import abstraction.Borrow;
-import abstraction.User;
-
-import java.time.LocalDate;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -247,18 +242,7 @@ public class LibraryApplication extends Application {
 		return allContainer;
 	}
 
-	public static void main(String[] args) {
-		// FOR TESTING	
-		
-		User user2 = new User(0, "TEST", "TEST", "TEST@gmail.com");
-		new Borrow(user2.getId(), "2", LocalDate.now()).setLate(true);
-		new Borrow(user2.getId(), "3", LocalDate.now());
-		new Borrow(user2.getId(), "4", LocalDate.now()).setEffectiveReturnDate(LocalDate.now().plusDays(35));
-		Borrow b = new Borrow(user2.getId(), "5", LocalDate.now());
-		b.setEffectiveReturnDate(LocalDate.now().plusDays(35));
-		b.setLate(true);
-		
-				
+	public static void main(String[] args) {		
 		launch(args);
 	}
 }

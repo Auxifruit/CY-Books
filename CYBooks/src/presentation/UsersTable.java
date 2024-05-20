@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import abstraction.User;
 import abstraction.db.DBConnect;
-import controle.DeleteUserButtonHandler;
+import control.userControl.DeleteUserButtonHandler;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +39,7 @@ public class UsersTable {
 	private FilteredList<User> filteredData;
 
     public UsersTable() {
+    	initializeData();
         initializeTable();
         createUsersTablePane();
     }
@@ -216,26 +217,27 @@ public class UsersTable {
 	    usersTable.setItems(data);
 	}
 	
+	private void initializeData() {
+		// We load the values of the users from the database
+	    try {
+	    	DBConnect.readUsersTable();
+	    } catch (SQLException e) {
+			System.err.println("Error BDD. (dataWithAllValues)");
+		}
+	}
+	
 	/**
 	 * Method to initialize the ObservableList data
 	 */
 	private void dataWithAllValues() {
 		// We reset the data
 		data.clear();
-		
-		// We load the values of the users from the text file
-	    try {
-	    	DBConnect.readUsersTable();
 	    	
-	    	// We add the users to our data
-	    	for(User u : User.getAllUser()) {
-	    		if(!(u.equals(null))) {
-	    			data.add(u);
-	    		}
-			}
-	    	
-	    } catch (SQLException e) {
-			System.err.println("Error BDD. (dataWithAllValues)");
+    	// We add the users to our data
+    	for(User u : User.getAllUser()) {
+    		if(!(u.equals(null))) {
+    			data.add(u);
+    		}
 		}
 	}
 

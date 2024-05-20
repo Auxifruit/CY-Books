@@ -1,7 +1,12 @@
 package presentation;
 
 
+import java.sql.SQLException;
+
 import abstraction.Borrow;
+import abstraction.db.DBConnect;
+import control.borrowControl.DeleteBorrowButtonHandler;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,6 +16,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
@@ -54,6 +60,7 @@ public class BorrowsTable {
         onGoingBorrowCheckBox = new CheckBox("On going borrows");
         finishedBorrowCheckBox = new CheckBox("Finished borrows");
         
+        initializeData();
         initializeTable();
         createBorrowsTablePane();
     }
@@ -66,13 +73,17 @@ public class BorrowsTable {
 		borrowsTablePagination = new Pagination((data.size() / ROWS_PER_PAGE + 1), 0);
 		borrowsTablePagination.setPageFactory(this::createPage);
 		
-		// VBox containing all the node for the users table expect the main label
-		VBox searchTableVBox = new VBox(20);
-		
 	    Label labelUserTable = new Label("BORROWS TABLE :");
 		labelUserTable.setFont(new Font("Arial", 24));
 		labelUserTable.setUnderline(true);
 		labelUserTable.setStyle("-fx-font-weight: bold;");
+		
+		// Button to delete an user
+	    Button deleteBorrowButton = new Button("Delete borrow");
+	    deleteBorrowButton.setOnAction(new DeleteBorrowButtonHandler(data, borrowsTable, borrowsTablePagination));
+	    
+	    // If no user is selected, the button is disable
+	    deleteBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
 	    
 	    // We change the number of pages
 	    changingNumberOfPages();
@@ -99,10 +110,14 @@ public class BorrowsTable {
 	    HBox checkBoxContainer = new HBox(10);
 	    checkBoxContainer.getChildren().addAll(lateBorrowCheckBox, onGoingBorrowCheckBox, finishedBorrowCheckBox);
 	    
+	    // VBox containing the borrowsTable and the delete button
+	 	VBox tableViewVBox = new VBox(20);
+	    tableViewVBox.getChildren().addAll(borrowsTablePagination, deleteBorrowButton);
+	    
 	    // VBox containing the nodes for the users table
         borrowsTableVBox = new VBox(20);
         borrowsTableVBox.setPadding(new Insets(10, 10, 10, 10));
-        borrowsTableVBox.getChildren().addAll(labelUserTable, checkBoxContainer, borrowsTablePagination, searchTableVBox);
+        borrowsTableVBox.getChildren().addAll(labelUserTable, checkBoxContainer, tableViewVBox);
         borrowsTableVBox.setAlignment(Pos.TOP_CENTER);
     }
 	
@@ -226,6 +241,16 @@ public class BorrowsTable {
 	    borrowsTable.setItems(data);
 	}
 	
+	private void initializeData() {
+		// We load the values of the borrows from the database
+	    try {
+	    	DBConnect.readBorrowsTable();
+	    } catch (SQLException e) {
+			System.err.println("Error BDD. (dataWithAllValues)");
+		}
+	    Borrow.checkAllborrowsLate();
+	}
+	
 	/**
 	 * Method to filter the user's borrows
 	 */
@@ -263,7 +288,7 @@ public class BorrowsTable {
 	private void dataWithAllBorrow() {
 		// We reset the data
 		data.clear();
-        	
+	    	
     	// We add all the user's borrows to our data
     	for(Borrow b : Borrow.getAllBorrow()) {
     		if(!(b.equals(null))) {

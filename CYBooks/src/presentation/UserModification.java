@@ -1,7 +1,7 @@
 package presentation;
 
 import abstraction.User;
-import controle.ModificationUserButtonHandler;
+import control.userControl.ModificationUserButtonHandler;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
