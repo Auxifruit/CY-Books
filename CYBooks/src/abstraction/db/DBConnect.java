@@ -16,6 +16,7 @@ public class DBConnect {
 	// Constants declared to save the tables names
 	public final static String USER_TABLE = "users";
 	public final static String BORROW_TABLE = "borrow";
+	public final static String PROBLEM_TABLE = "problem";
 
 	// Constant used to avoid spelling mistakes when retrieving the results of
 	// queries
@@ -33,6 +34,10 @@ public class DBConnect {
 	public final static String BORROW_END = "borrow_end";
 	public final static String BORROW_REAL_END = "borrow_real_end";
 	public final static String BORROW_LATE = "late";
+	
+	// USED BY PROBLEM
+	public final static String BORROW_ID = "borrow_id";
+	public final static String PROBLEM = "problem_text";
 
 	// Constants declared to form the tables structure
 	public final static String USER_TABLE_STRUCTURE = "CREATE TABLE " + USER_TABLE + " (\r\n" + ID
@@ -44,10 +49,15 @@ public class DBConnect {
 			+ " TEXT NOT NULL,\r\n" + BORROW_START + " TEXT NOT NULL,\r\n" + BORROW_END + " TEXT,\r\n"
 			+ BORROW_REAL_END + " TEXT,\r\n" + BORROW_LATE + " TEXT, \r\n"
 			+ "FOREIGN KEY (" + USER_ID + ") REFERENCES " + USER_TABLE + "(" + ID + "));";
+	
+	public final static String PROBLEM_TABLE_STRUCTURE = "CREATE TABLE " + PROBLEM_TABLE + " (\r\n" + ID
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" + BORROW_ID + " INTEGER NOT NULL,\r\n" + PROBLEM
+			+ " TEXT NOT NULL,\r\n"
+			+ "FOREIGN KEY (" + BORROW_ID + ") REFERENCES " + BORROW_TABLE + "(" + ID + "));";
 
 	// Regroup all of these constants into variables
-	private final static String[] tables = { USER_TABLE, BORROW_TABLE };
-	private final static String[] creationQuery = { USER_TABLE_STRUCTURE, BORROW_TABLE_STRUCTURE };
+	private final static String[] tables = { USER_TABLE, BORROW_TABLE, PROBLEM_TABLE };
+	private final static String[] creationQuery = { USER_TABLE_STRUCTURE, BORROW_TABLE_STRUCTURE, PROBLEM_TABLE_STRUCTURE };
 
 	/**
 	 * Try to connect to the database (WILL AUTOMATICALLY CREATE THE DATABASE IF IT
@@ -179,24 +189,19 @@ public class DBConnect {
 	 */
 	public static void deleteUserInTable(User userToDelete) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "DELETE FROM " + USER_TABLE + " WHERE " + ID + " = ? and " + FIRST_NAME + " = ? and " + LAST_NAME + " = ? and " + EMAIL + " = ?";
+		final String query = "DELETE FROM " + USER_TABLE + " WHERE " + ID + " = ?";
 		
 		try {
 			Connection co = quickconnect();
 			
 			// Allow us to prepare the query to execute it later
 			PreparedStatement ps = co.prepareStatement(query);
-
+			
+			// We only use the id because it is unique 
 			int usersID = userToDelete.getId();
-			String firstname = userToDelete.getFirstname();
-			String lastname = userToDelete.getLastname();
-			String email = userToDelete.getEmail();
 
 			// We set the values of the query
 			ps.setInt(1, usersID);
-			ps.setString(2, firstname);
-			ps.setString(3, lastname);
-			ps.setString(4, email);
 			
 			ps.executeUpdate();
 			
@@ -369,8 +374,7 @@ public class DBConnect {
 	 */
 	public static void deleteBorrowInTable(Borrow borrowToDelete) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
-		final String query = "DELETE FROM " + BORROW_TABLE + " WHERE " + ID + " = ? and " + USER_ID + " = ? and " + BOOK_ID + " = ? and " + BORROW_START + " = ?"
-				+ "and " + BORROW_END + " = ? and " + BORROW_REAL_END + " = ? and " + BORROW_LATE + " = ?";
+		final String query = "DELETE FROM " + BORROW_TABLE + " WHERE " + ID + " = ?";
 
 		try {
 			Connection co = quickconnect();
@@ -378,22 +382,11 @@ public class DBConnect {
 			// Allow us to prepare the query to execute it later
 			PreparedStatement ps = co.prepareStatement(query);
 
+			// We only use the id because it is unique 
 			int id = borrowToDelete.getId();
-			int usersID = borrowToDelete.getUsersID();
-			String booksID = borrowToDelete.getBooksISBN();
-			String borrowDate = borrowToDelete.getDateBorrow();
-			String returnDate = borrowToDelete.getReturnDate();
-			String effectiveReturnDate = borrowToDelete.getEffectiveReturnDate();
-			String late = String.valueOf(borrowToDelete.isLate());
 
 			// We set the values of the query
 			ps.setInt(1, id);
-			ps.setInt(2, usersID);
-			ps.setString(3, booksID);
-			ps.setString(4, borrowDate);
-			ps.setString(5, returnDate);
-			ps.setString(6, effectiveReturnDate);
-			ps.setString(7, late);
 			
 			ps.executeUpdate();
 			
@@ -448,12 +441,14 @@ public class DBConnect {
 		}
 	}
 	
+	
+	
 	public static void main(String[] args) throws SQLException {
 		//System.out.println(BORROW_TABLE_STRUCTURE);
 		createTables();
 		
 		//readUsersTable();
-
+		
 		/*
 		User user2 = new User(0, "TEST", "TEST", "TEST@gmail.com");
 		Borrow b2 = new Borrow(user2.getId(), "2", LocalDate.now());
