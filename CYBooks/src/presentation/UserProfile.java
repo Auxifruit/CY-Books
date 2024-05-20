@@ -228,6 +228,7 @@ public class UserProfile {
 		dataWithAllUsersBorrow();
 		
 		usersBorrowTable = new TableView<>();
+		usersBorrowTable.setPlaceholder(new Label("No rows to display"));
 		
 		// Column for the borrow's ID
 		idCol = new TableColumn<>("Borrow's ID");

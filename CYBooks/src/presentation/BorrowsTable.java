@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import abstraction.Borrow;
 import abstraction.db.DBConnect;
 import control.borrowControl.DeleteBorrowButtonHandler;
+import control.borrowControl.ReturnBorrowButtonHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -78,17 +79,28 @@ public class BorrowsTable {
 		labelUserTable.setUnderline(true);
 		labelUserTable.setStyle("-fx-font-weight: bold;");
 		
-		// Button to delete an user
+		// Button to delete a borrow
 	    Button deleteBorrowButton = new Button("Delete borrow");
 	    deleteBorrowButton.setOnAction(new DeleteBorrowButtonHandler(data, borrowsTable, borrowsTablePagination));
-	    
-	    // If no user is selected, the button is disable
+	    // If no borrow is selected, the button is disable
 	    deleteBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
+	    
+	    // Button to see the borrow's problem
+	    Button problemBorrowButton = new Button("Check borrow's problems");
+	    //problemBorrowButton.setOnAction();
+	    // If no borrow is selected, the button is disable
+	    problemBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
+	    
+	    // Button to see the borrow's return
+	    Button returnBorrowButton = new Button("Validate borrow's returns");
+	    returnBorrowButton.setOnAction(new ReturnBorrowButtonHandler(borrowsTable));
+	    // If no borrow is selected, the button is disable
+	    returnBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
 	    
 	    // We change the number of pages
 	    changingNumberOfPages();
 	    
-	    // We update the tableView to display 15 users starting from index 0
+	    // We update the tableView to display 15 borrow starting from index 0
         changeTableView(0, ROWS_PER_PAGE);
         
         // If we check it we display the late borrows and if not we display all the borrows
@@ -110,9 +122,13 @@ public class BorrowsTable {
 	    HBox checkBoxContainer = new HBox(10);
 	    checkBoxContainer.getChildren().addAll(lateBorrowCheckBox, onGoingBorrowCheckBox, finishedBorrowCheckBox);
 	    
+	    // The HBox containing the delete, problem and return button
+	    HBox buttonsContainer = new HBox(10);
+	    buttonsContainer.getChildren().addAll(deleteBorrowButton, problemBorrowButton, returnBorrowButton);
+	    
 	    // VBox containing the borrowsTable and the delete button
 	 	VBox tableViewVBox = new VBox(20);
-	    tableViewVBox.getChildren().addAll(borrowsTablePagination, deleteBorrowButton);
+	    tableViewVBox.getChildren().addAll(borrowsTablePagination, buttonsContainer);
 	    
 	    // VBox containing the nodes for the users table
         borrowsTableVBox = new VBox(20);
@@ -181,6 +197,7 @@ public class BorrowsTable {
 		dataWithAllBorrow();
 		
 		borrowsTable = new TableView<>();
+		borrowsTable.setPlaceholder(new Label("No rows to display"));
 		
 		// Column for the borrow's ID
 		idCol = new TableColumn<>("Borrow's ID");

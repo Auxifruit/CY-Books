@@ -1,5 +1,10 @@
 package presentation;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+
+import abstraction.Borrow;
+import abstraction.db.DBConnect;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -29,8 +34,8 @@ public class LibraryApplication extends Application {
 	private UserCreation usersCreation;
 	// The class containing the pane to modify an user
 	private UserModification userModification;
-	// The class containing the pane to display the user's profil
-	private UserProfil userProfil;
+	// The class containing the pane to display the user's profile
+	private UserProfile userProfile;
 	// The VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
 	private VBox containerButtonChangeCenterUsersApp;
 	
@@ -68,7 +73,7 @@ public class LibraryApplication extends Application {
 	    userModification = new UserModification(usersTable.getUsersTable());
 	    
 	    // User's Profil
-	    userProfil = new UserProfil(usersTable.getUsersTable());
+	    userProfile = new UserProfile(usersTable.getUsersTable());
 	    
     	// The VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
  		containerButtonChangeCenterUsersApp = createButtonChangeCenterUsers();
@@ -123,9 +128,9 @@ public class LibraryApplication extends Application {
  	    // If no user is selected, the button is disable
  	    goToUserModificationButton.disableProperty().bind(Bindings.isEmpty(usersTable.getUsersTable().getSelectionModel().getSelectedItems()));
  	    
- 	    Button goToUserProfile = new Button("Check profil");
+ 	    Button goToUserProfile = new Button("Check profile");
  	    goToUserProfile.setOnAction(e -> {
-	    	mainBorderPane.setCenter(userProfil.getUsersProfilTableVBox());
+	    	mainBorderPane.setCenter(userProfile.getUsersProfileTableVBox());
 	    });
 	    
 	    // If no user is selected, the button is disable
@@ -242,7 +247,16 @@ public class LibraryApplication extends Application {
 		return allContainer;
 	}
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {	
+		/*
+		Borrow b2 = new Borrow(152, 5, "2", LocalDate.now(), LocalDate.now().plusDays(50), false);
+		try {
+			DBConnect.addBorrowInTable(b2);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
 		launch(args);
 	}
 }

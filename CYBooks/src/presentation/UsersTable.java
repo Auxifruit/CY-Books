@@ -186,8 +186,9 @@ public class UsersTable {
 		dataWithAllValues();
 		
 		usersTable = new TableView<>();
-		
-		 // Column for the user's ID
+		usersTable.setPlaceholder(new Label("No rows to display"));
+
+		// Column for the user's ID
 		idCol = new TableColumn<>("ID");
 		idCol.setMinWidth(100);
 		idCol.setCellValueFactory(new PropertyValueFactory<User, Integer>("id"));
