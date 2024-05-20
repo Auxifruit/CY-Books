@@ -8,7 +8,7 @@ import java.time.LocalDate;
  */
 public class Book {
 	protected static long MAX_BORROW_TIME = 30;
-	protected int isbn;
+	protected String isbn;
 	protected String title;
 	protected String author;
 	protected LocalDate publishedDate;
@@ -26,7 +26,7 @@ public class Book {
 	 * @param type the book's type
 	 * @param editor the book's editor
 	 */
-	public Book(int isbn, String title, String author, String publishedDate, String theme, String type, String editor) {
+	public Book(String isbn, String title, String author, String publishedDate, String theme, String type, String editor) {
 		this.isbn = isbn;
 		this.title = title;
 		this.author = author;
@@ -40,7 +40,7 @@ public class Book {
      * get the book's isbn
      * @return the book's isbn
      */
-	public int getIsbn() {
+	public String getIsbn() {
 		return isbn;
 	}
 
@@ -48,7 +48,7 @@ public class Book {
      * isbn setter method
      * @param isbn the book's isbn
      */
-	public void setIsbn(int isbn) {
+	public void setIsbn(String isbn) {
 		this.isbn = isbn;
 	}
 
@@ -154,7 +154,8 @@ public class Book {
 	 */
 	@Override
 	public String toString() {
-		return "ISBN : " + getIsbn() +
+		return "Book : " +
+				"\nISBN : " + getIsbn() +
 				"\nTitle : " + getTitle() +
 				"\nAuthor : " + getAuthor() +
 				"\nPublished date : " + getPublishedDate() +
