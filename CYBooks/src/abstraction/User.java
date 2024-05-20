@@ -15,13 +15,12 @@ import javafx.beans.property.StringProperty;
 
 public class User {
 	protected static int MAX_BORROW_NUMBER = 3;
-	protected static int compteurId = 1;
+	public static int counterId = 1;
 	protected static List<User> allUser = new ArrayList<>();
 	protected IntegerProperty id;
 	protected StringProperty lastname;
 	protected StringProperty firstname;
 	protected StringProperty email;
-	protected List<Borrow> borrowHistory = new ArrayList<>();
 
     /**
      * User constructor without the id
@@ -33,7 +32,7 @@ public class User {
     	this.lastname = new SimpleStringProperty(lastname);
         this.firstname = new SimpleStringProperty(firstname);
         this.email = new SimpleStringProperty(email);
-        this.id = new SimpleIntegerProperty(compteurId++);
+        this.id = new SimpleIntegerProperty(counterId++);
         allUser.add(this);
     }
     
@@ -142,6 +141,7 @@ public class User {
     public String getEmail() {
 		return email.get();
 	}
+    
     /**
      * email setter method
      * @param email the user's email
@@ -159,14 +159,6 @@ public class User {
     }
 	
 	/**
-     * Get the user's borrow history
-     * @return the user's borrow history
-     */
-	public List<Borrow> getBorrowHistory() {
-		return borrowHistory;
-	}
-	
-	/**
 	 * Get the list of all the users
 	 * @return the list of all the users
 	 */
@@ -174,6 +166,23 @@ public class User {
 		return allUser;
 	}
 
+	public static boolean getExist(int id ) {
+		for(User u : User.getAllUser()) {
+			if (u.getId() == id){
+				return true ; 
+			}
+		}
+		return false ;
+	}
+	
+	public static boolean getExist(User k) {
+		for(User u : User.getAllUser()) {
+			if (u.equals(k)){
+				return true ; 
+			}
+		}
+		return false ;
+	}
 	/**
 	 * toString method for User
 	 * @return the string to print an user
@@ -199,7 +208,7 @@ public class User {
     	}
     	User u = (User) obj;
     	return this.getFirstname().equals(u.getFirstname()) && this.getLastname().equals(u.getLastname()) && this.getEmail().equals(u.getEmail())
-    			&& this.getId() == u.getId() && this.getBorrowHistory().equals(u.getBorrowHistory());
+    			&& this.getId() == u.getId();
     }
 
 }
