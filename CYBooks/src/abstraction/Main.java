@@ -201,8 +201,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException, SQLException {
     	try {
-    		//DBConnect.readUsersTable();
-			//DBConnect.readBorrowsTable();
+    		DBConnect.readUsersTable();
+		DBConnect.readBorrowsTable();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
