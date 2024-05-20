@@ -134,8 +134,8 @@ public class DBConnect {
 			
 			co.close();
 			
-			// We update the User's class counterId to note have duplicate id if we have at least 2 element
-			if(User.getAllUser().size() > 1) {
+			// We update the User's class counterId to note have duplicate id if we have at least 1 element
+			if(User.getAllUser().size() > 0) {
 				User.setCounterId(User.getAllUser().get(User.getAllUser().size() - 1).getId() + 1);
 			}
 			
@@ -216,7 +216,7 @@ public class DBConnect {
 
 	/**
 	 * Method to modify an User in the database
-	 * @param userToModifysID the id of the user we want to modify
+	 * @param userToModify the user we want to modify
 	 * @param oldLastname the user's old last name
 	 * @param oldFirstname the user's old first name
 	 * @param oldEmail the user's old e-mail
@@ -225,10 +225,10 @@ public class DBConnect {
 	 * @param newEmail the user's new email
 	 * @throws SQLException if we have an exception about SQL
 	 */
-	public static void modifyUserInTable(int userToModifysID, String oldLastname, String oldFirstname, String oldEmail, String newLastname, String newFirstname, String newEmail) throws SQLException {
+	public static void modifyUserInTable(User userToModify, String newLastname, String newFirstname, String newEmail) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
 		final String query = "UPDATE " + USER_TABLE + " SET " + LAST_NAME + " = ?, " + FIRST_NAME + " = ?, " + EMAIL + " = ?  "
-				+ "WHERE " + ID + " = ? and " + LAST_NAME + " = ? and " + FIRST_NAME + " = ? and " + EMAIL + " = ?";
+				+ "WHERE " + ID + " = ?";
 		
 		try {
 			Connection co = quickconnect();
@@ -240,11 +240,7 @@ public class DBConnect {
 			ps.setString(1, newLastname);
 			ps.setString(2, newFirstname);
 			ps.setString(3, newEmail);
-			
-			ps.setInt(4, userToModifysID);
-			ps.setString(5, oldLastname);
-			ps.setString(6, oldFirstname);
-			ps.setString(7, oldEmail);
+			ps.setInt(4, userToModify.getId());
 			
 			ps.executeUpdate();
 			
@@ -401,7 +397,7 @@ public class DBConnect {
 
 	/**
 	 * Method to modify a Borrow in the database
-	 * @param borrowToModifysID the id of the borrow we want to modify
+	 * @param borrowToModifythe borrow we want to modify
 	 * @param oldBorrowDate the borrow's old date
 	 * @param oldReturnDate the borrow's old return date
 	 * @param oldEffectiveReturnDate the borrow's old effective return date
@@ -410,10 +406,10 @@ public class DBConnect {
 	 * @param newEffectiveReturnDate the borrow's new effective return date
 	 * @throws SQLException if we have an exception about SQL
 	 */
-	public static void modifyBorrowInTable(int borrowToModifysID, String oldBorrowDate, String oldReturnDate, String oldEffectiveReturnDate, String newBorrowDate, String newReturnDate, String newEffectiveReturnDate) throws SQLException {
+	public static void modifyBorrowInTable(Borrow borrowToModify, String newBorrowDate, String newReturnDate, String newEffectiveReturnDate) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
 		final String query = "UPDATE " + BORROW_TABLE + " SET " + BORROW_START + " = ?, " + BORROW_END + " = ?, " + BORROW_REAL_END + " = ?  "
-				+ "WHERE " + ID + " = ? and " + BORROW_START + " = ? and " + BORROW_END + " = ? and " + BORROW_REAL_END + " = ?";
+				+ "WHERE " + ID + " = ?";
 		
 		try {
 			Connection co = quickconnect();
@@ -425,11 +421,7 @@ public class DBConnect {
 			ps.setString(1, newBorrowDate);
 			ps.setString(2, newReturnDate);
 			ps.setString(3, newEffectiveReturnDate);
-			
-			ps.setInt(4, borrowToModifysID);
-			ps.setString(5, oldBorrowDate);
-			ps.setString(6, oldReturnDate);
-			ps.setString(7, oldEffectiveReturnDate);
+			ps.setInt(4, borrowToModify.getId());
 			
 			ps.executeUpdate();
 			
