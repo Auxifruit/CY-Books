@@ -15,7 +15,7 @@ import javafx.beans.property.StringProperty;
 
 public class User {
 	protected static int MAX_BORROW_NUMBER = 3;
-	public static int counterId = 1;
+	protected static int counterId = 1;
 	protected static List<User> allUser = new ArrayList<>();
 	protected IntegerProperty id;
 	protected StringProperty lastname;
@@ -164,6 +164,21 @@ public class User {
 	 */
 	public static List<User> getAllUser() {
 		return allUser;
+	}
+	
+	/**
+	 * Get the counterId of the class Borrow
+	 * @return the counterId of the class Borrow
+	 */
+	public static int getCounterId() {
+		return counterId;
+	}
+	
+	/**
+	 * Setter for the counterId of the class Borrow
+	 */
+	public static void setCounterId(int newCounterId) {
+		counterId = newCounterId;
 	}
 
 	/**

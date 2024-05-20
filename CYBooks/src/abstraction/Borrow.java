@@ -16,7 +16,7 @@ import javafx.beans.property.StringProperty;
  * @author CYTech Student
  */
 public class Borrow {
-	public static int counterId = 1;
+	protected static int counterId = 1;
 	protected static List<Borrow> allBorrows = new ArrayList<>();
 	protected IntegerProperty id;
 	protected IntegerProperty usersID;
@@ -269,14 +269,40 @@ public class Borrow {
 	}
 	
 	/**
+	 * Get the counterId of the class Borrow
+	 * @return the counterId of the class Borrow
+	 */
+	public static int getCounterId() {
+		return counterId;
+	}
+	
+	/**
+	 * Setter for the counterId of the class Borrow
+	 */
+	public static void setCounterId(int newCounterId) {
+		counterId = newCounterId;
+	}
+	
+	/**
 	 * Method to check is a borrow is late, if true, changed the late state to true
-	 * @return true if the borrow is late and false if not
 	 */
 	public void checkBorrowLate() {
 		LocalDate today = LocalDate.now();
 		
 		if(today.isAfter(LocalDate.parse(getReturnDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
 			this.setLate(true);
+		}
+	}
+	
+	/**
+	 * Method to check the statue of all the borrows
+	 * @return 
+	 */
+	public static void checkAllborrowsLate() {
+		for(Borrow b : Borrow.getAllBorrow()) {
+			if(!(b.equals(null))) {
+				b.checkBorrowLate();
+			}
 		}
 	}
 	
