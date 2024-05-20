@@ -41,6 +41,8 @@ public class LibraryApplication extends Application {
 	
 	// The class containing the pane and the table for the borrows
 	private BorrowsTable borrowsTable;
+	// The class containing the pane to modify a borrow
+	private BorrowModification borrowModification;
 	// The VBox containing the buttons to change the center of the main BorderPane to Borrows oriented Pane
 	private VBox containerButtonChangeCenterBorrowsApp;
 	
@@ -58,6 +60,8 @@ public class LibraryApplication extends Application {
 	    stage.setWidth(1100);
 	    stage.setHeight(700);
 		
+	    DBConnect.createTables();
+	    
 		mainBorderPane = new BorderPane();
 		
 		// HBox containing all the button to change between User oriented scenes
@@ -72,7 +76,7 @@ public class LibraryApplication extends Application {
 	    // User Modification pane
 	    userModification = new UserModification(usersTable.getUsersTable());
 	    
-	    // User's Profil
+	    // User's Profile
 	    userProfile = new UserProfile(usersTable.getUsersTable());
 	    
     	// The VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
@@ -80,6 +84,9 @@ public class LibraryApplication extends Application {
 	    
  		// Borrow Table pane
  		borrowsTable = new BorrowsTable();
+ 		
+ 		// Borrow Modification pane
+ 		borrowModification = new BorrowModification(borrowsTable.getBorrowsTable());
  		
  		// Book search pane
  		bookSearch = new BookSearch();
@@ -171,8 +178,11 @@ public class LibraryApplication extends Application {
 		
 		Button goToBorrowsModificationButton = new Button("Modify a borrow");
 		goToBorrowsModificationButton.setOnAction(e -> {
+			mainBorderPane.setCenter(borrowModification.getBorrowsModificationVBox());
 		});
-		goToBorrowsModificationButton.setDisable(true);
+		
+		// If no user is selected, the button is disable
+		goToBorrowsModificationButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getBorrowsTable().getSelectionModel().getSelectedItems()));
 		
 		buttonsContainer.getChildren().addAll(goToUsersTableButton, goToBorrowsCreationButton, goToBorrowsModificationButton);
 		 

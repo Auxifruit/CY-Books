@@ -7,6 +7,7 @@ import abstraction.Borrow;
 import abstraction.db.DBConnect;
 import control.borrowControl.DeleteBorrowButtonHandler;
 import control.borrowControl.ReturnBorrowButtonHandler;
+import control.borrowControl.CancelBorrowButtonHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -89,13 +90,20 @@ public class BorrowsTable {
 	    Button problemBorrowButton = new Button("Check borrow's problems");
 	    //problemBorrowButton.setOnAction();
 	    // If no borrow is selected, the button is disable
-	    problemBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
+	    //problemBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
+	    problemBorrowButton.setDisable(true);
 	    
-	    // Button to see the borrow's return
-	    Button returnBorrowButton = new Button("Validate borrow's returns");
+	    // Button to validate the borrow's return
+	    Button returnBorrowButton = new Button("Validate borrow's return");
 	    returnBorrowButton.setOnAction(new ReturnBorrowButtonHandler(borrowsTable));
 	    // If no borrow is selected, the button is disable
 	    returnBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
+	    
+	    // Button to cancel the borrow's return
+	    Button cancelReturnBorrowButton = new Button("Cancel borrow's return");
+	    cancelReturnBorrowButton.setOnAction(new CancelBorrowButtonHandler(borrowsTable));
+	    // If no borrow is selected, the button is disable
+	    cancelReturnBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
 	    
 	    // We change the number of pages
 	    changingNumberOfPages();
@@ -124,7 +132,7 @@ public class BorrowsTable {
 	    
 	    // The HBox containing the delete, problem and return button
 	    HBox buttonsContainer = new HBox(10);
-	    buttonsContainer.getChildren().addAll(deleteBorrowButton, problemBorrowButton, returnBorrowButton);
+	    buttonsContainer.getChildren().addAll(deleteBorrowButton, problemBorrowButton, returnBorrowButton, cancelReturnBorrowButton);
 	    
 	    // VBox containing the borrowsTable and the delete button
 	 	VBox tableViewVBox = new VBox(20);
@@ -402,7 +410,7 @@ public class BorrowsTable {
 	 * Getter to get the table view displaying the borrows
 	 * @return the table view displaying the borrows
 	 */
-    public TableView<Borrow> getUsersTable() {
+    public TableView<Borrow> getBorrowsTable() {
         return borrowsTable;
     }
 
