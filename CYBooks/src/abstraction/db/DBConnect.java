@@ -336,7 +336,7 @@ public class DBConnect {
 
 			int id = borrowToAdd.getId();
 			int usersID = borrowToAdd.getUsersID();
-			String booksID = borrowToAdd.getBooksISBN();
+			String booksID = borrowToAdd.getBooksIdentifier();
 			String borrowDate = borrowToAdd.getDateBorrow();
 			String returnDate = borrowToAdd.getReturnDate();
 			String effectiveReturnDate = borrowToAdd.getEffectiveReturnDate();
@@ -468,9 +468,69 @@ public class DBConnect {
 		}
 	}
 	
+	/**
+	 * Method to count the number of borrow for one user by it's ID
+	 * @param usersID the user's ID
+	 * @return the number of borrow for one user by it's ID
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static int countUsersBorrow(int usersID) throws SQLException {
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to call the query
+			Statement smt = co.createStatement();
+
+			// Allow us to store the result of the query 
+			ResultSet res = smt.executeQuery("SELECT COUNT(*) AS total FROM " + BORROW_TABLE + " WHERE " + USER_ID + " = " + usersID + " ;");
+			
+			// Get the number of borrow for one user
+			int nombreEmprunt = res.getInt("total");
+			
+			co.close();			
+			
+			return nombreEmprunt;
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
+	/**
+	 * Method to count the number of time a book is borrowed by it's identifier
+	 * @param booksID the book's ID
+	 * @return the number of time a book is borrowed by it's identifier
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static int countBookBorrowed(String booksID) throws SQLException {
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to call the query
+			Statement smt = co.createStatement();
+
+			// Allow us to store the result of the query 
+			ResultSet res = smt.executeQuery("SELECT COUNT(*) AS total FROM " + BORROW_TABLE + " WHERE " + BOOK_ID + " = '" + booksID + "' and " + BORROW_REAL_END + " = '' ;");
+			
+			// Get the number of book is borrowed
+			int nombreEmprunt = res.getInt("total");
+			
+			co.close();			
+			
+			return nombreEmprunt;
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}
+	
 	public static void main(String[] args) throws SQLException {
 		//System.out.println(BORROW_TABLE_STRUCTURE);
-		// createTables();
+		//createTables();
 		
 		/*
 		 * try { Connection co = DriverManager.getConnection("jdbc:sqlite:cybase.db");
