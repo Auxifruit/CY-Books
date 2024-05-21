@@ -194,7 +194,11 @@ public class User {
 		}
 		return false ;
 	}
-	
+
+	    /**
+     * Get the user with its id 
+     * @return the use that you want if he exist or null
+     */
 	public static User getUserById(int id) {
 		for ( User u : User.getAllUser()) {
 			if (u.getId() == id) {
