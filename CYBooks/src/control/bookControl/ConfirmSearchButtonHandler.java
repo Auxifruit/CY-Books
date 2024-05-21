@@ -3,6 +3,9 @@ package control.bookControl;
 import java.util.ArrayList;
 import java.util.List;
 
+import abstraction.API;
+import abstraction.Book;
+import presentation.BooksTable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -16,6 +19,8 @@ import javafx.scene.control.Alert.AlertType;
  * The class to handle the event of the button to search a book
  */
 public class ConfirmSearchButtonHandler implements EventHandler<ActionEvent> {
+	private BooksTable booksTable;
+	
     private TextField titleTextField;
     private TextField authorTextField;
     private TextField typeTextField;
@@ -33,12 +38,15 @@ public class ConfirmSearchButtonHandler implements EventHandler<ActionEvent> {
     /**
      * Constructor for ConfirmSearchButtonHandler
      * @param booksTitleLabel book's title
+     * @param booksTable the data and TableView with all the books
      * @param authorTextField author's name
      * @param typeTextField book's type
      * @param dateTextField book's published date
      * @param identifierTextField book's identifier
      */
-    public ConfirmSearchButtonHandler(TextField titleTextField, TextField authorTextField, TextField typeTextField, TextField dateTextField, TextField languageTextField, TextField identifierTextField, ToggleGroup anyOrAllTitle, ToggleGroup anyOrAllAuthor, ToggleGroup anyOrAllType, ToggleGroup anyOrAllDate, ToggleGroup anyOrAllLanguage, ToggleGroup anyOrAllIdentifier) {
+    public ConfirmSearchButtonHandler(BooksTable booksTable, TextField titleTextField, TextField authorTextField, TextField typeTextField, TextField dateTextField, TextField languageTextField, TextField identifierTextField, ToggleGroup anyOrAllTitle, ToggleGroup anyOrAllAuthor, ToggleGroup anyOrAllType, ToggleGroup anyOrAllDate, ToggleGroup anyOrAllLanguage, ToggleGroup anyOrAllIdentifier) {
+    	this.booksTable = booksTable;
+    	
         this.titleTextField = titleTextField;
         this.authorTextField = authorTextField;
         this.typeTextField = typeTextField;
@@ -168,8 +176,18 @@ public class ConfirmSearchButtonHandler implements EventHandler<ActionEvent> {
 	    	getDateTextField().setText("");
 	    	getLanguageTextField().setText("");
 	    	getIdentifierTextField().setText("");
+	    		    	
+	    	System.out.println("We searching books...");
 	    	
-	    	System.out.println(query);
+	    	List<Book> bookList = API.searchBook(query.toArray(new String[0]), 60);
+	    	
+	    	System.out.println("Searching finished !");
+	    	
+	    	booksTable.updateData(bookList);
+
+	    	Alert searchBookAlert = new Alert(Alert.AlertType.CONFIRMATION, "The search is finished, you can check the books table.", ButtonType.OK);
+	    	searchBookAlert.setTitle("Books search confirmation");
+	    	searchBookAlert.showAndWait();
 		}
 	}
 }
