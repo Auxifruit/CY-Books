@@ -20,7 +20,7 @@ public class Borrow {
 	protected static List<Borrow> allBorrows = new ArrayList<>();
 	protected IntegerProperty id;
 	protected IntegerProperty usersID;
-	protected StringProperty booksISBN;
+	protected StringProperty booksIdentifier;
 	protected StringProperty borrowDate;
 	protected StringProperty returnDate;
 	protected StringProperty effectiveReturnDate;
@@ -30,12 +30,12 @@ public class Borrow {
     /**
      * Borrow constructor with all fields as parameters
      * @param userID the ID of the user who borrowed the book
-     * @param bookISBN the ISBN of the borrowed book
+     * @param bookIdentifier the Identifier of the borrowed book
      * @param dateBorrow the borrow's date
      */
-    public Borrow(int usersID, String booksISBN, LocalDate dateBorrow) {
+    public Borrow(int usersID, String booksIdentifier, LocalDate dateBorrow) {
         this.usersID = new SimpleIntegerProperty(usersID);
-        this.booksISBN =new SimpleStringProperty(booksISBN);
+        this.booksIdentifier =new SimpleStringProperty(booksIdentifier);
         this.borrowDate = new SimpleStringProperty(dateBorrow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.MAX_BORROW_TIME).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.effectiveReturnDate = new SimpleStringProperty("");
@@ -48,13 +48,13 @@ public class Borrow {
     /**
      * Borrow constructor with all fields as parameters except the effectiveReturnDate
      * @param userID the ID of the user who borrowed the book
-     * @param bookISBN the ISBN of the borrowed book
+     * @param bookIdentifier the Identifier of the borrowed book
      * @param dateBorrow the borrow's date
      * @param returnDate the borrow's return date
      * @param late the statue of the borrow
      */
-    public Borrow(int id, int usersID, String booksISBN, LocalDate dateBorrow, LocalDate returnDate, boolean late) {
-        this(usersID, booksISBN, dateBorrow);
+    public Borrow(int id, int usersID, String booksIdentifier, LocalDate dateBorrow, LocalDate returnDate, boolean late) {
+        this(usersID, booksIdentifier, dateBorrow);
         this.returnDate = new SimpleStringProperty(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.late = new SimpleBooleanProperty(late);
         this.id = new SimpleIntegerProperty(id);
@@ -63,14 +63,14 @@ public class Borrow {
     /**
      * Borrow constructor with all fields as parameters
      * @param userID the ID of the user who borrowed the book
-     * @param bookISBN the ISBN of the borrowed book
+     * @param bookIdentifier the Identifier of the borrowed book
      * @param dateBorrow the borrow's date
      * @param returnDate the borrow's return date
      * @param effectiveReturnDate the borrow's effective return date
      * @param late the statue of the borrow
      */
-    public Borrow(int id, int usersID, String booksISBN, LocalDate dateBorrow, LocalDate returnDate, LocalDate effectiveReturnDate, boolean late) {
-        this(usersID, booksISBN, dateBorrow);
+    public Borrow(int id, int usersID, String booksIdentifier, LocalDate dateBorrow, LocalDate returnDate, LocalDate effectiveReturnDate, boolean late) {
+        this(usersID, booksIdentifier, dateBorrow);
         this.returnDate = new SimpleStringProperty(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.effectiveReturnDate = new SimpleStringProperty(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.late = new SimpleBooleanProperty(late);
@@ -126,27 +126,27 @@ public class Borrow {
     }
 
     /**
-     * Get the ISBN of the borrowed book
-     * @return the ISBN of the borrowed book
+     * Get the Identifier of the borrowed book
+     * @return the Identifier of the borrowed book
      */
-    public String getBooksISBN() {
-        return booksISBN.get();
+    public String getBooksIdentifier() {
+        return booksIdentifier.get();
     }
 
     /**
-     * Book's ISBN setter method
+     * Book's Identifier setter method
      * @param book new the borrowed book
      */
     public void setBook(Book book) {
-        this.booksISBN.set(String.valueOf(book.getIsbn()));
+        this.booksIdentifier.set(String.valueOf(book.getIdentifier()));
     }
     
     /**
-     * Method to return the StringProperty of the book's ISBN for the TableView
-     * @return the IntegerProperty of the book's ISBN that been borrowed
+     * Method to return the StringProperty of the book's Identifier for the TableView
+     * @return the IntegerProperty of the book's Identifier that been borrowed
      */
     public StringProperty isbnProperty() {
-        return booksISBN;
+        return booksIdentifier;
     }
 
     /**
@@ -371,6 +371,44 @@ public class Borrow {
 	}
 	
 	/**
+	 * Method to see if an User can borrow another book
+	 * @param userID the user's ID
+	 * @return true if the user can borrow another book and false if not
+	 */
+	public static boolean canUserBorrow(int userID) {
+		int count = 0;
+		
+		for(Borrow b : getAllBorrow()) {
+			if(b.getUsersID() == userID) {
+				count++;
+			}
+			if(count == User.getMaxBorrowNumber()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Method to see if an User can borrow another book
+	 * @param userID the user's ID
+	 * @return true if the user can borrow another book and false if not
+	 */
+	public static boolean canBookBeBorrowed(String bookID) {
+		int count = 0;
+		
+		for(Borrow b : getAllBorrow()) {
+			if(b.getBooksIdentifier().equals(bookID)) {
+				count++;
+			}
+			if(count == Book.getCanBeBorrow()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * toString method for Borrow
 	 * @return the string to print a borrow
 	 */
@@ -379,7 +417,7 @@ public class Borrow {
         String text =  "Borrow : " +
         		"\nID: " + getId() +
         		"\nUser's ID : "+ getUsersID() +
-        		"\nBook's ISBN : " + getBooksISBN() +
+        		"\nBook's identifier : " + getBooksIdentifier() +
         		"\nBorrow date : " + getDateBorrow() +
         		"\nReturn date : " + getReturnDate();
         if(getProblems().size() > 0) {
@@ -399,7 +437,7 @@ public class Borrow {
     		return false;
     	}
     	Borrow b = (Borrow) obj;
-    	return this.getUsersID() == b.getUsersID() && this.getBooksISBN().equals(b.getBooksISBN()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
+    	return this.getUsersID() == b.getUsersID() && this.getBooksIdentifier().equals(b.getBooksIdentifier()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
     			this.getReturnDate().equals(b.getReturnDate()) && this.getProblems().equals(b.getProblems());
     }
   
