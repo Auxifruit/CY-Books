@@ -194,6 +194,15 @@ public class User {
 		}
 		return false ;
 	}
+	
+	public static User getUserById(int id) {
+		for ( User u : User.getAllUser()) {
+			if (u.getId() == id) {
+				return u;
+			}
+		}
+		return null ;
+	}
 		
 	/**
 	 * Method to check if an user exist
