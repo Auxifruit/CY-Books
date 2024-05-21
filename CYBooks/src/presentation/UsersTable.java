@@ -62,7 +62,7 @@ public class UsersTable {
 	    
 	    // Button to delete an user
 	    Button deleteUserButton = new Button("Delete user");
-	    deleteUserButton.setOnAction(new DeleteUserButtonHandler(data, usersTable, usersTablePagination));
+	    deleteUserButton.setOnAction(new DeleteUserButtonHandler(this));
 	    
 	    // If no user is selected, the button is disable
 	    deleteUserButton.disableProperty().bind(Bindings.isEmpty(usersTable.getSelectionModel().getSelectedItems()));
@@ -186,7 +186,7 @@ public class UsersTable {
 		dataWithAllValues();
 		
 		usersTable = new TableView<>();
-		usersTable.setPlaceholder(new Label("No rows to display"));
+		usersTable.setPlaceholder(new Label("No users to display"));
 
 		// Column for the user's ID
 		idCol = new TableColumn<>("ID");
@@ -218,6 +218,9 @@ public class UsersTable {
 	    usersTable.setItems(data);
 	}
 	
+	/**
+	 * Method to initialize all the user's informations
+	 */
 	private void initializeData() {
 		// We load the values of the users from the database
 	    try {
@@ -273,4 +276,28 @@ public class UsersTable {
     public VBox getUsersTableVBox() {
     	return usersTableVBox;
     }
+    
+    /**
+   	 * Method to update the ObservableList data
+   	 */
+   	public void updateData() {
+   		// We clear the data
+   		data.clear();
+   		
+   		for(User u : User.getAllUser()) {
+   	    	if(!(u.equals(null))) {
+   	    		data.add(u);
+   	    	}
+   	    }
+   		
+   		// We set the new data
+   		getUsersTable().setItems(data);
+   		
+   		// We update the number of pages necessary to display all the data
+   	    changingNumberOfPages();
+   	    
+   	    // We update the tableView to display 15 users starting from index 0
+        changeTableView(0, ROWS_PER_PAGE);
+   	}
+
 }

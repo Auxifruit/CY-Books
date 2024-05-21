@@ -36,7 +36,7 @@ import javafx.scene.text.Font;
  */
 public class BorrowsTable {
 	private VBox borrowsTableVBox;
-	
+		
 	private Pagination borrowsTablePagination;
 	public final static int ROWS_PER_PAGE = 15;
 	
@@ -47,7 +47,7 @@ public class BorrowsTable {
 	private TableView<Borrow> borrowsTable;
 	private TableColumn<Borrow, Integer> idCol;
 	private TableColumn<Borrow, Integer> usersIdCol;
-	private TableColumn<Borrow, String> booksISBNCol;
+	private TableColumn<Borrow, String> booksIdentifierCol;
 	private TableColumn<Borrow, String> borrowsDateCol;
 	private TableColumn<Borrow, String> borrowsReturnDateCol;
 	private TableColumn<Borrow, String> borrowsEffectiveReturnDateCol;
@@ -82,7 +82,7 @@ public class BorrowsTable {
 		
 		// Button to delete a borrow
 	    Button deleteBorrowButton = new Button("Delete borrow");
-	    deleteBorrowButton.setOnAction(new DeleteBorrowButtonHandler(data, borrowsTable, borrowsTablePagination));
+	    deleteBorrowButton.setOnAction(new DeleteBorrowButtonHandler(this));
 	    // If no borrow is selected, the button is disable
 	    deleteBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
 	    
@@ -205,7 +205,7 @@ public class BorrowsTable {
 		dataWithAllBorrow();
 		
 		borrowsTable = new TableView<>();
-		borrowsTable.setPlaceholder(new Label("No rows to display"));
+		borrowsTable.setPlaceholder(new Label("No borrows to display"));
 		
 		// Column for the borrow's ID
 		idCol = new TableColumn<>("Borrow's ID");
@@ -217,10 +217,10 @@ public class BorrowsTable {
 		usersIdCol.setMinWidth(100);
 		usersIdCol.setCellValueFactory(new PropertyValueFactory<Borrow, Integer>("usersID"));
 		
-		// Column for the book's ISBN
-	    booksISBNCol = new TableColumn<>("Book's ISBN");
-	    booksISBNCol.setMinWidth(100);
-	    booksISBNCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("booksISBN"));
+		// Column for the book's Identifier
+	    booksIdentifierCol = new TableColumn<>("Book's Identifier");
+	    booksIdentifierCol.setMinWidth(100);
+	    booksIdentifierCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("booksIdentifier"));
 
 	    // Column for the borrow's date
 	    borrowsDateCol = new TableColumn<>("Borrow's date");
@@ -257,7 +257,7 @@ public class BorrowsTable {
 	    borrowsLate.setCellValueFactory(new PropertyValueFactory<Borrow, Boolean>("late"));
 
 	    // We add the column to our table
-	    borrowsTable.getColumns().addAll(idCol, usersIdCol, booksISBNCol, borrowsDateCol, borrowsReturnDateCol, borrowsEffectiveReturnDateCol,borrowsLate);
+	    borrowsTable.getColumns().addAll(idCol, usersIdCol, booksIdentifierCol, borrowsDateCol, borrowsReturnDateCol, borrowsEffectiveReturnDateCol,borrowsLate);
 	    
 	    // The columns take up all the table space
 	    borrowsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -430,4 +430,44 @@ public class BorrowsTable {
     	return borrowsTableVBox;
     }
 
+    /**
+	 * Method to update the ObservableList data
+	 */
+	public void updateData() {
+		//We reset the checkBoxes
+		lateBorrowCheckBox.setSelected(false);
+		onGoingBorrowCheckBox.setSelected(false);
+		finishedBorrowCheckBox.setSelected(false);
+		
+		// We clear the data
+		data.clear();
+		
+		for(Borrow b : Borrow.getAllBorrow()) {
+	    	if(!(b.equals(null))) {
+	    		data.add(b);
+	    	}
+	    }
+		
+		// We set the new data
+		getBorrowsTable().setItems(data);
+		
+		// We update the number of pages necessary to display all the data
+	    changingNumberOfPages();
+	    
+	    // We update the tableView to display 15 users starting from index 0
+        changeTableView(0, ROWS_PER_PAGE);
+	}
+
+	public CheckBox getLateBorrowCheckBox() {
+		return lateBorrowCheckBox;
+	}
+
+	public CheckBox getOnGoingBorrowCheckBox() {
+		return onGoingBorrowCheckBox;
+	}
+
+	public CheckBox getFinishedBorrowCheckBox() {
+		return finishedBorrowCheckBox;
+	}
+	
 }

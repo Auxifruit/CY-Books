@@ -1,9 +1,8 @@
 package presentation;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.ArrayList;
 
-import abstraction.Borrow;
+import abstraction.Book;
 import abstraction.db.DBConnect;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -46,6 +45,8 @@ public class LibraryApplication extends Application {
 	// The VBox containing the buttons to change the center of the main BorderPane to Borrows oriented Pane
 	private VBox containerButtonChangeCenterBorrowsApp;
 	
+	// The class containing the pane and the table for the books
+	private BooksTable booksTable;
 	// The class containing the pane to enter a book's information to search it
 	private BookSearch bookSearch;
 	// The VBox containing the buttons to change the center of the main BorderPane to Books oriented Pane
@@ -58,7 +59,7 @@ public class LibraryApplication extends Application {
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("CY-Books");
 	    stage.setWidth(1100);
-	    stage.setHeight(700);
+	    stage.setHeight(750);
 		
 	    DBConnect.createTables();
 	    
@@ -71,12 +72,12 @@ public class LibraryApplication extends Application {
 	    usersTable = new UsersTable();
 	    
 	    // User Creation pane
-	    usersCreation = new UserCreation(usersTable.getData(), usersTable.getUsersTable(), usersTable.getUsersTablePagination());
+	    usersCreation = new UserCreation(usersTable);
 
 	    // User Modification pane
 	    userModification = new UserModification(usersTable.getUsersTable());
 	    
-	    // User's Profile
+ 		// User's Profile we need to instantiate the profile after the borrows to get the historic
 	    userProfile = new UserProfile(usersTable.getUsersTable());
 	    
     	// The VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
@@ -88,8 +89,11 @@ public class LibraryApplication extends Application {
  		// Borrow Modification pane
  		borrowModification = new BorrowModification(borrowsTable.getBorrowsTable());
  		
+ 		// Borrow Table pane
+ 		booksTable = new BooksTable(new ArrayList<Book>(), borrowsTable, userProfile);
+
  		// Book search pane
- 		bookSearch = new BookSearch();
+ 		bookSearch = new BookSearch(booksTable);
  		
  		containerButtonChangeCenterBooksApp = createButtonChangeCenterBooks();
  		
@@ -116,7 +120,7 @@ public class LibraryApplication extends Application {
 		Separator sep = new Separator();
 		sep.setOrientation(Orientation.HORIZONTAL);
  		
- 		// Buttons to change scene
+ 		// Buttons to change the BorderPane's center
  		Button goToUsersTableButton = new Button("Users table");
  		goToUsersTableButton.setOnAction(e -> {
  			mainBorderPane.setCenter(usersTable.getUsersTableVBox());
@@ -138,6 +142,7 @@ public class LibraryApplication extends Application {
  	    Button goToUserProfile = new Button("Check profile");
  	    goToUserProfile.setOnAction(e -> {
 	    	mainBorderPane.setCenter(userProfile.getUsersProfileTableVBox());
+	    	userProfile.updateData();
 	    });
 	    
 	    // If no user is selected, the button is disable
@@ -165,16 +170,11 @@ public class LibraryApplication extends Application {
 		buttonsContainer.setAlignment(Pos.CENTER);
 		buttonsContainer.setPrefHeight(50);
 		
-		// Buttons to change scene
+		// Buttons to change the BorderPane's center
 		Button goToUsersTableButton = new Button("Borrows table");
 		goToUsersTableButton.setOnAction(e -> {
 			mainBorderPane.setCenter(borrowsTable.getBorrowsTableVBox());
 		});
-		
-		Button goToBorrowsCreationButton = new Button("Create a borrow");
-		goToBorrowsCreationButton.setOnAction(e -> {
-		});
-		goToBorrowsCreationButton.setDisable(true);
 		
 		Button goToBorrowsModificationButton = new Button("Modify a borrow");
 		goToBorrowsModificationButton.setOnAction(e -> {
@@ -184,7 +184,7 @@ public class LibraryApplication extends Application {
 		// If no user is selected, the button is disable
 		goToBorrowsModificationButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getBorrowsTable().getSelectionModel().getSelectedItems()));
 		
-		buttonsContainer.getChildren().addAll(goToUsersTableButton, goToBorrowsCreationButton, goToBorrowsModificationButton);
+		buttonsContainer.getChildren().addAll(goToUsersTableButton, goToBorrowsModificationButton);
 		 
 		allContainer.getChildren().addAll(sep, buttonsContainer);
 		allContainer.setPadding(new Insets(10, 10, 10, 10));
@@ -202,13 +202,19 @@ public class LibraryApplication extends Application {
 		buttonsContainer.setAlignment(Pos.CENTER);
 		buttonsContainer.setPrefHeight(50);
 		
-		// Buttons to change scene
+		// Buttons to change the BorderPane's center
+		Button goToBooksTableButton = new Button("Books table");
+		goToBooksTableButton.setOnAction(e -> {
+			mainBorderPane.setCenter(booksTable.getBooksTableVBox());
+		});
+		
+		// Buttons to change the BorderPane's center
 		Button goToSearchBookButton = new Button("Search books");
 		goToSearchBookButton.setOnAction(e -> {
 			mainBorderPane.setCenter(bookSearch.getCommandContainer());
 		});
 		
-		buttonsContainer.getChildren().addAll(goToSearchBookButton);
+		buttonsContainer.getChildren().addAll(goToSearchBookButton, goToBooksTableButton);
 		 
 		allContainer.getChildren().addAll(sep, buttonsContainer);
 		allContainer.setPadding(new Insets(10, 10, 10, 10));
@@ -230,7 +236,7 @@ public class LibraryApplication extends Application {
 		buttonContainer.setAlignment(Pos.CENTER);
 		buttonContainer.setPrefHeight(50);
 		
-		// Buttons to change scene
+		// Buttons to change the BorderPane's center and bottom
 		Button goToUsers = new Button("Users");
 		goToUsers.setOnAction(e -> {
 			mainBorderPane.setCenter(usersTable.getUsersTableVBox());

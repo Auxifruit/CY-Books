@@ -1,14 +1,10 @@
 package presentation;
 
-import abstraction.User;
 import control.userControl.CreateUserButtonHandler;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,20 +13,14 @@ import javafx.scene.text.Font;
 public class UserCreation {
 	private VBox userCreationVBox;
 	
-    private ObservableList<User> data;
-    private TableView<User> usersTable;
-    private Pagination usersTablePagination;
+    private UsersTable usersTable;
 
     /**
      * Constructor of the UserCreation class
-     * @param data the list containing all the informations
-     * @param usersTable the table view displaying the informations
-     * @param usersTablePagination the pagination of the table view
+     * @param usersTable the class containing the data and the table for the users
      */
-    public UserCreation(ObservableList<User> data, TableView<User> usersTable, Pagination usersTablePagination) {
-        this.data = data;
-        this.usersTable = usersTable;
-        this.usersTablePagination = usersTablePagination;
+    public UserCreation(UsersTable usersTable) {
+    	this.usersTable = usersTable;
         createUserCreationPane();
     }
 
@@ -78,7 +68,7 @@ public class UserCreation {
 	    
 	    // Button for creating an user
 	    Button createUserButton = new Button("Create new user");
-	    createUserButton.setOnAction(new CreateUserButtonHandler(data, usersTable, usersTablePagination, firstnameText, lastnameText, emailText));
+	    createUserButton.setOnAction(new CreateUserButtonHandler(usersTable, firstnameText, lastnameText, emailText));
 	    
 	    // We add all the node necessary to create an user 
 	    userInfoInput.getChildren().addAll(userCreationExplanation, firstnameHBox, lastnameHBox, emailHBox, createUserButton);

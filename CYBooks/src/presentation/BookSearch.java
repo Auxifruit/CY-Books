@@ -13,8 +13,11 @@ import javafx.scene.text.Font;
 
 public class BookSearch {
 	private VBox commandContainer;
+		
+	private BooksTable booksTable;
 
-	public BookSearch() {
+	public BookSearch(BooksTable booksTable) {
+		this.booksTable = booksTable;
 		createBookSearch();
 	}
 	
@@ -59,8 +62,6 @@ public class BookSearch {
 		
 		authorCommand.getChildren().addAll(authorLabel, buttonAnyAuthor, buttonAllAuthor, authorTextField);
 		
-		// HBox formatCommand = new HBox(10);
-
 		// Type
 		HBox typeCommand = new HBox(10);
 		Label typeLabel = new Label("Type : ");
@@ -126,7 +127,7 @@ public class BookSearch {
 		identifierCommand.getChildren().addAll(identifierLabel, buttonAnyIdentifier, buttonAllIdentifier, identifierTextField);
 		
 		Button confirmButton = new Button("Confirm");
-		confirmButton.setOnAction(new ConfirmSearchButtonHandler(titleTextField, authorTextField, typeTextField, dateTextField, languageTextField, identifierTextField, anyOrAllTitle, anyOrAllAuthor, anyOrAllType, anyOrAllDate, anyOrAllLanguage, anyOrAllIdentifier));
+		confirmButton.setOnAction(new ConfirmSearchButtonHandler(booksTable, titleTextField, authorTextField, typeTextField, dateTextField, languageTextField, identifierTextField, anyOrAllTitle, anyOrAllAuthor, anyOrAllType, anyOrAllDate, anyOrAllLanguage, anyOrAllIdentifier));
 		
 		VBox vbox = new VBox(10);
 		vbox.getChildren().addAll(bookSearchLabel, titleCommand, authorCommand, typeCommand, dateCommand, languageCommand, identifierCommand, confirmButton);

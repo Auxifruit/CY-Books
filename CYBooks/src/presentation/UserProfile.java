@@ -33,7 +33,7 @@ public class UserProfile {
 	public final static int ROWS_PER_PAGE = 10;
 	
 	private TableView<User> usersTable;
-	private User u;
+	private User user;
 	
 	private CheckBox lateBorrowCheckBox;
 	private CheckBox onGoingBorrowCheckBox;
@@ -41,7 +41,7 @@ public class UserProfile {
 	
 	private TableView<Borrow> usersBorrowTable;
 	private TableColumn<Borrow, Integer> idCol;
-	private TableColumn<Borrow, String> booksISBNCol;
+	private TableColumn<Borrow, String> booksIdentifierCol;
 	private TableColumn<Borrow, String> borrowsDateCol;
 	private TableColumn<Borrow, String> borrowsReturnDateCol;
 	private TableColumn<Borrow, String> borrowsEffectiveReturnDateCol;
@@ -106,7 +106,7 @@ public class UserProfile {
 	    // If the selected user changed we update the values of the labels
 	    usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 	        if (newSelection != null) {
-	        	u = newSelection;
+	        	user = newSelection;
 	        	
 	        	usersIDValue.setText(String.valueOf(newSelection.getId()));
 	           	usersFirstnameValue.setText(newSelection.getFirstname());
@@ -228,17 +228,17 @@ public class UserProfile {
 		dataWithAllUsersBorrow();
 		
 		usersBorrowTable = new TableView<>();
-		usersBorrowTable.setPlaceholder(new Label("No rows to display"));
+		usersBorrowTable.setPlaceholder(new Label("No borrows to display"));
 		
 		// Column for the borrow's ID
 		idCol = new TableColumn<>("Borrow's ID");
 		idCol.setMinWidth(100);
 		idCol.setCellValueFactory(new PropertyValueFactory<Borrow, Integer>("id"));
 				
-		// Column for the book's ISBN
-	    booksISBNCol = new TableColumn<>("Book's ISBN");
-	    booksISBNCol.setMinWidth(100);
-	    booksISBNCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("booksISBN"));
+		// Column for the book's Identifier
+	    booksIdentifierCol = new TableColumn<>("Book's Identifier");
+	    booksIdentifierCol.setMinWidth(100);
+	    booksIdentifierCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("booksIdentifier"));
 
 	    // Column for the borrow's date
 	    borrowsDateCol = new TableColumn<>("Borrow's date");
@@ -275,7 +275,7 @@ public class UserProfile {
 	    borrowsLate.setCellValueFactory(new PropertyValueFactory<Borrow, Boolean>("late"));
 
 	    // We add the column to our table
-	    usersBorrowTable.getColumns().addAll(idCol, booksISBNCol, borrowsDateCol, borrowsReturnDateCol, borrowsEffectiveReturnDateCol, borrowsLate);
+	    usersBorrowTable.getColumns().addAll(idCol, booksIdentifierCol, borrowsDateCol, borrowsReturnDateCol, borrowsEffectiveReturnDateCol, borrowsLate);
 	    
 	    // The columns take up all the table space
 	    usersBorrowTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -322,11 +322,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (u != null) {
+        if (user != null) {
         	
 	    	// We add all the user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == u.getId()) {
+	    		if(!(b.equals(null)) && b.getUsersID() == user.getId()) {
 	    			data.add(b);
 	    		}
 			}
@@ -340,10 +340,10 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 
-		if(u != null) {
+		if(user != null) {
 			// We add only the late borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == u.getId() && b.isLate()) {
+	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && b.isLate()) {
 	    			data.add(b);
 	    		}
 			}
@@ -357,11 +357,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (u != null) {
+        if (user != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == u.getId() && b.getEffectiveReturnDate().equals("")) {
+	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && b.getEffectiveReturnDate().equals("")) {
 	    			data.add(b);
 	    		}
 			}
@@ -375,11 +375,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (u != null) {
+        if (user != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == u.getId() && !(b.getEffectiveReturnDate().equals(""))) {
+	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && !(b.getEffectiveReturnDate().equals(""))) {
 	    			data.add(b);
 	    		}
 			}
@@ -393,11 +393,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (u != null) {
+        if (user != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == u.getId() && b.getEffectiveReturnDate().equals("") && b.isLate()) {
+	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && b.getEffectiveReturnDate().equals("") && b.isLate()) {
 	    			b.checkBorrowLate();
 	    			data.add(b);
 	    		}
@@ -412,15 +412,45 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (u != null) {
+        if (user != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && (b.getUsersID() == u.getId() && (!(b.getEffectiveReturnDate().equals("")) && b.isLate()))) {
+	    		if(!(b.equals(null)) && (b.getUsersID() == user.getId() && (!(b.getEffectiveReturnDate().equals("")) && b.isLate()))) {
 	    			data.add(b);
 	    		}
 			}
         }
+	}
+	
+	/**
+	 * Method to update the ObservableList data
+	 */
+	public void updateData() {
+		if(user != null) {
+			//We reset the checkBoxes
+			lateBorrowCheckBox.setSelected(false);
+			onGoingBorrowCheckBox.setSelected(false);
+			finishedBorrowCheckBox.setSelected(false);
+			
+			// We clear the data
+			data.clear();
+			
+			for(Borrow b : Borrow.getAllBorrow()) {
+		    	if(!(b.equals(null)) && b.getUsersID() == user.getId()) {
+		    		data.add(b);
+		    	}
+		    }
+			
+			// We set the new data
+			getUsersBorrowsTable().setItems(data);
+			
+			// We update the number of pages necessary to display all the data
+		    changingNumberOfPages();
+		    
+		    // We update the tableView to display 15 users starting from index 0
+	        changeTableView(0, ROWS_PER_PAGE);
+		}
 	}
 	
 	/**
