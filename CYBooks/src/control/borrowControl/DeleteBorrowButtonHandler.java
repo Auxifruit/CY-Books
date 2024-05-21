@@ -5,14 +5,11 @@ import java.util.Optional;
 
 import abstraction.Borrow;
 import abstraction.db.DBConnect;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
 import presentation.BorrowsTable;
 
@@ -20,20 +17,15 @@ import presentation.BorrowsTable;
  * The class to handle the event of the button deleting a borrow
  */
 public class DeleteBorrowButtonHandler implements EventHandler<ActionEvent> {
-	private ObservableList<Borrow> data;
-    private TableView<Borrow> borrowsTable;
-    private Pagination pagination;
+    private BorrowsTable borrowsTable;
 
     /**
      * DeleteBorrowButtonHandler constructor
-     * @param data the list of all the borrows
-     * @param borrowsTable the table of all the borrows
-     * @param pagination the TableView's pagination
+     * @param BorrowsTable the class containing the data and the table for the borrows
+     * @param userProfile the class containing the data and the table for the user's borrows
      */
-    public DeleteBorrowButtonHandler(ObservableList<Borrow> data, TableView<Borrow> borrowsTable, Pagination pagination) {
-        this.data = data;
+    public DeleteBorrowButtonHandler(BorrowsTable borrowsTable) {
         this.borrowsTable = borrowsTable;
-        this.pagination = pagination;
     }
 
     /**
@@ -54,24 +46,15 @@ public class DeleteBorrowButtonHandler implements EventHandler<ActionEvent> {
     	
     	if(result.get().equals(yesButton)) {
     		// We get the selected borrow we want to delete
-    		Borrow borrowToDelete = borrowsTable.getSelectionModel().getSelectedItem();		
+    		Borrow borrowToDelete = borrowsTable.getBorrowsTable().getSelectionModel().getSelectedItem();		
     		
 	    	try {
 	    		// We remove it from our database, the list of all the borrows and the data 
 	    		DBConnect.deleteBorrowInTable(borrowToDelete);
 	    		Borrow.getAllBorrow().remove(borrowToDelete);
-		    	data.remove(borrowToDelete);
-
-		    	borrowsTable.setItems(data);
+		    	borrowsTable.getData().remove(borrowToDelete);
 		    	
-		    	// We update the pagination to see if we need to remove a new page or not
-	            int numberOfPages = (int) Math.ceil((double) data.size() / BorrowsTable.ROWS_PER_PAGE);
-	            pagination.setPageCount(numberOfPages);
-	            
-	            if(numberOfPages > 1) {
-	            	pagination.setCurrentPageIndex(1);
-	            }
-	            pagination.setCurrentPageIndex(0);
+		    	borrowsTable.updateData();
 	            
 	            Alert deletedBorrowAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been deleted.", ButtonType.OK);
 	    		deletedBorrowAlert.setTitle("Borrow deleted confirmation");

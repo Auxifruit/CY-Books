@@ -1,7 +1,6 @@
 package control.borrowControl;
 
 
-import abstraction.Book;
 import abstraction.Borrow;
 import abstraction.db.DBConnect;
 
@@ -13,14 +12,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The class to handle the event of the button modifying a borrow
