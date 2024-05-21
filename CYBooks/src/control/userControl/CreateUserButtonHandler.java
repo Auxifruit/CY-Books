@@ -8,13 +8,10 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
 
@@ -22,26 +19,20 @@ import javafx.scene.control.TextField;
  * The class to handle the event of the button creating an user
  */
 public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
-    private ObservableList<User> data;
-    private TableView<User> usersTable;
-    private Pagination pagination;
+	private UsersTable usersTable;
     private TextField firstnameText;
     private TextField lastnameText;
     private TextField emailText;
 
     /**
      * CreateUserButtonHandler constructor
-     * @param data the list of all the users
-     * @param usersTable the table of all the users
-     * @param pagination the TableView's pagination
+     * @param usersTable the class containing the data and the table for the users
      * @param firstnameText the new user's first name
      * @param lastnameText the new user's last name
      * @param emailText the new user's first name
      */
-    public CreateUserButtonHandler(ObservableList<User> data, TableView<User> usersTable, Pagination pagination, TextField firstnameText, TextField lastnameText, TextField emailText) {
-        this.data = data;
+    public CreateUserButtonHandler(UsersTable usersTable, TextField firstnameText, TextField lastnameText, TextField emailText) {
         this.usersTable = usersTable;
-        this.pagination = pagination;
         this.firstnameText = firstnameText;
         this.lastnameText = lastnameText;
         this.emailText = emailText;
@@ -67,18 +58,9 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
                 try {
     				DBConnect.addUserInTable(userToCreate);
     				
-    				data.add(userToCreate);
-    	            usersTable.setItems(data);
+    				usersTable.getData().add(userToCreate);
     	            
-    	            // We update the pagination to see if we need to add a new page or not
-    	            int numberOfPages = (int) Math.ceil((double) data.size() / UsersTable.ROWS_PER_PAGE);
-    	            pagination.setPageCount(numberOfPages);
-    	            
-    	            if(numberOfPages > 1) {
-    	            	pagination.setCurrentPageIndex(1);
-    	            }
-    	            pagination.setCurrentPageIndex(0);
-    	            
+    				usersTable.updateData();
     	            	            
     	            Alert createUserAlert = new Alert(Alert.AlertType.CONFIRMATION, "The user has been created.", ButtonType.OK);
     	            createUserAlert.setTitle("User created confirmation");

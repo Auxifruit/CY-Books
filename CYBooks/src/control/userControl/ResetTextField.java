@@ -29,6 +29,9 @@ public class ResetTextField implements EventHandler<ActionEvent> {
     	this.newEmailText = newEmailText;
     }
     
+    /**
+     * Method to handle the reset of the TextFields
+     */
 	@Override
 	public void handle(ActionEvent arg0) {
 		// Set the "yes" / "cancel" button for the alert

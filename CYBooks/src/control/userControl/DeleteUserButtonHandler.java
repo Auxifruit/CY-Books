@@ -3,14 +3,11 @@ package control.userControl;
 import abstraction.User;
 import abstraction.db.DBConnect;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
 import presentation.UsersTable;
 
@@ -22,20 +19,14 @@ import java.util.Optional;
  * The class to handle the event of the button deleting an user
  */
 public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
-    private ObservableList<User> data;
-    private TableView<User> usersTable;
-    private Pagination pagination;
+	private UsersTable usersTable;
 
     /**
      * DeleteUserButtonHandler constructor
-     * @param data the list of all the users
-     * @param usersTable the table of all the users
-     * @param pagination the TableView's pagination 
+     * @param usersTable the class containing the data and the table for the users
      */
-    public DeleteUserButtonHandler(ObservableList<User> data, TableView<User> usersTable, Pagination pagination) {
-        this.data = data;
+    public DeleteUserButtonHandler(UsersTable usersTable) {
         this.usersTable = usersTable;
-        this.pagination = pagination;
     }
 
     /**
@@ -56,25 +47,16 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     	
     	if(result.get().equals(yesButton)) {
     		// We get the selected user we want to delete
-    		User userToDelete = usersTable.getSelectionModel().getSelectedItem();		
+    		User userToDelete = usersTable.getUsersTable().getSelectionModel().getSelectedItem();		
     		
 	    	try {
 	    		// We remove it from our database, the list of all the users and the data
 	    		
 	    		DBConnect.deleteUserInTable(userToDelete);
 	    		User.getAllUser().remove(userToDelete);
-		    	data.remove(userToDelete);
+		    	usersTable.getData().remove(userToDelete);
 
-		    	usersTable.setItems(data);
-		    	
-		    	// We update the pagination to see if we need to remove a new page or not
-	            int numberOfPages = (int) Math.ceil((double) data.size() / UsersTable.ROWS_PER_PAGE);
-	            pagination.setPageCount(numberOfPages);
-	            
-	            if(numberOfPages > 1) {
-	            	pagination.setCurrentPageIndex(1);
-	            }
-	            pagination.setCurrentPageIndex(0);
+		    	usersTable.updateData();
 	            
 	            Alert deletedUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been deleted.", ButtonType.OK);
 	    		deletedUserAlert.setTitle("User deleted confirmation");
