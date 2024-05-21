@@ -8,23 +8,24 @@ import java.util.List;
 import java.util.Scanner;
 
 import abstraction.db.DBConnect;
+import abstraction.exception.*;
 
 public class Main {
 
-	
-    public static void UserMenu() throws IOException, SQLException {
+	public static void userMenu() throws IOException, SQLException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("What would you like to do?");
-            System.out.println("1) Stop everything 2) Add a user 3) Check the list of users 4) Modify a user 5) Delete a user");
+            System.out.println("1) Stop 2) Add a user 3) View the list of users 4) Modify a user 5) Delete a user");
             int wdyw = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
             switch (wdyw) {
                 case 1:
-                    System.out.print("Program ending");
-                    return; // Exit the method
+                    System.out.println("Program ending");
+                    scanner.close();
+                    return;
 
                 case 2:
                     System.out.print("First name? ");
@@ -35,49 +36,70 @@ public class Main {
                     String emailText = scanner.nextLine();
                     User userToCreate = new User(lastnameText, firstnameText, emailText);
                     DBConnect.addUserInTable(userToCreate);
-                    
-                    System.out.println("User added: " + userToCreate.toString());
+
+                    System.out.println("User added: " + userToCreate);
                     break;
 
                 case 3:
-                    for (User u : User.getAllUser()) {
-                        System.out.println(u.toString());
+                    List<User> users = User.getAllUser();
+                    if (users.isEmpty()) {
+                        System.out.println("No users found.");
+                    } else {
+                        for (User u : users) {
+                            System.out.println(u);
+                        }
                     }
                     break;
 
                 case 4:
-                    System.out.println("What is the ID of the user you want to modify?");
-                    int idToModify = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    try {
+                        System.out.println("What is the ID of the user to modify?");
+                        int idToModify = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
 
-                    System.out.print("First name? ");
-                    String firstnameNew = scanner.nextLine();
-                    System.out.print("Last name? ");
-                    String lastnameNew = scanner.nextLine();
-                    System.out.print("Email? ");
-                    String emailNew = scanner.nextLine();
-
-                    for (User u : User.getAllUser()) {
-                        if (u.getId() == idToModify) {
-                            u.setEmail(emailNew);
-                            u.setFirstname(firstnameNew);
-                            u.setLastname(lastnameNew);
-                            System.out.println("User modified: " + u.toString());
-                            break; // Once modified, no need to continue looping
+                        if (!User.IsExisting(idToModify)) {
+                            throw new UserNotExistException("This user does not exist: " + idToModify);
                         }
+
+                        System.out.print("First name? ");
+                        String firstnameNew = scanner.nextLine();
+                        System.out.print("Last name? ");
+                        String lastnameNew = scanner.nextLine();
+                        System.out.print("Email? ");
+                        String emailNew = scanner.nextLine();
+
+                        User userToModify = User.getUserById(idToModify);
+                        if (userToModify != null) {
+                            userToModify.setFirstname(firstnameNew);
+                            userToModify.setLastname(lastnameNew);
+                            userToModify.setEmail(emailNew);
+                            System.out.println("User modified: " + userToModify);
+                        }
+                    } catch (UserNotExistException e) {
+                        System.out.println(e.getMessage());
+                        System.out.println("You need to redo the procedure.");
                     }
                     break;
 
                 case 5:
-                    System.out.println("What is the ID?");
-                    int idToDelete = scanner.nextInt();
-                    Iterator<User> iterator = User.getAllUser().iterator();
-                    while (iterator.hasNext()) {
-                        User u = iterator.next();
-                        if (u.getId() == idToDelete) {
-                            iterator.remove();
-                            System.out.println("User deleted: " + u.toString());
+                    try {
+                        System.out.println("What is the ID of the user to delete?");
+                        int idToDelete = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+
+                        if (!User.IsExisting(idToDelete)) {
+                            throw new UserNotExistException("This user does not exist: " + idToDelete);
                         }
+
+                        User userToDelete = User.getUserById(idToDelete);
+                        if (userToDelete != null) {
+                            User.getAllUser().remove(User.getUserById(idToDelete));
+                            DBConnect.deleteUserInTable(userToDelete);
+                            System.out.println("User deleted: " + userToDelete);
+                        }
+                    } catch (UserNotExistException e) {
+                        System.out.println(e.getMessage());
+                        System.out.println("You need to redo the procedure.");
                     }
                     break;
 
@@ -88,82 +110,105 @@ public class Main {
         }
     }
 
-    public static void BorrowMenu() throws SQLException {
+    public static void borrowMenu() throws SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("What would you like to do?");
-            System.out.println("1) View borrow list 2) Borrow a book 3) Return a book 4) Search a book 5) Exit");
+            System.out.println("1) View borrow list 2) Borrow a book 3) Return a book 4) Search a book 5) Quit");
 
             int wdyw = scanner.nextInt();
             scanner.nextLine(); 
 
             switch (wdyw) {
-            case 1:
-                List<Borrow> borrowList = Borrow.getAllBorrow();
-                if (borrowList.isEmpty()) {
-                    System.out.println("Aucun emprunt pour le moment.");
-                } else {
-                    for (Borrow n : borrowList) {
-                        System.out.println(n.toString());
+                case 1:
+                    List<Borrow> borrowList = Borrow.getAllBorrow();
+                    if (borrowList.isEmpty()) {
+                        System.out.println("No borrows at the moment.");
+                    } else {
+                        for (Borrow n : borrowList) {
+                            System.out.println(n);
+                        }
                     }
-                }
-                break;
+                    break;
 
                 case 2:
-                	if ( !User.getAllUser().isEmpty()) {
-                    System.out.println("What is the user ID?");
-                    int userId = scanner.nextInt();
-                    scanner.nextLine(); 
-                    while (!User.IsExisting(userId)) {
-                    	 System.out.println("This user doesn't exist ,What is the user ID?");
-                    	userId = scanner.nextInt();
-                    	scanner.nextLine(); 
+                    if (!User.getAllUser().isEmpty()) {
+                        try {
+                            System.out.println("What is the user ID?");
+                            int userId = scanner.nextInt();
+                            scanner.nextLine(); // Clear the buffer
+
+                            if (!User.IsExisting(userId)) {
+                                throw new UserNotExistException("This user does not exist: " + userId);
+                            }
+
+                            System.out.println("What is the book's ISBN?");
+                            String bookISBN = scanner.nextLine();
+
+                            if (!API.checkIdentifierExistance(bookISBN)) {
+                                throw new BookNotExistException("This book does not exist: " + bookISBN);
+                            }
+
+                            LocalDate dateBorrow = LocalDate.now();
+                            Borrow newBorrow = new Borrow(userId, bookISBN, dateBorrow);
+                            DBConnect.addBorrowInTable(newBorrow);
+                            System.out.println("Borrow added: " + newBorrow);
+
+                        } catch (UserNotExistException | BookNotExistException e) {
+                            System.out.println(e.getMessage());
+                            System.out.println("You need to redo the procedure.");
+                        } catch (Exception e) {
+                            System.out.println("An unexpected error occurred: " + e.getMessage());
+                        }
+                    } else {
+                        System.out.println("No users available.");
                     }
-
-                    System.out.println("What is the book's ISBN?");
-                    String bookISBN = scanner.nextLine();
-
-                    LocalDate dateBorrow = LocalDate.now();
-                    Borrow newBorrow = new Borrow(userId, bookISBN, dateBorrow);
-                    DBConnect.addBorrowInTable(newBorrow);
-                    System.out.println("Borrow added: " + newBorrow.toString());
-                	}
-                	else {
-                		System.out.println("There is no user so you cant borrow ");
-                	}
                     break;
 
                 case 3:
+                	try {
                     System.out.println("What is the ID of the borrow to return?");
                     int borrowId = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
-
+                    
                     Borrow borrowToReturn = null;
                     for (Borrow borrow : Borrow.getAllBorrow()) {
                         if (borrow.getId() == borrowId) {
                             borrowToReturn = borrow;
                             break;
                         }
+                    
                     }
 
-                    if (borrowToReturn != null) {
+                    if (borrowToReturn == null ) {
+                    	throw new BorrowNotExistException("This borrow id does not exist " + borrowId);
+                    }
+                    
+  
                         LocalDate effectiveReturnDate = LocalDate.now();
                         borrowToReturn.setEffectiveReturnDate(effectiveReturnDate);
                         borrowToReturn.checkBorrowLate();
-                        System.out.println("Borrow returned: " + borrowToReturn.toString());
-                    } else {
-                        System.out.println("Borrow not found.");
-                    }
+                        System.out.println("Borrow returned: " + borrowToReturn);
+                	}
+                	catch (BorrowNotExistException e) {
+                        System.out.println(e.getMessage());
+                        System.out.println("You need to redo the procedure.");
+                	}
                     break;
 
                 case 4:
-                    System.out.println("Search functionality not yet implemented.");
+                    String[] searchCriteria = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };            	
+                    List<Book> books = API.searchBook(searchCriteria, 1);
+                    for (Book book : books) {
+                        System.out.println(book);
+                    }
                     break;
 
                 case 5:
                     System.out.println("Exiting borrow menu.");
-                    return; // Exit the BorrowMenu
+                    scanner.close();
+                    return;
 
                 default:
                     System.out.println("Invalid option. Please try again.");
@@ -172,9 +217,7 @@ public class Main {
         }
     }
 
-
-
-    public static void Commandline() throws IOException, SQLException {
+    public static void commandline() throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -185,16 +228,17 @@ public class Main {
 
             switch (wdyw) {
                 case 1:
-                    UserMenu();
+                    userMenu();
                     break;
                     
                 case 2:
-                    BorrowMenu();
+                    borrowMenu();
                     break;
                     
                 case 3:
-                	return ; 
-                	
+                    scanner.close();
+                    return;
+                    
                 default:
                     System.out.println("Invalid option. Please try again.");
                     break;
@@ -202,14 +246,14 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException, SQLException {
-    	try {
-    		DBConnect.readUsersTable();
-			DBConnect.readBorrowsTable();
-		} catch (SQLException e) {
-
-			e.printStackTrace();
-		}
-    	Commandline();
+    public static void main(String[] args) throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException {
+        try {
+            DBConnect.readUsersTable();
+            DBConnect.readBorrowsTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        commandline();
+        System.out.println("The program has terminated");
     }
 }
