@@ -32,13 +32,9 @@ public final class API {
 	private final static String PUBLISHER = "dc:publisher";
 	private final static String FORMAT = "dc:format";
 
-	// Regroup them into an array (Useful to loop through the informations from the
-	// xml document)
+	// Regroup them into an array (Useful to loop through the informations from the xml document)
 	private final static String[] GALLICA_IDENTIFIERS = { TITLE, CREATOR, TYPE, DATE, LANGUAGE, IDENTIFIER, PUBLISHER, FORMAT };
 
-	// Constants to retrieve information from the xml documemnt
-	// private final static String SRW_RECORD = "recordData";
-	// private final static String RECORD_DATA = "recordData";
 
 	/**
 	 * Create the query from the query information passed in parameter
@@ -69,7 +65,7 @@ public final class API {
 	 * @category API=>Queries
 	 * @return A collection of DOM elements
 	 */
-	private static Document fetchAPIResulty(String query) {
+	private static Document fetchAPIResult(String query) {
 		String normalizedQuery = normalizeQuery(query);
 		Document doc = null;
 
@@ -114,7 +110,7 @@ public final class API {
 
 	/**
 	 * Construct a query from a string by converting it from the norms of gallica
-	 * API i.e By remove 'quote' and 'spaces'
+	 * API i.e By removing 'quote' and 'spaces'
 	 * 
 	 * @category API=>misc
 	 * @return The valid query
@@ -128,7 +124,6 @@ public final class API {
 
 	/**
 	 * Go to the API fetch result and construct a list of book objects
-	 * 
 	 * @param query          The categories of the search
 	 * @param maximumRecords The numbers max returned result
 	 * @return A list of constructed book objects
@@ -144,13 +139,23 @@ public final class API {
 		System.out.println("QueryReady: " + operationalQuery);
 
 		// Now that the query is ready we execute it
-		Document queryResult = fetchAPIResulty(operationalQuery);
-		if (queryResult == null) {
+		Document domResult = fetchAPIResult(operationalQuery);
+		if (domResult == null) {
 			throw new APIException("Document null from query call");
 		}
 
+		return extractBooksInformations(domResult);
+	}
+	
+	/** Extract all the informations of a books from the dom Document  (Note that the dom
+	 * attributes are  found by using the "GALLICA_IDENTIFIERS" array")
+	 * @param stream The DOM document in which the informations are in
+	 * @return An array list of all the books
+	 */
+	private static List<Book> extractBooksInformations(Document domDocument){
+		
 		// From this document root we retrieve the attributes of each recorded element
-		Element rootElement = queryResult.getDocumentElement();
+		Element rootElement = domDocument.getDocumentElement();
 		NodeList recordedNodes = rootElement.getElementsByTagName("srw:record");
 		// Map to efficiently fetch the XML results
 		HashMap<String, String> fetchMap = new HashMap<>();
@@ -169,19 +174,18 @@ public final class API {
 			
 			// Create a new instance of book with the fetched informations
 			Book currentBook  = new Book(fetchMap.get(IDENTIFIER).replaceFirst("https://gallica.bnf.fr/ark:/12148/", ""), fetchMap.get(TITLE), fetchMap.get(CREATOR), 
-					"0000-01-01", fetchMap.get(FORMAT) , fetchMap.get(TYPE), fetchMap.get(PUBLISHER));
+					fetchMap.get(DATE), fetchMap.get(FORMAT) , fetchMap.get(TYPE), fetchMap.get(PUBLISHER));
 			
 			// Add the created book to the returned list and clear the map
 			returnedBooks.add(currentBook);	
 			// Clear the map when we find a new book
 			fetchMap.clear();
-		
-
 		}
-
+			
 		return returnedBooks;
+		
+		
 	}
-	
 	
 	/** Check if the document identifier exist
 	 * 
@@ -195,40 +199,9 @@ public final class API {
 	}
 
 	public static void main(String[] args) {
-		//String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };
-		//searchBook(a, 70);
-		System.out.println(checkIdentifierExistance("bpt6k1194845g"));
-		// String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor
-		// Hugo\"" };
-		// System.out.println(normalizeQuery(executeQuery(a)));
-		/*
-		 * String query =
-		 * "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=gallica dc.title all \"Les Misérables\""
-		 * ; System.out.println(normalizeQuery(query)); Document doc =
-		 * fetchAPIResulty(query); if(doc == null) { throw new
-		 * APIException("Document null"); }
-		 */
+		String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };
+		System.out.println(searchBook(a, 15));
+		//System.out.println(checkIdentifierExistance("bpt6k1194845g"));
 
-		/*
-		 * Element rootElement = doc.getDocumentElement(); NodeList recordNodes =
-		 * rootElement.getElementsByTagName("srw:record");
-		 * 
-		 * // Process each XML nodes for(int i = 0; i < recordNodes.getLength(); i++) {
-		 * Element currentElement = (Element)recordNodes.item(i); Element recordData =
-		 * (Element)currentElement.getElementsByTagName("srw:recordData").item(0);
-		 * Element dc = (Element)recordData.getElementsByTagName("oai_dc:dc").item(0);
-		 * 
-		 * NodeList nameElement = dc.getElementsByTagName("dc:Title"); NodeList
-		 * creatorElement = dc.getElementsByTagName("dc:creator");
-		 * 
-		 * 
-		 * if(creatorElement.getLength() > 0) {
-		 * System.out.println(creatorElement.item(0).getTextContent()); } }
-		 * 
-		 * System.out.println("New Test"); NodeList titles =
-		 * rootElement.getElementsByTagName("dc:title"); for(int i = 0; i <
-		 * titles.getLength(); i++) {
-		 * System.out.println(titles.item(i).getTextContent()); }
-		 */
 	}
 }
