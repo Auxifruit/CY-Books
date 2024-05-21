@@ -167,18 +167,26 @@ public class User {
 	}
 	
 	/**
-	 * Get the counterId of the class Borrow
-	 * @return the counterId of the class Borrow
+	 * Get the counterId of the class User
+	 * @return the counterId of the class User
 	 */
 	public static int getCounterId() {
 		return counterId;
 	}
 	
 	/**
-	 * Setter for the counterId of the class Borrow
+	 * Setter for the counterId of the class User
 	 */
 	public static void setCounterId(int newCounterId) {
 		counterId = newCounterId;
+	}
+	
+	/**
+	 * Get the maximum number of borrow an user can make
+	 * @return the maximum number of borrow an user can make
+	 */
+	public static int getMaxBorrowNumber() {
+		return MAX_BORROW_NUMBER;
 	}
 	
 	/**
@@ -186,7 +194,7 @@ public class User {
 	 * @param id the user's id
 	 * @return true if the user exist and false if not
 	 */
-	public static boolean IsExisting(int id) {
+	public static boolean isExisting(int id) {
 		for(User u : User.getAllUser()) {
 			if (u.getId() == id){
 				return true ; 
@@ -194,13 +202,13 @@ public class User {
 		}
 		return false ;
 	}
-
-	    /**
+	
+    /**
      * Get the user with its id 
      * @return the use that you want if he exist or null
      */
 	public static User getUserById(int id) {
-		for ( User u : User.getAllUser()) {
+		for (User u : User.getAllUser()) {
 			if (u.getId() == id) {
 				return u;
 			}
@@ -213,7 +221,7 @@ public class User {
 	 * @param user the user we want to check its existing
 	 * @return true if the user exist and false if not
 	 */
-	public static boolean IsExisting(User user) {
+	public static boolean isExisting(User user) {
 		for(User u : User.getAllUser()) {
 			if (u.equals(user)){
 				return true ; 
