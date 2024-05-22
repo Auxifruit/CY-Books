@@ -23,6 +23,14 @@ public class UserCreation {
     	this.usersTable = usersTable;
         createUserCreationPane();
     }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the creation of an user
+	 * @return the the VBox containing all the element for the creation of an user
+	 */
+	public VBox getUserCreationVBox() {
+		return userCreationVBox;
+	}
 
     /**
 	 * Method to create a pane to create an user
@@ -80,11 +88,4 @@ public class UserCreation {
 	    userCreationVBox.setAlignment(Pos.TOP_CENTER);
 	}
 	
-	/**
-	 * Getter to get the VBox containing all the element for the creation of an user
-	 * @return the the VBox containing all the element for the creation of an user
-	 */
-	public VBox getUserCreationVBox() {
-		return userCreationVBox;
-	}
 }

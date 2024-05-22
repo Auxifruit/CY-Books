@@ -1,6 +1,7 @@
 package presentation;
 
 import control.bookControl.ConfirmSearchButtonHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,6 +22,14 @@ public class BookSearch {
 		createBookSearch();
 	}
 	
+	/**
+	 * Getter to get the VBox containing all the element for searching a book
+	 * @return the the VBox containing all the element for searching a book
+	 */
+	public VBox getCommandContainer() {
+		return commandContainer;
+	}
+	
 	public void createBookSearch() {
 		commandContainer = new VBox(10);
 		commandContainer.setAlignment(Pos.TOP_CENTER);
@@ -38,6 +47,7 @@ public class BookSearch {
 	    RadioButton buttonAnyTitle = new RadioButton("any");
 	    RadioButton buttonAllTitle = new RadioButton("all");
 		
+	    booksTitleLabel.setStyle("-fx-font-weight: bold;");
 		titleTextField.setPromptText("Book's title");		
 		
 		buttonAnyTitle.setToggleGroup(anyOrAllTitle);
@@ -54,6 +64,7 @@ public class BookSearch {
 	    RadioButton buttonAnyAuthor = new RadioButton("any");
 	    RadioButton buttonAllAuthor = new RadioButton("all");
 		
+	    authorLabel.setStyle("-fx-font-weight: bold;");
 	    authorTextField.setPromptText("Book's author's full name");		
 		
 	    buttonAnyAuthor.setToggleGroup(anyOrAllAuthor);
@@ -70,6 +81,7 @@ public class BookSearch {
 	    RadioButton buttonAnyType = new RadioButton("any");
 	    RadioButton buttonAllType = new RadioButton("all");
 		
+	    typeLabel.setStyle("-fx-font-weight: bold;");
 	    typeTextField.setPromptText("Book's type");		
 		
 		buttonAnyType.setToggleGroup(anyOrAllType);
@@ -86,6 +98,7 @@ public class BookSearch {
 	    RadioButton buttonAnyDate = new RadioButton("any");
 	    RadioButton buttonAllDate = new RadioButton("all");
 		
+	    dateLabel.setStyle("-fx-font-weight: bold;");
 	    dateTextField.setPromptText("Book's published date");		
 		
 		buttonAnyDate.setToggleGroup(anyOrAllDate);
@@ -102,6 +115,7 @@ public class BookSearch {
 	    RadioButton buttonAnyLanguage = new RadioButton("any");
 	    RadioButton buttonAllLanguage = new RadioButton("all");
 		
+	    languageLabel.setStyle("-fx-font-weight: bold;");
 	    languageTextField.setPromptText("Book's language");		
 		
 		buttonAnyLanguage.setToggleGroup(anyOrAllLanguage);
@@ -118,6 +132,7 @@ public class BookSearch {
 	    RadioButton buttonAnyIdentifier = new RadioButton("any");
 	    RadioButton buttonAllIdentifier = new RadioButton("all");
 		
+	    identifierLabel.setStyle("-fx-font-weight: bold;");
 	    identifierTextField.setPromptText("Book's identifier");		
 	    
 		buttonAnyIdentifier.setToggleGroup(anyOrAllIdentifier);
@@ -129,19 +144,12 @@ public class BookSearch {
 		Button confirmButton = new Button("Confirm");
 		confirmButton.setOnAction(new ConfirmSearchButtonHandler(booksTable, titleTextField, authorTextField, typeTextField, dateTextField, languageTextField, identifierTextField, anyOrAllTitle, anyOrAllAuthor, anyOrAllType, anyOrAllDate, anyOrAllLanguage, anyOrAllIdentifier));
 		
-		VBox vbox = new VBox(10);
+		VBox vbox = new VBox(50);
 		vbox.getChildren().addAll(bookSearchLabel, titleCommand, authorCommand, typeCommand, dateCommand, languageCommand, identifierCommand, confirmButton);
 		
 		commandContainer.getChildren().addAll(bookSearchLabel, vbox, confirmButton);
+		commandContainer.setPadding(new Insets(10, 10, 10, 10));
 		
-	}
-	
-	/**
-	 * Getter to get the VBox containing all the element for searching a book
-	 * @return the the VBox containing all the element for searching a book
-	 */
-	public VBox getCommandContainer() {
-		return commandContainer;
 	}
 
 }

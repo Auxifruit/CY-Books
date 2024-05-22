@@ -20,6 +20,14 @@ public class UserModification {
         this.usersTable = usersTable;
         createUserModificationPane();
     }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the modification of an user
+	 * @return the the VBox containing all the element for the modification of an user
+	 */
+	public VBox getUsersModificationVBox() {
+		return usersModificationVBox;
+	}
 
     /**
 	 * Method to create a pane to modify an user
@@ -35,6 +43,7 @@ public class UserModification {
 	    userModificationLabel.setStyle("-fx-font-weight: bold;");
 	    
 	    Label oldUsersLabel = new Label("Previous user's information :");
+	    oldUsersLabel.setFont(new Font("Arial", 16));
 	    oldUsersLabel.setUnderline(true);
 	    oldUsersLabel.setStyle("-fx-font-weight: bold;");
 	    
@@ -42,9 +51,9 @@ public class UserModification {
 	    HBox oldUsersLastnameAndLabel = new HBox();
 	    HBox oldUsersEmailAndLabel = new HBox();
 	    
-	    Label oldUsersFirstname = new Label("• First name : ");
-	    Label oldUsersLastname = new Label("• Last name : ");
-	    Label oldUsersEmail = new Label("• E-mail : ");
+	    Label oldUsersFirstname = new Label("- First name : ");
+	    Label oldUsersLastname = new Label("- Last name : ");
+	    Label oldUsersEmail = new Label("- E-mail : ");
 	    
 	    oldUsersFirstname.setStyle("-fx-font-weight: bold;");
 	    oldUsersLastname.setStyle("-fx-font-weight: bold;");
@@ -74,6 +83,7 @@ public class UserModification {
 	    HBox newUserInfosInput = new HBox(50);
 	    
 	    Label newUserLabel = new Label("New user's information :");
+	    newUserLabel.setFont(new Font("Arial", 16));
 	    newUserLabel.setUnderline(true);
 	    newUserLabel.setStyle("-fx-font-weight: bold;");
 	    
@@ -117,12 +127,5 @@ public class UserModification {
 	    usersModificationVBox.getChildren().addAll(userModificationLabel, usersOldInfos, usersNewInfos);
 	    usersModificationVBox.setAlignment(Pos.TOP_CENTER);
 	}
-	
-	/**
-	 * Getter to get the VBox containing all the element for the modification of an user
-	 * @return the the VBox containing all the element for the modification of an user
-	 */
-	public VBox getUsersModificationVBox() {
-		return usersModificationVBox;
-	}
+
 }

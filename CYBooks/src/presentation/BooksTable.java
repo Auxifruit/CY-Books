@@ -24,7 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 public class BooksTable {
-	private VBox VBox;
+	private VBox booksTableVBox;
 	
 	private List<Book> bookList;
 	
@@ -53,6 +53,38 @@ public class BooksTable {
         createBooksTablePane();
     }
 
+	/**
+	 * Getter to get the data containing the books
+	 * @return the data containing the books
+	 */
+    public ObservableList<Book> getData() {
+        return data;
+    }
+
+    /**
+	 * Getter to get the table view displaying the books
+	 * @return the table view displaying the books
+	 */
+    public TableView<Book> getBooksTable() {
+        return booksTable;
+    }
+
+    /**
+	 * Getter to get the pagination for the table view of books
+	 * @return the pagination for the table view of books
+	 */
+    public Pagination getBooksTablebooksTablePagination() {
+        return booksTablePagination;
+    }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the book table
+	 * @return the the VBox containing all the element for the book table
+	 */
+    public VBox getBooksTableVBox() {
+    	return booksTableVBox;
+    }
+    
 	/**
 	 * Method to create a pane for the books table
 	 * @return the pane for the books table
@@ -135,10 +167,10 @@ public class BooksTable {
         booksTablePagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> changeTableView(newValue.intValue(), ROWS_PER_PAGE));
 	    
 	    // VBox containing the nodes for the books table
-	    VBox = new VBox(20);
-	    VBox.setPadding(new Insets(10, 10, 10, 10));
-	    VBox.getChildren().addAll(labelBookTable, searchTableVBox);
-	    VBox.setAlignment(Pos.TOP_CENTER);
+        booksTableVBox = new VBox(20);
+        booksTableVBox.setPadding(new Insets(10, 10, 10, 10));
+        booksTableVBox.getChildren().addAll(labelBookTable, searchTableVBox);
+        booksTableVBox.setAlignment(Pos.TOP_CENTER);
 	}
 
 	/**
@@ -210,17 +242,17 @@ public class BooksTable {
 		
 		// Column for the book's firstname
 	    titleCol = new TableColumn<>("Title");
-	    titleCol.setMinWidth(100);
+	    titleCol.setMinWidth(150);
 	    titleCol.setCellValueFactory(new PropertyValueFactory<Book, String>("title"));
 
 	    // Column for the book's lastname
 	    authorCol = new TableColumn<>("Author");
-	    authorCol.setMinWidth(100);
+	    authorCol.setMinWidth(150);
 	    authorCol.setCellValueFactory(new PropertyValueFactory<Book, String>("author"));
 
 	    // Column for the book's e-mail
 	    publishedDateCol = new TableColumn<>("Published date");
-	    publishedDateCol.setMinWidth(200);
+	    publishedDateCol.setMinWidth(80);
 	    publishedDateCol.setCellValueFactory(new PropertyValueFactory<Book, String>("publishedDate"));
 	    
 	    // Column for the book's e-mail
@@ -230,12 +262,12 @@ public class BooksTable {
 	    
 	    // Column for the book's e-mail
 	    typeCol = new TableColumn<>("Type");
-	    typeCol.setMinWidth(200);
+	    typeCol.setMinWidth(100);
 	    typeCol.setCellValueFactory(new PropertyValueFactory<Book, String>("type"));
 	    
 	    // Column for the book's e-mail
 	    publisherCol = new TableColumn<>("Editor");
-	    publisherCol.setMinWidth(200);
+	    publisherCol.setMinWidth(80);
 	    publisherCol.setCellValueFactory(new PropertyValueFactory<Book, String>("publisher"));
 
 	    // We add the column to our table
@@ -284,37 +316,5 @@ public class BooksTable {
 	    // We update the tableView to display 15 users starting from index 0
         changeTableView(0, ROWS_PER_PAGE);
 	}
-
-	/**
-	 * Getter to get the data containing the books
-	 * @return the data containing the books
-	 */
-    public ObservableList<Book> getData() {
-        return data;
-    }
-
-    /**
-	 * Getter to get the table view displaying the books
-	 * @return the table view displaying the books
-	 */
-    public TableView<Book> getBooksTable() {
-        return booksTable;
-    }
-
-    /**
-	 * Getter to get the pagination for the table view of books
-	 * @return the pagination for the table view of books
-	 */
-    public Pagination getBooksTablebooksTablePagination() {
-        return booksTablePagination;
-    }
-    
-    /**
-	 * Getter to get the VBox containing all the element for the book table
-	 * @return the the VBox containing all the element for the book table
-	 */
-    public VBox getBooksTableVBox() {
-    	return VBox;
-    }
     
 }

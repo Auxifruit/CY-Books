@@ -2,6 +2,7 @@ package presentation;
 
 import java.sql.SQLException;
 
+import abstraction.Status;
 import abstraction.User;
 import abstraction.db.DBConnect;
 import control.userControl.DeleteUserButtonHandler;
@@ -24,6 +25,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * The class containing the pane and the TableView to display all the users
+ */
 public class UsersTable {
 	private VBox usersTableVBox;
 	
@@ -35,6 +39,7 @@ public class UsersTable {
 	private TableColumn<User, String> firstNameCol;
 	private TableColumn<User, String> lastNameCol;
 	private TableColumn<User, String> emailCol;
+	private TableColumn<User, Status> statusCol;
 	private final ObservableList<User> data = FXCollections.observableArrayList();
 	private FilteredList<User> filteredData;
 	private TextField filteredField;
@@ -45,6 +50,38 @@ public class UsersTable {
         createUsersTablePane();
     }
 
+	/**
+	 * Getter to get the data containing the users
+	 * @return the data containing the users
+	 */
+    public ObservableList<User> getData() {
+        return data;
+    }
+
+    /**
+	 * Getter to get the table view displaying the users
+	 * @return the table view displaying the users
+	 */
+    public TableView<User> getUsersTable() {
+        return usersTable;
+    }
+
+    /**
+	 * Getter to get the pagination for the table view of users
+	 * @return the pagination for the table view of users
+	 */
+    public Pagination getUsersTablePagination() {
+        return usersTablePagination;
+    }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the user table
+	 * @return the the VBox containing all the element for the user table
+	 */
+    public VBox getUsersTableVBox() {
+    	return usersTableVBox;
+    }
+    
 	/**
 	 * Method to create a pane for the users table
 	 * @return the pane for the users table
@@ -208,9 +245,14 @@ public class UsersTable {
 	    emailCol = new TableColumn<>("E-mail");
 	    emailCol.setMinWidth(200);
 	    emailCol.setCellValueFactory(new PropertyValueFactory<User, String>("email"));
+	    
+	    // Column for the user's status
+	    statusCol = new TableColumn<>("Status");
+	    statusCol.setMinWidth(50);
+	    statusCol.setCellValueFactory(new PropertyValueFactory<User, Status>("status"));
 
 	    // We add the column to our table
-	    usersTable.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
+	    usersTable.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol, statusCol);
 	    
 	    // The columns take up all the table space
 	    usersTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -226,6 +268,7 @@ public class UsersTable {
 		// We load the values of the users from the database
 	    try {
 	    	DBConnect.readUsersTable();
+	    	User.checkAllUserStatus();
 	    } catch (SQLException e) {
 			System.err.println("Error BDD. (dataWithAllValues)");
 		}
@@ -237,6 +280,9 @@ public class UsersTable {
 	private void dataWithAllValues() {
 		// We reset the data
 		data.clear();
+		
+		// We check all user' status
+        User.checkAllUserStatus();
 	    	
     	// We add the users to our data
     	for(User u : User.getAllUser()) {
@@ -245,46 +291,17 @@ public class UsersTable {
     		}
 		}
 	}
-
+	
 	/**
-	 * Getter to get the data containing the users
-	 * @return the data containing the users
-	 */
-    public ObservableList<User> getData() {
-        return data;
-    }
-
-    /**
-	 * Getter to get the table view displaying the users
-	 * @return the table view displaying the users
-	 */
-    public TableView<User> getUsersTable() {
-        return usersTable;
-    }
-
-    /**
-	 * Getter to get the pagination for the table view of users
-	 * @return the pagination for the table view of users
-	 */
-    public Pagination getUsersTablePagination() {
-        return usersTablePagination;
-    }
-    
-    /**
-	 * Getter to get the VBox containing all the element for the user table
-	 * @return the the VBox containing all the element for the user table
-	 */
-    public VBox getUsersTableVBox() {
-    	return usersTableVBox;
-    }
-    
-    /**
    	 * Method to update the ObservableList data
    	 */
    	public void updateData() {
    		// We reset the TextField for the search
         filteredField.clear();
-   		
+        
+        // We check if one user' status changed
+        User.checkAllUserStatus();
+        
    		// We clear the data
    		data.clear();
    		

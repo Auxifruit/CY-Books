@@ -33,10 +33,15 @@ public class UserProfile {
 	private VBox usersProfileVBox;
 	
 	private Pagination usersBorrowTablePagination;
-	public final static int ROWS_PER_PAGE = 10;
+	public final static int ROWS_PER_PAGE = 7;
 	
-	private TableView<User> usersTable;
-	private User user;
+	private User userToDisplay;
+	
+	private Label usersIDValue = new Label("");
+	private Label usersFirstnameValue = new Label("");
+	private Label usersLastnameValue = new Label("");
+	private Label usersEmailValue = new Label("");
+	private Label usersStatusValue = new Label("");
 	
 	private CheckBox lateBorrowCheckBox;
 	private CheckBox onGoingBorrowCheckBox;
@@ -57,13 +62,61 @@ public class UserProfile {
      * @param usersTable the table view displaying the informations
      * @param usersTablePagination the pagination of the table view
      */
-    public UserProfile(TableView<User> usersTable) {
-    	this.usersTable = usersTable;
+    public UserProfile() {
+    	this.userToDisplay = null;
     	lateBorrowCheckBox = new CheckBox("Late borrows");
         onGoingBorrowCheckBox = new CheckBox("On going borrows");
         finishedBorrowCheckBox = new CheckBox("Finished borrows");
     	initializeTable();
         createUserProfilePane();
+    }
+    
+    /**
+     * Getter method to get the user to display
+     * @return the class' user to display
+     */
+    public User getUserToDisplay() {
+    	return userToDisplay;
+    }
+    
+    /**
+     * Setter method to set the user to display
+     * @param user the new user to display
+     */
+    public void setUserToDisplay(User userToDisplay) {
+    	this.userToDisplay = userToDisplay;
+    }
+
+	/**
+	 * Getter to get the data containing the user's borrows
+	 * @return the data containing the user's borrows
+	 */
+	public ObservableList<Borrow> getData() {
+        return data;
+    }
+
+	/**
+	 * Getter to get the table view displaying the user's borrows
+	 * @return the table view displaying the user's borrows
+	 */
+    public TableView<Borrow> getUsersBorrowsTable() {
+        return usersBorrowTable;
+    }
+
+    /**
+	 * Getter to get the pagination for the table view of the user's borrows
+	 * @return the pagination for the table view of the user's borrows
+	 */
+    public Pagination getUsersBorrowsTablePagination() {
+        return usersBorrowTablePagination;
+    }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the user's profile
+	 * @return the the VBox containing all the element for the user's profile
+	 */
+    public VBox getUsersProfileVBox() {
+    	return usersProfileVBox;
     }
     
     /**
@@ -83,6 +136,7 @@ public class UserProfile {
 	    usersProfileLabel.setStyle("-fx-font-weight: bold;");
 	    
 	    Label usersInfosLabel = new Label("User's information :");
+	    usersInfosLabel.setFont(new Font("Arial", 16));
 	    usersInfosLabel.setUnderline(true);
 	    usersInfosLabel.setStyle("-fx-font-weight: bold;");
 	    
@@ -90,46 +144,29 @@ public class UserProfile {
 	    HBox usersFirsnameAndValue = new HBox();
 	    HBox usersLastnameAndValue = new HBox();
 	    HBox usersEmailAndValue = new HBox();
+	    HBox usersStatusAndValue = new HBox();
 	    
-	    Label usersID = new Label("• ID : ");
-	    Label usersFirstname = new Label("• First name : ");
-	    Label usersLastname = new Label("• Last name : ");
-	    Label usersEmail = new Label("• E-mail : ");
+	    Label usersID = new Label("- ID : ");
+	    Label usersFirstname = new Label("- First name : ");
+	    Label usersLastname = new Label("- Last name : ");
+	    Label usersEmail = new Label("- E-mail : ");
+	    Label usersStatus = new Label("- Status : ");
 	    
 	    usersID.setStyle("-fx-font-weight: bold;");
 	    usersFirstname.setStyle("-fx-font-weight: bold;");
 	    usersLastname.setStyle("-fx-font-weight: bold;");
 	    usersEmail.setStyle("-fx-font-weight: bold;");
+	    usersStatus.setStyle("-fx-font-weight: bold;");
 	    
-	    Label usersIDValue = new Label("");
-	    Label usersFirstnameValue = new Label("");
-	    Label usersLastnameValue = new Label("");
-	    Label usersEmailValue = new Label("");
-
-	    // If the selected user changed we update the values of the labels
-	    usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-	        if (newSelection != null) {
-	        	user = newSelection;
-	        	
-	        	usersIDValue.setText(String.valueOf(newSelection.getId()));
-	           	usersFirstnameValue.setText(newSelection.getFirstname());
-	           	usersLastnameValue.setText(newSelection.getLastname());
-	          	usersEmailValue.setText(newSelection.getEmail());
-	          	
-	          	dataWithAllUsersBorrow();
-	          	usersBorrowTable.setItems(data);
-	          	
-	          	changingNumberOfPages();
-	        }
-	    });
-	    
+	    // We had in each HBox the info's name and its value
       	usersIDAndValue.getChildren().addAll(usersID, usersIDValue);
 	    usersFirsnameAndValue.getChildren().addAll(usersFirstname, usersFirstnameValue);
 	    usersLastnameAndValue.getChildren().addAll(usersLastname, usersLastnameValue);
 	    usersEmailAndValue.getChildren().addAll(usersEmail, usersEmailValue);
+	    usersStatusAndValue.getChildren().addAll(usersStatus, usersStatusValue);
 	    
 	    // We add the node useful for the old user's information
-	    usersInfosContainer.getChildren().addAll(usersInfosLabel, usersIDAndValue, usersFirsnameAndValue, usersLastnameAndValue, usersEmailAndValue);
+	    usersInfosContainer.getChildren().addAll(usersInfosLabel, usersIDAndValue, usersFirsnameAndValue, usersLastnameAndValue, usersEmailAndValue, usersStatusAndValue);
 	    
 	    // We change the number of pages
 	    changingNumberOfPages();
@@ -138,6 +175,7 @@ public class UserProfile {
         changeTableView(0, ROWS_PER_PAGE);
         
         Label usersBorrowLabel = new Label("User's borrow :");
+        usersBorrowLabel.setFont(new Font("Arial", 16));
         usersBorrowLabel.setUnderline(true);
         usersBorrowLabel.setStyle("-fx-font-weight: bold;");
         
@@ -247,22 +285,22 @@ public class UserProfile {
 				
 		// Column for the book's Identifier
 	    booksIdentifierCol = new TableColumn<>("Book's Identifier");
-	    booksIdentifierCol.setMinWidth(100);
+	    booksIdentifierCol.setMinWidth(150);
 	    booksIdentifierCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("booksIdentifier"));
 
 	    // Column for the borrow's date
 	    borrowsDateCol = new TableColumn<>("Borrow's date");
-	    borrowsDateCol.setMinWidth(200);
+	    borrowsDateCol.setMinWidth(100);
 	    borrowsDateCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("borrowDate"));
 
 	    // Column for the borrow's return date
 	    borrowsReturnDateCol = new TableColumn<>("Borrow's return date");
-	    borrowsReturnDateCol.setMinWidth(200);
+	    borrowsReturnDateCol.setMinWidth(100);
 	    borrowsReturnDateCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("returnDate"));
 	    
 	    // Column for the borrow's effective return date
 	    borrowsEffectiveReturnDateCol = new TableColumn<>("Borrow's effective return date");
-	    borrowsEffectiveReturnDateCol.setMinWidth(200);
+	    borrowsEffectiveReturnDateCol.setMinWidth(100);
 	    borrowsEffectiveReturnDateCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("effectiveReturnDate"));
 	    
 	    // Column for the borrow's statue
@@ -332,11 +370,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (user != null) {
+        if (userToDisplay != null) {
         	
 	    	// We add all the user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == user.getId()) {
+	    		if(!(b.equals(null)) && b.getUsersID() == userToDisplay.getId()) {
 	    			data.add(b);
 	    		}
 			}
@@ -350,10 +388,10 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 
-		if(user != null) {
+		if(userToDisplay != null) {
 			// We add only the late borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && b.isLate()) {
+	    		if(!(b.equals(null)) && b.getUsersID() == userToDisplay.getId() && b.isLate()) {
 	    			data.add(b);
 	    		}
 			}
@@ -367,11 +405,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (user != null) {
+        if (userToDisplay != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && b.getEffectiveReturnDate().equals("")) {
+	    		if(!(b.equals(null)) && b.getUsersID() == userToDisplay.getId() && b.getEffectiveReturnDate().equals("")) {
 	    			data.add(b);
 	    		}
 			}
@@ -385,11 +423,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (user != null) {
+        if (userToDisplay != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && !(b.getEffectiveReturnDate().equals(""))) {
+	    		if(!(b.equals(null)) && b.getUsersID() == userToDisplay.getId() && !(b.getEffectiveReturnDate().equals(""))) {
 	    			data.add(b);
 	    		}
 			}
@@ -403,11 +441,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (user != null) {
+        if (userToDisplay != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && b.getUsersID() == user.getId() && b.getEffectiveReturnDate().equals("") && b.isLate()) {
+	    		if(!(b.equals(null)) && b.getUsersID() == userToDisplay.getId() && b.getEffectiveReturnDate().equals("") && b.isLate()) {
 	    			b.checkBorrowLate();
 	    			data.add(b);
 	    		}
@@ -422,11 +460,11 @@ public class UserProfile {
 		// We reset the data
 		data.clear();
 		
-        if (user != null) {
+        if (userToDisplay != null) {
         	
 	    	// We add the on going user's borrows to our data
 	    	for(Borrow b : Borrow.getAllBorrow()) {
-	    		if(!(b.equals(null)) && (b.getUsersID() == user.getId() && (!(b.getEffectiveReturnDate().equals("")) && b.isLate()))) {
+	    		if(!(b.equals(null)) && (b.getUsersID() == userToDisplay.getId() && (!(b.getEffectiveReturnDate().equals("")) && b.isLate()))) {
 	    			data.add(b);
 	    		}
 			}
@@ -437,17 +475,25 @@ public class UserProfile {
 	 * Method to update the ObservableList data
 	 */
 	public void updateData() {
-		if(user != null) {
+		if(userToDisplay != null) {
 			//We reset the checkBoxes
 			lateBorrowCheckBox.setSelected(false);
 			onGoingBorrowCheckBox.setSelected(false);
 			finishedBorrowCheckBox.setSelected(false);
 			
+			// To update the labels
+        	updateInfo();
+          	
+          	dataWithAllUsersBorrow();
+          	usersBorrowTable.setItems(data);
+          	
+          	changingNumberOfPages();
+			
 			// We clear the data
 			data.clear();
 			
 			for(Borrow b : Borrow.getAllBorrow()) {
-		    	if(!(b.equals(null)) && b.getUsersID() == user.getId()) {
+		    	if(!(b.equals(null)) && b.getUsersID() == userToDisplay.getId()) {
 		    		data.add(b);
 		    	}
 		    }
@@ -464,35 +510,14 @@ public class UserProfile {
 	}
 	
 	/**
-	 * Getter to get the data containing the user's borrows
-	 * @return the data containing the user's borrows
+	 * Method to update the label with an user's informations
 	 */
-	public ObservableList<Borrow> getData() {
-        return data;
-    }
-
-	/**
-	 * Getter to get the table view displaying the user's borrows
-	 * @return the table view displaying the user's borrows
-	 */
-    public TableView<Borrow> getUsersBorrowsTable() {
-        return usersBorrowTable;
-    }
-
-    /**
-	 * Getter to get the pagination for the table view of the user's borrows
-	 * @return the pagination for the table view of the user's borrows
-	 */
-    public Pagination getUsersBorrowsTablePagination() {
-        return usersBorrowTablePagination;
-    }
-    
-    /**
-	 * Getter to get the VBox containing all the element for the user's profile
-	 * @return the the VBox containing all the element for the user's profile
-	 */
-    public VBox getUsersProfileTableVBox() {
-    	return usersProfileVBox;
-    }
+	public void updateInfo() {
+		usersIDValue.setText(String.valueOf(userToDisplay.getId()));
+       	usersFirstnameValue.setText(userToDisplay.getFirstname());
+       	usersLastnameValue.setText(userToDisplay.getLastname());
+      	usersEmailValue.setText(userToDisplay.getEmail());
+      	usersStatusValue.setText(userToDisplay.getStatus());
+	}
 	
 }

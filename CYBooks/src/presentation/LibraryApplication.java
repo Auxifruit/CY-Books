@@ -42,6 +42,8 @@ public class LibraryApplication extends Application {
 	private BorrowsTable borrowsTable;
 	// The class containing the pane to modify a borrow
 	private BorrowModification borrowModification;
+	// The class containing the pane to display the borrow's informations
+	private BorrowInformation borrowInformation;
 	// The VBox containing the buttons to change the center of the main BorderPane to Borrows oriented Pane
 	private VBox containerButtonChangeCenterBorrowsApp;
 	
@@ -49,6 +51,8 @@ public class LibraryApplication extends Application {
 	private BooksTable booksTable;
 	// The class containing the pane to enter a book's information to search it
 	private BookSearch bookSearch;
+	// The class containing the pane and the table for the most borrowed books of the last 30 days
+	private MostBorrowedBook mostBorrowedBook;
 	// The VBox containing the buttons to change the center of the main BorderPane to Books oriented Pane
 	private VBox containerButtonChangeCenterBooksApp;
 
@@ -68,18 +72,6 @@ public class LibraryApplication extends Application {
 		// HBox containing all the button to change between User oriented scenes
 		containerButtonChangeCenterAndBottomApp = createButtonChangeCenterAndBottomApp();
 	    
-		// Borrow Table pane
- 		borrowsTable = new BorrowsTable();
- 		
- 		// Borrow Modification pane
- 		borrowModification = new BorrowModification(borrowsTable.getBorrowsTable());
- 		
- 		// Borrow Table pane
- 		booksTable = new BooksTable(new ArrayList<Book>());
-
- 		// Book search pane
- 		bookSearch = new BookSearch(booksTable);
-		
 		// User Table pane
 	    usersTable = new UsersTable();
 	    
@@ -89,8 +81,26 @@ public class LibraryApplication extends Application {
 	    // User Modification pane
 	    userModification = new UserModification(usersTable.getUsersTable());
 	    
- 		// User's Profile we need to instantiate the profile after the borrows to get the historic
-	    userProfile = new UserProfile(usersTable.getUsersTable());
+ 		// User's Profile
+	    userProfile = new UserProfile();
+		
+		// Borrow Table pane
+ 		borrowsTable = new BorrowsTable();
+ 		
+ 		// Borrow Modification pane
+ 		borrowModification = new BorrowModification(borrowsTable.getBorrowsTable());
+ 		
+ 		// Borrow's information pane
+ 		borrowInformation = new BorrowInformation();
+ 		
+ 		// Borrow Table pane
+ 		booksTable = new BooksTable(new ArrayList<Book>());
+
+ 		// Book search pane
+ 		bookSearch = new BookSearch(booksTable);
+ 		
+ 		// Most borrowed book Pane
+ 		mostBorrowedBook = new MostBorrowedBook();
 	    
     	// The VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
  		containerButtonChangeCenterUsersApp = createButtonChangeCenterUsers();
@@ -141,8 +151,9 @@ public class LibraryApplication extends Application {
  	    
  	    Button goToUserProfile = new Button("Check profile");
  	    goToUserProfile.setOnAction(e -> {
-	    	mainBorderPane.setCenter(userProfile.getUsersProfileTableVBox());
-	    	userProfile.updateData();
+ 	    	userProfile.setUserToDisplay(usersTable.getUsersTable().getSelectionModel().getSelectedItem());
+ 	    	userProfile.updateData();
+	    	mainBorderPane.setCenter(userProfile.getUsersProfileVBox());	    	
 	    });
 	    
 	    // If no user is selected, the button is disable
@@ -181,10 +192,20 @@ public class LibraryApplication extends Application {
 			mainBorderPane.setCenter(borrowModification.getBorrowsModificationVBox());
 		});
 		
-		// If no user is selected, the button is disable
+		// If no borrow is selected, the button is disable
 		goToBorrowsModificationButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getBorrowsTable().getSelectionModel().getSelectedItems()));
 		
-		buttonsContainer.getChildren().addAll(goToUsersTableButton, goToBorrowsModificationButton);
+		Button goToBorrowInformations = new Button("Check borrow's information");
+		goToBorrowInformations.setOnAction(e -> {
+			borrowInformation.setBorrowToDisplay(borrowsTable.getBorrowsTable().getSelectionModel().getSelectedItem());
+			borrowInformation.updateInfo();
+	    	mainBorderPane.setCenter(borrowInformation.getBorrowsInformationsVBox());
+	    });
+	    
+	    // If no borrow is selected, the button is disable
+		goToBorrowInformations.disableProperty().bind(Bindings.isEmpty(borrowsTable.getBorrowsTable().getSelectionModel().getSelectedItems()));
+		
+		buttonsContainer.getChildren().addAll(goToUsersTableButton, goToBorrowsModificationButton, goToBorrowInformations);
 		 
 		allContainer.getChildren().addAll(sep, buttonsContainer);
 		allContainer.setPadding(new Insets(10, 10, 10, 10));
@@ -208,13 +229,17 @@ public class LibraryApplication extends Application {
 			mainBorderPane.setCenter(booksTable.getBooksTableVBox());
 		});
 		
-		// Buttons to change the BorderPane's center
 		Button goToSearchBookButton = new Button("Search books");
 		goToSearchBookButton.setOnAction(e -> {
 			mainBorderPane.setCenter(bookSearch.getCommandContainer());
 		});
+
+		Button goToMostBorrowedBooks = new Button("Most borrowed books");
+		goToMostBorrowedBooks.setOnAction(e -> {
+			mainBorderPane.setCenter(mostBorrowedBook.getBooksTableVBox());
+		});  
 		
-		buttonsContainer.getChildren().addAll(goToSearchBookButton, goToBooksTableButton);
+		buttonsContainer.getChildren().addAll(goToSearchBookButton, goToBooksTableButton, goToMostBorrowedBooks);
 		 
 		allContainer.getChildren().addAll(sep, buttonsContainer);
 		allContainer.setPadding(new Insets(10, 10, 10, 10));
@@ -256,7 +281,7 @@ public class LibraryApplication extends Application {
 		goToBooks.setOnAction(e -> {
 			mainBorderPane.setCenter(bookSearch.getCommandContainer());
 			mainBorderPane.setBottom(containerButtonChangeCenterBooksApp);
-		});  
+		});
 		
 		buttonContainer.getChildren().addAll(goToUsers, goToBorrow, goToBooks);
 		
@@ -267,15 +292,6 @@ public class LibraryApplication extends Application {
 	}
 
 	public static void main(String[] args) {	
-		/*
-		Borrow b2 = new Borrow(152, 5, "2", LocalDate.now(), LocalDate.now().plusDays(50), false);
-		try {
-			DBConnect.addBorrowInTable(b2);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 		launch(args);
 	}
 }

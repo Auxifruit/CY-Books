@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 public class BorrowModification {
 	private VBox borrowsModificationVBox;
@@ -24,6 +25,14 @@ public class BorrowModification {
         this.borrowsTable = borrowsTable;
         createUserModificationPane();
     }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the modification of a borrow
+	 * @return the the VBox containing all the element for the modification of a borrow
+	 */
+	public VBox getBorrowsModificationVBox() {
+		return borrowsModificationVBox;
+	}
 
     /**
 	 * Method to create a pane to modify a borrow
@@ -39,6 +48,7 @@ public class BorrowModification {
 	    borrowModificationLabel.setStyle("-fx-font-weight: bold;");
 	    
 	    Label oldBorrowLabel = new Label("Previous borrow's information :");
+	    oldBorrowLabel.setFont(new Font("Arial", 16));
 	    oldBorrowLabel.setUnderline(true);
 	    oldBorrowLabel.setStyle("-fx-font-weight: bold;");
 	    
@@ -46,9 +56,9 @@ public class BorrowModification {
 	    HBox oldBorrowReturnDateAndLabel = new HBox();
 	    HBox oldBorrowEffectiveReturnDateAndLabel = new HBox();
 	    
-	    Label oldBorrowDate = new Label("• Date : ");
-	    Label oldBorrowReturnDate = new Label("• Return date : ");
-	    Label oldBorrowEffectiveReturnDate = new Label("• Effective return date : ");
+	    Label oldBorrowDate = new Label("- Date : ");
+	    Label oldBorrowReturnDate = new Label("- Return date : ");
+	    Label oldBorrowEffectiveReturnDate = new Label("- Effective return date : ");
 	    
 	    oldBorrowDate.setStyle("-fx-font-weight: bold;");
 	    oldBorrowReturnDate.setStyle("-fx-font-weight: bold;");
@@ -61,9 +71,16 @@ public class BorrowModification {
 	    // If the selected borrow changed we update the values of the labels
 	    borrowsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 	        if (newSelection != null) {
-	        	oldBorrowDateLabel.setText(borrowsTable.getSelectionModel().getSelectedItem().getDateBorrow());
-	        	oldBorrowReturnDateLabel.setText(borrowsTable.getSelectionModel().getSelectedItem().getReturnDate());
-	        	oldBorrowEffectiveReturnDateLabel.setText(borrowsTable.getSelectionModel().getSelectedItem().getEffectiveReturnDate());
+	        	Borrow borrowToDisplay = newSelection;
+	        	
+	        	oldBorrowDateLabel.setText(borrowToDisplay.getDateBorrow());
+	        	oldBorrowReturnDateLabel.setText(borrowToDisplay.getReturnDate());
+	        	oldBorrowEffectiveReturnDateLabel.setText(borrowToDisplay.getEffectiveReturnDate());
+	        }
+	        else {
+	        	oldBorrowDateLabel.setText("");
+	        	oldBorrowReturnDateLabel.setText("");
+	        	oldBorrowEffectiveReturnDateLabel.setText("");
 	        }
 	    });
 	    
@@ -78,12 +95,26 @@ public class BorrowModification {
 	    HBox newUserInfosInput = new HBox(50);
 	    
 	    Label newBorrowLabel = new Label("New borrow's information :");
+	    newBorrowLabel.setFont(new Font("Arial", 16));
 	    newBorrowLabel.setUnderline(true);
 	    newBorrowLabel.setStyle("-fx-font-weight: bold;");
 	    
+	    // Will allow to choose a date
 	    DatePicker newDatePicker = new DatePicker();
 	    DatePicker newReturnDatePicker = new DatePicker();
 	    DatePicker newEffectiveReturnDatePicker = new DatePicker();
+	    
+	    // Will display which DatePicker referencing to which data
+	    Tooltip newDateTooltip = new Tooltip("New date for the borrow");
+	    newDateTooltip.setShowDelay(Duration.seconds(0));
+	    Tooltip newReturnDateTooltip = new Tooltip("New return date for the borrow");
+	    newReturnDateTooltip.setShowDelay(Duration.seconds(0));
+	    Tooltip newEffectiveReturnDateTooltip = new Tooltip("New effective return date for the borrow");
+	    newEffectiveReturnDateTooltip.setShowDelay(Duration.seconds(0));
+	    
+	    newDatePicker.setTooltip(newDateTooltip);
+	    newReturnDatePicker.setTooltip(newReturnDateTooltip);
+	    newEffectiveReturnDatePicker.setTooltip(newEffectiveReturnDateTooltip);
 	    
 	    // Button to modify a borrow
 	    Button modifyBorrowButton = new Button("Modify");
@@ -115,12 +146,5 @@ public class BorrowModification {
 	    borrowsModificationVBox.getChildren().addAll(borrowModificationLabel, borrowsOldInfos, borrowsNewInfos);
 	    borrowsModificationVBox.setAlignment(Pos.TOP_CENTER);
 	}
-	
-	/**
-	 * Getter to get the VBox containing all the element for the modification of a borrow
-	 * @return the the VBox containing all the element for the modification of a borrow
-	 */
-	public VBox getBorrowsModificationVBox() {
-		return borrowsModificationVBox;
-	}
+
 }

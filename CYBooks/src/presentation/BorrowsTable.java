@@ -32,7 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
- * The class of the users management application
+ * The class containing the pane and the TableView to display all the borrows
  */
 public class BorrowsTable {
 	private VBox borrowsTableVBox;
@@ -66,6 +66,62 @@ public class BorrowsTable {
         initializeTable();
         createBorrowsTablePane();
     }
+	
+	/**
+	 * Getter to get the data containing the borrows
+	 * @return the data containing the borrows
+	 */
+	public ObservableList<Borrow> getData() {
+        return data;
+    }
+
+	/**
+	 * Getter to get the table view displaying the borrows
+	 * @return the table view displaying the borrows
+	 */
+    public TableView<Borrow> getBorrowsTable() {
+        return borrowsTable;
+    }
+
+    /**
+	 * Getter to get the pagination for the table view of borrows
+	 * @return the pagination for the table view of borrows
+	 */
+    public Pagination getBorrowsTablePagination() {
+        return borrowsTablePagination;
+    }
+    
+    /**
+	 * Getter to get the VBox containing all the element for the borrows table
+	 * @return the the VBox containing all the element for the borrows table
+	 */
+    public VBox getBorrowsTableVBox() {
+    	return borrowsTableVBox;
+    }
+
+    /**
+     * Getter for the late borrow filter CheckBox
+     * @return the CheckBox for filter the late borrow
+     */
+	public CheckBox getLateBorrowCheckBox() {
+		return lateBorrowCheckBox;
+	}
+	
+	/**
+     * Getter for the on going borrow filter CheckBox
+     * @return the CheckBox for filter the on going borrow
+     */
+	public CheckBox getOnGoingBorrowCheckBox() {
+		return onGoingBorrowCheckBox;
+	}
+
+	/**
+     * Getter for the finished borrow filter CheckBox
+     * @return the CheckBox for filter the finished borrow
+     */
+	public CheckBox getFinishedBorrowCheckBox() {
+		return finishedBorrowCheckBox;
+	}
 
 	/**
 	 * Method to create a pane for the users table
@@ -219,22 +275,22 @@ public class BorrowsTable {
 		
 		// Column for the book's Identifier
 	    booksIdentifierCol = new TableColumn<>("Book's Identifier");
-	    booksIdentifierCol.setMinWidth(100);
+	    booksIdentifierCol.setMinWidth(150);
 	    booksIdentifierCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("booksIdentifier"));
 
 	    // Column for the borrow's date
 	    borrowsDateCol = new TableColumn<>("Borrow's date");
-	    borrowsDateCol.setMinWidth(200);
+	    borrowsDateCol.setMinWidth(100);
 	    borrowsDateCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("borrowDate"));
 
 	    // Column for the borrow's return date
 	    borrowsReturnDateCol = new TableColumn<>("Borrow's return date");
-	    borrowsReturnDateCol.setMinWidth(200);
+	    borrowsReturnDateCol.setMinWidth(100);
 	    borrowsReturnDateCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("returnDate"));
 	    
 	    // Column for the borrow's effective return date
 	    borrowsEffectiveReturnDateCol = new TableColumn<>("Borrow's effective return date");
-	    borrowsEffectiveReturnDateCol.setMinWidth(200);
+	    borrowsEffectiveReturnDateCol.setMinWidth(100);
 	    borrowsEffectiveReturnDateCol.setCellValueFactory(new PropertyValueFactory<Borrow, String>("effectiveReturnDate"));
 	    
 	    // Column for the borrow's statue
@@ -399,38 +455,6 @@ public class BorrowsTable {
 	}
 	
 	/**
-	 * Getter to get the data containing the borrows
-	 * @return the data containing the borrows
-	 */
-	public ObservableList<Borrow> getData() {
-        return data;
-    }
-
-	/**
-	 * Getter to get the table view displaying the borrows
-	 * @return the table view displaying the borrows
-	 */
-    public TableView<Borrow> getBorrowsTable() {
-        return borrowsTable;
-    }
-
-    /**
-	 * Getter to get the pagination for the table view of borrows
-	 * @return the pagination for the table view of borrows
-	 */
-    public Pagination getBorrowsTablePagination() {
-        return borrowsTablePagination;
-    }
-    
-    /**
-	 * Getter to get the VBox containing all the element for the borrows table
-	 * @return the the VBox containing all the element for the borrows table
-	 */
-    public VBox getBorrowsTableVBox() {
-    	return borrowsTableVBox;
-    }
-
-    /**
 	 * Method to update the ObservableList data
 	 */
 	public void updateData() {
@@ -456,18 +480,6 @@ public class BorrowsTable {
 	    
 	    // We update the tableView to display 15 users starting from index 0
         changeTableView(0, ROWS_PER_PAGE);
-	}
-
-	public CheckBox getLateBorrowCheckBox() {
-		return lateBorrowCheckBox;
-	}
-
-	public CheckBox getOnGoingBorrowCheckBox() {
-		return onGoingBorrowCheckBox;
-	}
-
-	public CheckBox getFinishedBorrowCheckBox() {
-		return finishedBorrowCheckBox;
 	}
 	
 }
