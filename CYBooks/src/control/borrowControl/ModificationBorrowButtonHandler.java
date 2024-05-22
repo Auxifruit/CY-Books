@@ -15,7 +15,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Alert.AlertType;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -103,17 +102,17 @@ public class ModificationBorrowButtonHandler implements EventHandler<ActionEvent
 		    	if(result.get().equals(yesButton)) {
 		    		// We update the borrow's values
 		    		borrowToModify.setDateBorrow(date);
-		    		oldBorrowsDate.setText(date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		    		oldBorrowsDate.setText(date.toString());
 					
 					borrowToModify.setReturnDate(returnDate);
-					oldBorrowsReturnDate.setText(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+					oldBorrowsReturnDate.setText(returnDate.toString());
 		    		if(effectiveReturnDate == null) {
 		    			try {
 		    				// Check if the new borrow's late
 		    				borrowToModify.checkBorrowLate();
 		    				
 				    		// We modify the borrow's informations in the database
-			    			DBConnect.modifyBorrowInTable(borrowToModify, date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+			    			DBConnect.modifyBorrowInTable(borrowToModify, date.toString(), returnDate.toString());
 				    		
 				    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been modified.", ButtonType.OK);
 					    	modificationUserAlert.setTitle("Borrow modified confirmation");
@@ -128,13 +127,13 @@ public class ModificationBorrowButtonHandler implements EventHandler<ActionEvent
 		    		}
 		    		else {
 		    			borrowToModify.setEffectiveReturnDate(effectiveReturnDate);
-						oldBorrowsEffectiveReturnDate.setText(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+						oldBorrowsEffectiveReturnDate.setText(effectiveReturnDate.toString());
 						try {
 							// Check if the new borrow's late
 		    				borrowToModify.checkBorrowLate();
 
 				    		// We modify the borrow's informations in the database
-			    			DBConnect.modifyBorrowInTable(borrowToModify, date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+			    			DBConnect.modifyBorrowInTable(borrowToModify, date.toString(), returnDate.toString(), effectiveReturnDate.toString());
 				    		
 				    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been modified.", ButtonType.OK);
 					    	modificationUserAlert.setTitle("Borrow modified confirmation");
@@ -162,8 +161,18 @@ public class ModificationBorrowButtonHandler implements EventHandler<ActionEvent
 		}
     }
     
+    /**
+     * Method to check if the entered dates are logic
+     * @param date the borrow's date
+     * @param returnDate the borrow's return date
+     * @param effectiveReturnDate the borrow's effective return date
+     * @return true if the dates are logic and false if not
+     */
     public static boolean validDate(LocalDate date, LocalDate returnDate, LocalDate effectiveReturnDate) {
-    	if(effectiveReturnDate == null && date.isBefore(returnDate)) {
+    	if((effectiveReturnDate == null && date.isBefore(returnDate)) || date.equals(returnDate)) {
+    		return true;
+    	}
+    	if(date.equals(effectiveReturnDate) && date.isBefore(returnDate)) {
     		return true;
     	}
     	if(date.isBefore(returnDate) && date.isBefore(effectiveReturnDate)) {

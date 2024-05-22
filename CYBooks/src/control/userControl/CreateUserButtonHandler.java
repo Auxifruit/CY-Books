@@ -1,6 +1,7 @@
 package control.userControl;
 
 import presentation.UsersTable;
+import abstraction.GeneralUtils;
 import abstraction.User;
 import abstraction.db.DBConnect;
 
@@ -50,7 +51,7 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
             errorCreateUserAlert.showAndWait();
         } else {
             // We verify is the e-mail format is correct
-            if(isValidEmail(emailText.getText()) == true) {
+            if(GeneralUtils.isValidEmail(emailText.getText()) == true) {
             	// We instantiate the user that will be added to our data base
                 User userToCreate = new User(lastnameText.getText(), firstnameText.getText(), emailText.getText());
                 
@@ -83,24 +84,5 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
             	emailAlert.showAndWait();
             }
         }
-    }
-    
-    /**
-	 * Method to check if a String matches the e-mail format
-	 * @param email the string we want to check the format
-	 * @return true if String matches the e-mail format and false if not
-	 */
-	public static boolean isValidEmail(String email) {
-		// Regular expression to validate an e-mail
-        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-
-        // Create a Pattern object containing our regular expression
-        Pattern pattern = Pattern.compile(regex);
-
-        // Create an Matcher object to search a motif in our regular expression
-        Matcher matcher = pattern.matcher(email);
-
-        // Check if the String matches the e-mail format
-        return matcher.matches();
     }
 }

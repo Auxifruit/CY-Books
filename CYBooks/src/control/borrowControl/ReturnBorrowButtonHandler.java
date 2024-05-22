@@ -48,8 +48,12 @@ public class ReturnBorrowButtonHandler implements EventHandler<ActionEvent> {
 	    		borrowToValidate.setEffectiveReturnDate(LocalDate.now());
 	    		
 		    	try {
+		    		borrowToValidate.checkBorrowLate();
+		    		
 		    		// We modify the Borrow's effective return date in the text file
-		    		DBConnect.modifyBorrowInTable(borrowToValidate, borrowToValidate.getDateBorrow(), borrowToValidate.getReturnDate(), LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		    		DBConnect.modifyBorrowInTable(borrowToValidate, borrowToValidate.getDateBorrow(), borrowToValidate.getReturnDate(), LocalDate.now().toString());
+		    		
+		    		borrowsTable.getSelectionModel().select(null);
 		    		
 		            Alert validatedBorrowAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been validated.", ButtonType.OK);
 		            validatedBorrowAlert.setTitle("Borrow validation confirmation");

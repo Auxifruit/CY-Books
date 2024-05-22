@@ -51,6 +51,8 @@ public class CancelBorrowButtonHandler implements EventHandler<ActionEvent> {
 		    		// We modify the Borrow's effective return date in the text file
 		    		DBConnect.modifyBorrowInTable(borrowToValidate, borrowToValidate.getDateBorrow(), borrowToValidate.getReturnDate(), borrowToValidate.getEffectiveReturnDate());
 		    		
+		    		borrowsTable.getSelectionModel().select(null);
+		    		
 		            Alert validatedBorrowAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been canceled.", ButtonType.OK);
 		            validatedBorrowAlert.setTitle("Borrow cancelation confirmation");
 		            validatedBorrowAlert.showAndWait();
