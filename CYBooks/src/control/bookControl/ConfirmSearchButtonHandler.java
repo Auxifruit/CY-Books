@@ -179,6 +179,7 @@ public class ConfirmSearchButtonHandler implements EventHandler<ActionEvent> {
 	    		    	
 	    	System.out.println("We searching books...");
 	    	
+	    	// We get the list of book returned by the API call
 	    	List<Book> bookList = API.searchBook(query.toArray(new String[0]), 60);
 	    	
 	    	System.out.println("Searching finished !");

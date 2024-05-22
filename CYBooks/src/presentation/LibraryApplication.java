@@ -68,6 +68,18 @@ public class LibraryApplication extends Application {
 		// HBox containing all the button to change between User oriented scenes
 		containerButtonChangeCenterAndBottomApp = createButtonChangeCenterAndBottomApp();
 	    
+		// Borrow Table pane
+ 		borrowsTable = new BorrowsTable();
+ 		
+ 		// Borrow Modification pane
+ 		borrowModification = new BorrowModification(borrowsTable.getBorrowsTable());
+ 		
+ 		// Borrow Table pane
+ 		booksTable = new BooksTable(new ArrayList<Book>());
+
+ 		// Book search pane
+ 		bookSearch = new BookSearch(booksTable);
+		
 		// User Table pane
 	    usersTable = new UsersTable();
 	    
@@ -82,18 +94,6 @@ public class LibraryApplication extends Application {
 	    
     	// The VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
  		containerButtonChangeCenterUsersApp = createButtonChangeCenterUsers();
-	    
- 		// Borrow Table pane
- 		borrowsTable = new BorrowsTable();
- 		
- 		// Borrow Modification pane
- 		borrowModification = new BorrowModification(borrowsTable.getBorrowsTable());
- 		
- 		// Borrow Table pane
- 		booksTable = new BooksTable(new ArrayList<Book>(), borrowsTable, userProfile);
-
- 		// Book search pane
- 		bookSearch = new BookSearch(booksTable);
  		
  		containerButtonChangeCenterBooksApp = createButtonChangeCenterBooks();
  		
@@ -241,12 +241,15 @@ public class LibraryApplication extends Application {
 		goToUsers.setOnAction(e -> {
 			mainBorderPane.setCenter(usersTable.getUsersTableVBox());
 			mainBorderPane.setBottom(containerButtonChangeCenterUsersApp);
+			usersTable.updateData();
+			userProfile.updateData();
 		});
 		
 		Button goToBorrow = new Button("Borrows");
 		goToBorrow.setOnAction(e -> {
 			mainBorderPane.setCenter(borrowsTable.getBorrowsTableVBox());
 			mainBorderPane.setBottom(containerButtonChangeCenterBorrowsApp);
+			borrowsTable.updateData();
 		});
 		
 		Button goToBooks = new Button("Books");

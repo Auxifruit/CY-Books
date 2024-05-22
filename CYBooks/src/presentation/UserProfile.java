@@ -2,6 +2,8 @@ package presentation;
 
 import abstraction.Borrow;
 import abstraction.User;
+import control.borrowControl.DeleteBorrowFromUserProfileButtonHandler;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,6 +13,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
@@ -137,6 +140,13 @@ public class UserProfile {
         Label usersBorrowLabel = new Label("User's borrow :");
         usersBorrowLabel.setUnderline(true);
         usersBorrowLabel.setStyle("-fx-font-weight: bold;");
+        
+        // Button to delete a borrow
+	    Button deleteBorrowButton = new Button("Delete borrow");
+	    deleteBorrowButton.setOnAction(new DeleteBorrowFromUserProfileButtonHandler(this));
+	    
+	    // If no borrow is selected, the button is disable
+	    deleteBorrowButton.disableProperty().bind(Bindings.isEmpty(usersBorrowTable.getSelectionModel().getSelectedItems()));
 	    
 	    // If we check it we display the late borrows and if not we display all the borrows
 	    ChangeListener<Boolean> borrowCheckChange = new ChangeListener<Boolean>() {
@@ -159,7 +169,7 @@ public class UserProfile {
 	    
 	    // The VBox containing all we need for the user's borrow
 	    VBox usersBorrowContainer = new VBox(10);
-	    usersBorrowContainer.getChildren().addAll(usersBorrowLabel, checkBoxContainer, usersBorrowTablePagination);
+	    usersBorrowContainer.getChildren().addAll(usersBorrowLabel, checkBoxContainer, usersBorrowTablePagination, deleteBorrowButton);
 	    
 	    // VBox containing the nodes for the user modification
 	    usersProfileVBox = new VBox(25);

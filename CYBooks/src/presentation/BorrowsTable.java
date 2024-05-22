@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import abstraction.Borrow;
 import abstraction.db.DBConnect;
-import control.borrowControl.DeleteBorrowButtonHandler;
+import control.borrowControl.DeleteBorrowFromBorrowsTableButtonHandler;
 import control.borrowControl.ReturnBorrowButtonHandler;
 import control.borrowControl.CancelBorrowButtonHandler;
 import javafx.beans.binding.Bindings;
@@ -82,7 +82,7 @@ public class BorrowsTable {
 		
 		// Button to delete a borrow
 	    Button deleteBorrowButton = new Button("Delete borrow");
-	    deleteBorrowButton.setOnAction(new DeleteBorrowButtonHandler(this));
+	    deleteBorrowButton.setOnAction(new DeleteBorrowFromBorrowsTableButtonHandler(this));
 	    // If no borrow is selected, the button is disable
 	    deleteBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
 	    

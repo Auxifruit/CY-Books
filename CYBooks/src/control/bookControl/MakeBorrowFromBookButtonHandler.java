@@ -22,20 +22,13 @@ import presentation.UserProfile;
 public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent> {
 	
 	private TableView<Book> booksTable;
-	
-	private BorrowsTable borrowsTable;
-	private UserProfile userProfile;
 
 	/**
 	 * MakeBorrowFromBookButtonHandler constructor
 	 * @param booksTable the TableView with all the books
-	 * @param borrowsTable the class containing the data and the table for the borrows
-	 * @param userProfile the class containing the data and the table for the user's profile
 	 */
-	public MakeBorrowFromBookButtonHandler(TableView<Book> booksTable, BorrowsTable borrowsTable, UserProfile userProfile) {
-		this.borrowsTable = borrowsTable;
+	public MakeBorrowFromBookButtonHandler(TableView<Book> booksTable) {
 		this.booksTable = booksTable;
-		this.userProfile = userProfile;
 	}
 
 	@Override
@@ -68,9 +61,6 @@ public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent
 						if(countBookBorrowed < Book.getCanBeBorrow()) {
 							Borrow newBorrow = new Borrow(usersIDInt, selectedBook.getIdentifier(), LocalDate.now());
 							DBConnect.addBorrowInTable(newBorrow);
-							
-							borrowsTable.updateData();
-							userProfile.updateData();
 							
 							Alert createBorrowAlert = new Alert(Alert.AlertType.CONFIRMATION, "The borrow has been created.", ButtonType.OK);
 							createBorrowAlert.setTitle("Borrow creation confirmation");

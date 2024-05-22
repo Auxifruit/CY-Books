@@ -1,5 +1,6 @@
 package control.userControl;
 
+import abstraction.Borrow;
 import abstraction.User;
 import abstraction.db.DBConnect;
 
@@ -50,11 +51,13 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     		User userToDelete = usersTable.getUsersTable().getSelectionModel().getSelectedItem();		
     		
 	    	try {
-	    		// We remove it from our database, the list of all the users and the data
+	    		// We remove the user's borrows from our database
+	    		DBConnect.deleteBorrowInTableByUsersID(userToDelete.getId());
+	    		Borrow.removeBorrowByUsersID(userToDelete.getId());	    	
 	    		
+	    		// We remove the user from our database	    		
 	    		DBConnect.deleteUserInTable(userToDelete);
 	    		User.getAllUser().remove(userToDelete);
-		    	usersTable.getData().remove(userToDelete);
 
 		    	usersTable.updateData();
 	            

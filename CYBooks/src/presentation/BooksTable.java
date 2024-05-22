@@ -28,9 +28,6 @@ public class BooksTable {
 	
 	private List<Book> bookList;
 	
-	private BorrowsTable borrowsTable;
-	private UserProfile userProfile;
-	
 	private Pagination booksTablePagination;
 	public final static int ROWS_PER_PAGE = 15;
 	
@@ -44,11 +41,14 @@ public class BooksTable {
 	private TableColumn<Book, String> publisherCol;
 	private final ObservableList<Book> data = FXCollections.observableArrayList();
 	private FilteredList<Book> filteredData;
+	private TextField filteredField;
 
-    public BooksTable(List<Book> bookList, BorrowsTable borrowsTable, UserProfile userProfile) {
+	/**
+	 * Constructor of the BooksTable class
+	 * @param bookList the list with all the books found
+	 */
+    public BooksTable(List<Book> bookList) {
     	this.bookList = bookList;
-    	this.borrowsTable = borrowsTable;
-    	this.userProfile = userProfile;
     	initializeTable();
         createBooksTablePane();
     }
@@ -71,13 +71,13 @@ public class BooksTable {
 	    
 	    // Button to delete an book
 	    Button makeBorrowFromBookButton = new Button("Make a borrow from this book");
-	    makeBorrowFromBookButton.setOnAction(new MakeBorrowFromBookButtonHandler(booksTable, borrowsTable, userProfile));
+	    makeBorrowFromBookButton.setOnAction(new MakeBorrowFromBookButtonHandler(booksTable));
 	    
 	    // If no book is selected, the button is disable
 	    makeBorrowFromBookButton.disableProperty().bind(Bindings.isEmpty(booksTable.getSelectionModel().getSelectedItems()));
 		
 	    // Allow the search in the table view
-	    TextField filteredField = new TextField();
+	    filteredField = new TextField();
 	    filteredField.setPromptText("Search");
 	    
 	    // At start all data are correct
@@ -263,6 +263,9 @@ public class BooksTable {
 	 * Method to update the ObservableList data
 	 */
 	public void updateData(List<Book> bookList) {
+		// We reset the TextField for the search
+		filteredField.clear();
+		
 		// We clear the data
 		data.clear();
 		

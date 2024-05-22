@@ -37,6 +37,7 @@ public class UsersTable {
 	private TableColumn<User, String> emailCol;
 	private final ObservableList<User> data = FXCollections.observableArrayList();
 	private FilteredList<User> filteredData;
+	private TextField filteredField;
 
     public UsersTable() {
     	initializeData();
@@ -68,7 +69,7 @@ public class UsersTable {
 	    deleteUserButton.disableProperty().bind(Bindings.isEmpty(usersTable.getSelectionModel().getSelectedItems()));
 	    
 	    // Allow the search in the table view
-	    TextField filteredField = new TextField();
+	    filteredField = new TextField();
 	    filteredField.setPromptText("Search");
 	    
 	    // At start all data are correct
@@ -281,6 +282,9 @@ public class UsersTable {
    	 * Method to update the ObservableList data
    	 */
    	public void updateData() {
+   		// We reset the TextField for the search
+        filteredField.clear();
+   		
    		// We clear the data
    		data.clear();
    		
@@ -298,6 +302,6 @@ public class UsersTable {
    	    
    	    // We update the tableView to display 15 users starting from index 0
         changeTableView(0, ROWS_PER_PAGE);
+        
    	}
-
 }
