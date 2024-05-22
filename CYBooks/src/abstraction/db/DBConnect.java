@@ -394,6 +394,33 @@ public class DBConnect {
 		}
 	}
 	
+	/**
+	 * Method to delete a Borrow from the database by using the user's ID
+	 * @param usersID the id of the user whose borrowings we want to delete
+	 * @throws SQLException if we have an exception about SQL
+	 */
+	public static void deleteBorrowInTableByUsersID(int usersID) throws SQLException {
+		// String for the query, the ? correspond to the values we want to assign
+		final String query = "DELETE FROM " + BORROW_TABLE + " WHERE " + USER_ID + " = ?";
+
+		try {
+			Connection co = quickconnect();
+			
+			// Allow us to prepare the query to execute it later
+			PreparedStatement ps = co.prepareStatement(query);
+
+			// We set the values of the query
+			ps.setInt(1, usersID);
+			
+			ps.executeUpdate();
+			
+			co.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			throw new SQLException("Fail to connect to the database for unknown reasons");
+		}
+	}	
 
 	/**
 	 * Method to modify a Borrow in the database
