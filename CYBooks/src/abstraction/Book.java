@@ -17,7 +17,7 @@ public class Book {
 	protected StringProperty format;
 	protected StringProperty type;
 	protected StringProperty publisher;
-	
+	protected static final int NumberOfBorrowPossible = 5 ; 
 	/**
 	 * book constructor with all fields as parameters
 	 * @param identifier the book's identifier
@@ -245,5 +245,10 @@ public class Book {
     			&& this.getPublishedDate().equals(b.getPublishedDate()) && this.getFormat().equals(b.getFormat()) && this.getType().equals(b.getType())
     			&& this.getPublisher().equals(b.getPublisher());
     }
+
+	public static int getCanBeBorrow() {
+		
+		return Book.NumberOfBorrowPossible;
+	}
 	
 }
