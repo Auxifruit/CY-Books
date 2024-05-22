@@ -76,7 +76,7 @@ public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent
 							// We count the number of time the book is borrowed to check if it can be borrowed
 							int countBookBorrowed = DBConnect.countBookBorrowed(selectedBook.getIdentifier());
 							
-							if(countBookBorrowed < Book.getCanBeBorrow()) {
+							if(countBookBorrowed < Book.getNumberBorrowPossible()) {
 								Borrow newBorrow = new Borrow(usersIDInt, selectedBook.getIdentifier(), LocalDate.now());
 								DBConnect.addBorrowInTable(newBorrow);
 								
