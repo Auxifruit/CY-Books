@@ -24,7 +24,7 @@ public class Main {
             switch (wdyw) {
                 case 1:
                     System.out.println("Program ending");
-                    scanner.close();
+
                     return;
 
                 case 2:
@@ -57,7 +57,7 @@ public class Main {
                         int idToModify = scanner.nextInt();
                         scanner.nextLine(); // Consume newline
 
-                        if (!User.IsExisting(idToModify)) {
+                        if (!User.isExisting(idToModify)) {
                             throw new UserNotExistException("This user does not exist: " + idToModify);
                         }
 
@@ -87,7 +87,7 @@ public class Main {
                         int idToDelete = scanner.nextInt();
                         scanner.nextLine(); // Consume newline
 
-                        if (!User.IsExisting(idToDelete)) {
+                        if (!User.isExisting(idToDelete)) {
                             throw new UserNotExistException("This user does not exist: " + idToDelete);
                         }
 
@@ -110,7 +110,7 @@ public class Main {
         }
     }
 
-    public static void borrowMenu() throws SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException {
+    public static void borrowMenu() throws SQLException,BookCantBeBorrowedException,UserCanBorrowException, UserNotExistException, BookNotExistException, BorrowNotExistException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -139,15 +139,24 @@ public class Main {
                             int userId = scanner.nextInt();
                             scanner.nextLine(); // Clear the buffer
 
-                            if (!User.IsExisting(userId)) {
+                            if (!User.isExisting(userId)) {
                                 throw new UserNotExistException("This user does not exist: " + userId);
                             }
 
+                            if (!Borrow.canUserBorrow(userId)) {
+                            	throw new UserCanBorrowException("This user can't borrow he has to much borrow "+ userId);
+                            }
+                            
+                            
                             System.out.println("What is the book's ISBN?");
                             String bookISBN = scanner.nextLine();
 
                             if (!API.checkIdentifierExistance(bookISBN)) {
                                 throw new BookNotExistException("This book does not exist: " + bookISBN);
+                            }
+                            
+                            if (!Borrow.canBookBeBorrowed(bookISBN)) {
+                            	throw new BookCantBeBorrowedException("This book can't be borrowed");
                             }
 
                             LocalDate dateBorrow = LocalDate.now();
@@ -155,7 +164,7 @@ public class Main {
                             DBConnect.addBorrowInTable(newBorrow);
                             System.out.println("Borrow added: " + newBorrow);
 
-                        } catch (UserNotExistException | BookNotExistException e) {
+                        } catch (UserNotExistException | BookNotExistException | UserCanBorrowException | BookCantBeBorrowedException e) {
                             System.out.println(e.getMessage());
                             System.out.println("You need to redo the procedure.");
                         } catch (Exception e) {
@@ -198,7 +207,7 @@ public class Main {
                     break;
 
                 case 4:
-                    String[] searchCriteria = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };            	
+                    String[] searchCriteria = { "dc.title all \"Les MisÃ©rables\"", "dc.creator all \"Victor Hugo\"" };            	
                     List<Book> books = API.searchBook(searchCriteria, 1);
                     for (Book book : books) {
                         System.out.println(book);
@@ -207,7 +216,7 @@ public class Main {
 
                 case 5:
                     System.out.println("Exiting borrow menu.");
-                    scanner.close();
+                
                     return;
 
                 default:
@@ -217,7 +226,7 @@ public class Main {
         }
     }
 
-    public static void commandline() throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException {
+    public static void commandline() throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException, BookCantBeBorrowedException, UserCanBorrowException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -236,7 +245,7 @@ public class Main {
                     break;
                     
                 case 3:
-                    scanner.close();
+                    
                     return;
                     
                 default:
@@ -246,7 +255,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException {
+    public static void main(String[] args) throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException, BookCantBeBorrowedException, UserCanBorrowException {
         try {
             DBConnect.readUsersTable();
             DBConnect.readBorrowsTable();
