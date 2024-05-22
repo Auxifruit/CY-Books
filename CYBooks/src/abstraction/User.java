@@ -1,12 +1,16 @@
 package abstraction;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import abstraction.db.DBConnect;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 /**
  * The class User represents a generic user going to the library
@@ -21,6 +25,7 @@ public class User {
 	protected StringProperty lastname;
 	protected StringProperty firstname;
 	protected StringProperty email;
+	private StringProperty status;
 
     /**
      * User constructor without the id
@@ -33,6 +38,7 @@ public class User {
         this.firstname = new SimpleStringProperty(firstname);
         this.email = new SimpleStringProperty(email);
         this.id = new SimpleIntegerProperty(counterId++);
+        this.status = new SimpleStringProperty(Status.PUNCTUAL.getText());
         allUser.add(this);
     }
     
@@ -42,10 +48,12 @@ public class User {
      * @param lastname the lastname of the user
      * @param firstname the firstname of the user
      * @param email the email of the user
+     * @param status the status of the user
      */
-    public User(int id, String lastname, String firstname, String email) {
+    public User(int id, String lastname, String firstname, String email, Status status) {
     	this(lastname, firstname, email);
     	this.id = new SimpleIntegerProperty(id);
+    	this.status = new SimpleStringProperty(status.getText());
     }
 
     /**
@@ -157,6 +165,22 @@ public class User {
     public StringProperty emailProperty() {
     	return email;
     }
+    
+    public String getStatus() {
+    	return status.get();
+    }
+    
+    public void setStatus(Status status) {
+    	this.status.set(status.getText());
+    }
+    
+    /**
+     * Method to return the StringProperty of the user' status for the TableView
+     * @return the StringProperty of the user' status
+     */
+    public StringProperty statusProperty() {
+    	return status;
+    }
 	
 	/**
 	 * Get the list of all the users
@@ -187,6 +211,32 @@ public class User {
 	 */
 	public static int getMaxBorrowNumber() {
 		return MAX_BORROW_NUMBER;
+	}
+	
+	public void checkUserStatus() {
+		// We start from the fact the user is punctual
+		Status status = Status.PUNCTUAL;
+		
+		for(Borrow b : Borrow.getAllBorrow()) {
+			// The user has at least one late borrow
+			if(!(b.equals(null)) && b.isLate() && b.getUsersID() == this.getId()) {
+				status = Status.LATECOMER;
+			}
+		}
+		
+		try {
+			DBConnect.modifyUsersStatusInTable(this, status.getText());
+		} catch (SQLException e) {
+			System.err.println("Fail to change the user' status in the database");
+			Alert errorAlert = new Alert(Alert.AlertType.ERROR, "An error occurred while changing the user' status.", ButtonType.OK);
+			errorAlert.showAndWait();
+		}	
+	}
+	
+	public static void checkAllUserStatus() {
+		for(User u : User.getAllUser()) {
+			u.checkUserStatus();
+		}
 	}
 	
 	/**
@@ -229,7 +279,7 @@ public class User {
 		}
 		return false ;
 	}
-
+	
 	/**
 	 * toString method for User
 	 * @return the string to print an user
@@ -255,7 +305,7 @@ public class User {
     	}
     	User u = (User) obj;
     	return this.getFirstname().equals(u.getFirstname()) && this.getLastname().equals(u.getLastname()) && this.getEmail().equals(u.getEmail())
-    			&& this.getId() == u.getId();
+    			&& this.getId() == u.getId() && this.getStatus().equals(u.getStatus());
     }
 
 }

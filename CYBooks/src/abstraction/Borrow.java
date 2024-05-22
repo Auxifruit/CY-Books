@@ -1,7 +1,6 @@
 package abstraction;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,8 +36,8 @@ public class Borrow {
     public Borrow(int usersID, String booksIdentifier, LocalDate dateBorrow) {
         this.usersID = new SimpleIntegerProperty(usersID);
         this.booksIdentifier =new SimpleStringProperty(booksIdentifier);
-        this.borrowDate = new SimpleStringProperty(dateBorrow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-        this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.MAX_BORROW_TIME).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.borrowDate = new SimpleStringProperty(dateBorrow.toString());
+        this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.MAX_BORROW_TIME).toString());
         this.effectiveReturnDate = new SimpleStringProperty("");
         this.late = new SimpleBooleanProperty(false);
         this.problems = new ArrayList<String>();
@@ -56,7 +55,7 @@ public class Borrow {
      */
     public Borrow(int id, int usersID, String booksIdentifier, LocalDate dateBorrow, LocalDate returnDate, boolean late) {
         this(usersID, booksIdentifier, dateBorrow);
-        this.returnDate = new SimpleStringProperty(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.returnDate = new SimpleStringProperty(returnDate.toString());
         this.late = new SimpleBooleanProperty(late);
         this.id = new SimpleIntegerProperty(id);
     }
@@ -72,11 +71,12 @@ public class Borrow {
      */
     public Borrow(int id, int usersID, String booksIdentifier, LocalDate dateBorrow, LocalDate returnDate, LocalDate effectiveReturnDate, boolean late) {
         this(usersID, booksIdentifier, dateBorrow);
-        this.returnDate = new SimpleStringProperty(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-        this.effectiveReturnDate = new SimpleStringProperty(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.returnDate = new SimpleStringProperty(returnDate.toString());
+        this.effectiveReturnDate = new SimpleStringProperty(effectiveReturnDate.toString());
         this.late = new SimpleBooleanProperty(late);
         this.id = new SimpleIntegerProperty(id);
     }
+    //.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
     /**
      * Get the borrow's ID
@@ -91,7 +91,7 @@ public class Borrow {
      * @param id the borrow's id
      */
     public void setId(int id) {
-        this.id.set(id);;
+        this.id.set(id);
     }
     
     /**
@@ -162,17 +162,8 @@ public class Borrow {
      * Get the borrow's date in LocalDate
      * @return the borrow's date in LocalDate
      */
-    public LocalDate getDateBorrowLocalDate() {
-    	// We get the date in a string
-    	String borrowDateString = this.getDateBorrow();
-    	
-		// We split the date's String to get the day, month and year
-		String[] date = borrowDateString.split("-");
-		
-		// We use these element for our LocalDate
-		LocalDate borrowDateLocalDate = LocalDate.of(Integer.valueOf(date[2]), Integer.valueOf(date[1]), Integer.valueOf(date[0]));
-		
-		return borrowDateLocalDate;
+    public LocalDate getDateBorrowLocalDate() {		
+		return GeneralUtils.stringToLocalDate(this.getDateBorrow());
     }
 
     /**
@@ -180,7 +171,7 @@ public class Borrow {
      * @param borrowDate the date of the creation of the borrow
      */
     public void setDateBorrow(LocalDate borrowDate) {
-        this.borrowDate.set(borrowDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.borrowDate.set(borrowDate.toString());
     }
     
     /**
@@ -204,16 +195,7 @@ public class Borrow {
      * @return the borrow's return date in LocalDate
      */
     public LocalDate getReturnDateLocalDate() {
-    	// We get the return date in a string
-    	String returnDateString = this.getReturnDate();
-    	
-		// We split the return date's String to get the day, month and year
-		String[] date = returnDateString.split("-");
-		
-		// We use these element for our LocalDate
-		LocalDate returnDateLocalDate = LocalDate.of(Integer.valueOf(date[2]), Integer.valueOf(date[1]), Integer.valueOf(date[0]));
-		
-		return returnDateLocalDate;
+		return GeneralUtils.stringToLocalDate(this.getReturnDate());
     }
 
     /**
@@ -221,7 +203,7 @@ public class Borrow {
      * @param return the borrow's return date
      */
     public void setReturnDate(LocalDate returnDate) {
-        this.returnDate.set(returnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.returnDate.set(returnDate.toString());
     }
     
     /**
@@ -249,13 +231,7 @@ public class Borrow {
     	String effectiveReturnDateString = this.getEffectiveReturnDate();
     	
     	if(!(effectiveReturnDateString.equals(""))) {
-    		// We split the return date's String to get the day, month and year
-    		String[] date = effectiveReturnDateString.split("-");
-    		
-    		// We use these element for our LocalDate
-    		LocalDate effectiveReturnDateLocalDate = LocalDate.of(Integer.valueOf(date[2]), Integer.valueOf(date[1]), Integer.valueOf(date[0]));
-    		
-    		return effectiveReturnDateLocalDate;
+    		return GeneralUtils.stringToLocalDate(effectiveReturnDateString);
     	}
 		
 		return null;
@@ -266,7 +242,7 @@ public class Borrow {
      */
 	public void setEffectiveReturnDate(LocalDate effectiveReturnDate) {
 		if(effectiveReturnDate != null) {
-			this.effectiveReturnDate.set(effectiveReturnDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+			this.effectiveReturnDate.set(effectiveReturnDate.toString());
 		}
 		else {
 			this.effectiveReturnDate.set(""); ;
@@ -353,9 +329,16 @@ public class Borrow {
 		if((this.getEffectiveReturnDateLocalDate() == null && today.isAfter(this.getReturnDateLocalDate())
 				|| (this.getEffectiveReturnDateLocalDate() != null && this.getEffectiveReturnDateLocalDate().isAfter(this.getReturnDateLocalDate())))) {
 			this.setLate(true);
+			
+			int usersID = this.getUsersID();
+			User u = User.getUserById(usersID);
+			u.setStatus(Status.LATECOMER);
 		}
 		else {
 			this.setLate(false);
+			int usersID = this.getUsersID();
+			User u = User.getUserById(usersID);
+			u.setStatus(Status.PUNCTUAL);
 		}
 	}
 	
@@ -469,7 +452,7 @@ public class Borrow {
     	}
     	Borrow b = (Borrow) obj;
     	return this.getUsersID() == b.getUsersID() && this.getBooksIdentifier().equals(b.getBooksIdentifier()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
-    			this.getReturnDate().equals(b.getReturnDate()) && this.getProblems().equals(b.getProblems());
+    			this.getReturnDate().equals(b.getReturnDate()) && this.getEffectiveReturnDate().equals(b.getEffectiveReturnDate()) && this.isLate() == b.isLate() && this.getProblems().equals(b.getProblems());
     }
   
 }

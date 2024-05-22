@@ -77,7 +77,7 @@ public final class API {
 			conn.setRequestMethod("GET");
 
 			int responseCode = conn.getResponseCode();
-			System.out.println("Error code: " + responseCode);
+			//System.out.println("Error code: " + responseCode);
 			if (responseCode != 200) {
 				throw new APIException("The query has a problem ! HTTPS Response code: " + responseCode);
 
@@ -136,7 +136,7 @@ public final class API {
 
 		String operationalQuery = createQuery(query, maximumRecords);
 		operationalQuery = normalizeQuery(operationalQuery);
-		System.out.println("QueryReady: " + operationalQuery);
+		//System.out.println("QueryReady: " + operationalQuery);
 
 		// Now that the query is ready we execute it
 		Document domResult = fetchAPIResult(operationalQuery);
@@ -197,9 +197,26 @@ public final class API {
 		List<Book> book = searchBook(query, 15);
 		return book.size() > 0;
 	}
+	
+	/**
+	 * Method to get one book from the API with its identifier
+	 * @param booksIdentifer the book's identifier
+	 * @return the book found or null if we don't find it
+	 */
+	public static Book getOneBookFromID(String booksIdentifer) {
+		if(checkIdentifierExistance(booksIdentifer) == false) {
+			return null;
+		}
+		
+		String[] query = { "dc.identifier all \"" + booksIdentifer + "\""};
+		
+		List<Book> bookList = searchBook(query, 1);
+		
+		return bookList.get(0);
+	}
 
 	public static void main(String[] args) {
-		String[] a = { "dc.title all \"Les MisÃ©rables\"", "dc.creator all \"Victor Hugo\"" };
+		String[] a = { "dc.title all \"Les Misérables\"", "dc.creator all \"Victor Hugo\"" };
 		System.out.println(searchBook(a, 15));
 		//System.out.println(checkIdentifierExistance("bpt6k1194845g"));
 

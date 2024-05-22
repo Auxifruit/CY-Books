@@ -1,8 +1,9 @@
 package abstraction;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * The class Book represents a book in the library
@@ -10,6 +11,7 @@ import javafx.beans.property.StringProperty;
  */
 public class Book {
 	protected static long MAX_BORROW_TIME = 30;
+	protected static long NUMBER_BORROW_POSSIBLE = 1;
 	protected StringProperty identifier;
 	protected StringProperty title;
 	protected StringProperty author;
@@ -17,7 +19,8 @@ public class Book {
 	protected StringProperty format;
 	protected StringProperty type;
 	protected StringProperty publisher;
-	protected static final int NumberOfBorrowPossible = 5 ; 
+	protected IntegerProperty nbBorrowed;
+	
 	/**
 	 * book constructor with all fields as parameters
 	 * @param identifier the book's identifier
@@ -36,6 +39,7 @@ public class Book {
 		this.format = new SimpleStringProperty(format);
 		this.type = new SimpleStringProperty(type);
 		this.publisher = new SimpleStringProperty(publisher);
+		this.nbBorrowed = new SimpleIntegerProperty(0);
 	}
 
 	/**
@@ -205,13 +209,34 @@ public class Book {
     public StringProperty publisherProperty() {
         return publisher;
     }
+    
+    
+    public int getNbBorrowed() {
+    	return nbBorrowed.get();
+    }
+    
+    public void setNbBorrowed(int nbBorrowed) {
+    	this.nbBorrowed.set(nbBorrowed);
+    }
+    
+    public IntegerProperty nbBorrowed() {
+        return nbBorrowed;
+    }
 	
 	/**
-	 * Get the maximum time a book can be borrow
-	 * @return the maximum time a book can be borrow
+	 * Get how long a book can be borrow
+	 * @return how long a book can be borrow
 	 */
 	public static long getMaxTimeBorrow() {
 		return MAX_BORROW_TIME;
+	}
+	
+	/**
+	 * Get the maximum number of time a book can be borrow
+	 * @return the maximum number of time a book can be borrow
+	 */
+	public static long getNumberBorrowPossible() {
+		return NUMBER_BORROW_POSSIBLE;
 	}
 	
 	/**
@@ -245,10 +270,5 @@ public class Book {
     			&& this.getPublishedDate().equals(b.getPublishedDate()) && this.getFormat().equals(b.getFormat()) && this.getType().equals(b.getType())
     			&& this.getPublisher().equals(b.getPublisher());
     }
-
-	public static int getCanBeBorrow() {
-		
-		return Book.NumberOfBorrowPossible;
-	}
 	
 }
