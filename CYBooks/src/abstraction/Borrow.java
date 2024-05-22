@@ -3,6 +3,7 @@ package abstraction;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.property.IntegerProperty;
@@ -366,6 +367,36 @@ public class Borrow {
 		for(Borrow b : Borrow.getAllBorrow()) {
 			if(!(b.equals(null))) {
 				b.checkBorrowLate();
+			}
+		}
+	}
+	
+	/**
+	 * Method to remove a borrow from all the borrow by using the user's ID
+	 * @param userID the user's ID we use to delete borrow
+	 */
+	public static void removeBorrowByUsersID(int usersID) {
+		Iterator<Borrow> iterator = getAllBorrow().iterator();
+		
+		while(iterator.hasNext()) {
+			Borrow b = iterator.next();
+			if(b.getUsersID() == usersID) {
+				iterator.remove();
+			}
+		}
+	}
+	
+	/**
+	 * Method to remove a borrow from all the borrow by using the borrow's ID
+	 * @param borrowsID the borrow's ID we use to delete borrow
+	 */
+	public static void removeBorrowByBorrowsID(int borrowsID) {
+		Iterator<Borrow> iterator = getAllBorrow().iterator();
+		
+		while(iterator.hasNext()) {
+			Borrow b = iterator.next();
+			if(b.getId() == borrowsID) {
+				iterator.remove();
 			}
 		}
 	}
