@@ -7,20 +7,21 @@
 4. [CRÉATEURS](#créateurs)
 
 ## INFORMATIONS GÉNÉRALES
-CY-Books est une application graphique pour les libraires permettant de gérer des utilisateurs, leurs emprunts et des livres. <br />
-L'application utilise l'API de la BNF pour récupérer les informations sur les livres.
+CY-Books est une application graphique utilisée par les bibliothécaires, utilisable à la souris et au clavier permettant de gérer une bibliothèque, avec toutes les fonctionnalités telles que l'inscription des usagrs, la gestion des livres, le stock et les différents emprunts. <br />
+L'application utilise l'API Gallica de la BNF pour récupérer les informations sur les livres.
 
 ## UTILISATION
 
 ## LISTE DES TÂCHES
 
+Pour le suivi de la liste des tâches, nous avons décidé d'utiliser l'outil Jira, un site internet qui permet de gérer un task board contenant trois colonnes : To do / In progress / Done.
 Lien pour la liste des tâches : https://cy-tech-java.atlassian.net/jira/software/projects/KAN/boards/1
 
 ## CRÉATEURS
-Guillaume Barré -> Auxifruit <br />
-Lucas Bezamat -> Luczerty <br />
-Clément Durecu -> shxclem <br />
-Raphaël Sencée -> gjjoifo <br />
-Augustin Verove -> Hermeticis
+BARRÉ Guillaume -> Auxifruit <br />
+BEZAMAT Lucas -> Luczerty <br />
+DURÉCU Clément -> shxclem <br />
+SENCÉE Raphaël -> gjjoifo <br />
+VEROVE Augustin -> Hermeticis
 
 
