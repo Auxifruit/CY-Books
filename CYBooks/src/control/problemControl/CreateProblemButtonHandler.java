@@ -2,7 +2,7 @@ package control.problemControl;
 
 import presentation.borrowPresentation.ProblemsTable;
 import abstraction.Problem;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseProblem;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -56,7 +56,7 @@ public class CreateProblemButtonHandler implements EventHandler<ActionEvent> {
 	        
 	    	// We add our problem in our database
 	        try {
-				DataBaseManage.addProblemInTable(problemToCreate);
+	        	DataBaseProblem.addProblemInTable(problemToCreate);
 				
 				problemsTable.getData().add(problemToCreate);
 	            

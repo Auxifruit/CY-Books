@@ -1,7 +1,7 @@
 package control.problemControl;
 
 import abstraction.Problem;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseProblem;
 import presentation.borrowPresentation.ProblemsTable;
 
 import java.util.Optional;
@@ -13,8 +13,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
 import java.sql.SQLException;
-
-
 
 /**
  * The class to handle the event of the button deleting an problem
@@ -52,7 +50,7 @@ public class DeleteProblemButtonHandler implements EventHandler<ActionEvent> {
     		
 	    	try { 	
 	    		// We remove the problem from our database	    		
-	    		DataBaseManage.deleteProblemInTable(problemToDelete);
+	    		DataBaseProblem.deleteProblemInTable(problemToDelete);
 	    		Problem.getAllProblems().remove(problemToDelete);
 
 		    	problemsTable.updateData();
