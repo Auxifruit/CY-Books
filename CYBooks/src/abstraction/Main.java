@@ -3,11 +3,11 @@ package abstraction;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseUser;
+import abstraction.db.DataBaseBorrow;
 import abstraction.exception.*;
 
 public class Main {
@@ -35,7 +35,7 @@ public class Main {
                     System.out.print("Email? ");
                     String emailText = scanner.nextLine();
                     User userToCreate = new User(lastnameText, firstnameText, emailText);
-                    DataBaseManage.addUserInTable(userToCreate);
+                    DataBaseUser.addUserInTable(userToCreate);
 
                     System.out.println("User added: " + userToCreate);
                     break;
@@ -94,7 +94,7 @@ public class Main {
                         User userToDelete = User.getUserById(idToDelete);
                         if (userToDelete != null) {
                             User.getAllUser().remove(User.getUserById(idToDelete));
-                            DataBaseManage.deleteUserInTable(userToDelete);
+                            DataBaseUser.deleteUserInTable(userToDelete);
                             System.out.println("User deleted: " + userToDelete);
                         }
                     } catch (UserNotExistException e) {
@@ -161,7 +161,7 @@ public class Main {
 
                             LocalDate dateBorrow = LocalDate.now();
                             Borrow newBorrow = new Borrow(userId, bookISBN, dateBorrow);
-                            DataBaseManage.addBorrowInTable(newBorrow);
+                            DataBaseBorrow.addBorrowInTable(newBorrow);
                             System.out.println("Borrow added: " + newBorrow);
 
                         } catch (UserNotExistException | BookNotExistException | UserCanBorrowException | BookCantBeBorrowedException e) {
@@ -257,8 +257,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException, SQLException, UserNotExistException, BookNotExistException, BorrowNotExistException, BookCantBeBorrowedException, UserCanBorrowException {
         try {
-            DataBaseManage.readUsersTable();
-            DataBaseManage.readBorrowsTable();
+        	DataBaseUser.readUsersTable();
+        	DataBaseBorrow.readBorrowsTable();
         } catch (SQLException e) {
             e.printStackTrace();
         }

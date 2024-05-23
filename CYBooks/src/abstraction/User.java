@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseUser;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -230,7 +230,7 @@ public class User {
 		this.setStatus(status);
 		
 		try {
-			DataBaseManage.modifyUserInTable(this, this.getLastname(), this.getFirstname(), this.getEmail(), status.getText());
+			DataBaseUser.modifyUserInTable(this, this.getLastname(), this.getFirstname(), this.getEmail(), status.getText());
 		} catch (SQLException e) {
 			System.err.println("Fail to change the user' status in the database");
 			Alert errorAlert = new Alert(Alert.AlertType.ERROR, "An error occurred while changing the user' status.", ButtonType.OK);
