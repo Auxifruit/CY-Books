@@ -3,7 +3,7 @@ package control.userControl;
 
 import abstraction.GeneralUtils;
 import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseUser;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -110,7 +110,7 @@ public class ModificationUserButtonHandler implements EventHandler<ActionEvent> 
 			    		}
 			    		
 			    		// We modify the user's informations in the database
-		    			DataBaseManage.modifyUserInTable(userToModify, lastname, firstname, email, userToModify.getStatus());
+			    		DataBaseUser.modifyUserInTable(userToModify, lastname, firstname, email, userToModify.getStatus());
 			    		
 			    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The user has been modified.", ButtonType.OK);
 				    	modificationUserAlert.setTitle("User modified confirmation");

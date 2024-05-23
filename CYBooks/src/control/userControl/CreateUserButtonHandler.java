@@ -3,7 +3,7 @@ package control.userControl;
 import presentation.userPresentation.UsersTable;
 import abstraction.GeneralUtils;
 import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseUser;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -55,7 +55,7 @@ public class CreateUserButtonHandler implements EventHandler<ActionEvent> {
                 
             	// We add our user in our database
                 try {
-    				DataBaseManage.addUserInTable(userToCreate);
+                	DataBaseUser.addUserInTable(userToCreate);
     				
     				usersTable.getData().add(userToCreate);
     	            

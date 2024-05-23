@@ -2,7 +2,8 @@ package control.userControl;
 
 import abstraction.Borrow;
 import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseUser;
+import abstraction.db.DataBaseBorrow;
 import presentation.userPresentation.UsersTable;
 
 import javafx.event.ActionEvent;
@@ -52,11 +53,11 @@ public class DeleteUserButtonHandler implements EventHandler<ActionEvent> {
     		
 	    	try {
 	    		// We remove the user's borrows from our database
-	    		DataBaseManage.deleteBorrowInTableByUsersID(userToDelete.getId());
+	    		DataBaseBorrow.deleteBorrowInTableByUsersID(userToDelete.getId());
 	    		Borrow.removeBorrowByUsersID(userToDelete.getId());	    	
 	    		
 	    		// We remove the user from our database	    		
-	    		DataBaseManage.deleteUserInTable(userToDelete);
+	    		DataBaseUser.deleteUserInTable(userToDelete);
 	    		User.getAllUser().remove(userToDelete);
 
 		    	usersTable.updateData();
