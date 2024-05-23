@@ -1,16 +1,15 @@
 package control.bookControl;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import abstraction.Book;
 import abstraction.Borrow;
 import abstraction.Status;
 import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +17,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableView;
+
+import java.sql.SQLException;
 
 /**
  * The class to handle the event of the button modifying an user
@@ -70,15 +71,15 @@ public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent
 				if(u.getStatus().equals(Status.PUNCTUAL.getText())) {
 					try {
 						// We count the user's number of borrows to see if he can borrow another book
-						int numberOfBorrow = DataBaseManage.countUsersBorrow(usersIDInt);
+						int numberOfBorrow = DataBaseBorrow.countUsersBorrow(usersIDInt);
 						
 						if(numberOfBorrow < User.getMaxBorrowNumber()) {
 							// We count the number of time the book is borrowed to check if it can be borrowed
-							int countBookBorrowed = DataBaseManage.countBookBorrowed(selectedBook.getIdentifier());
+							int countBookBorrowed = DataBaseBorrow.countBookBorrowed(selectedBook.getIdentifier());
 							
 							if(countBookBorrowed < Book.getNumberBorrowPossible()) {
 								Borrow newBorrow = new Borrow(usersIDInt, selectedBook.getIdentifier(), LocalDate.now());
-								DataBaseManage.addBorrowInTable(newBorrow);
+								DataBaseBorrow.addBorrowInTable(newBorrow);
 								
 								Alert createBorrowAlert = new Alert(Alert.AlertType.CONFIRMATION, "The borrow has been created.", ButtonType.OK);
 								createBorrowAlert.setTitle("Borrow creation confirmation");
