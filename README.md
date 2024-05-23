@@ -1,3 +1,5 @@
+![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/biblio.png)
+
 # PROJET CY BOOKS ING1
 
 ## Table des matières
