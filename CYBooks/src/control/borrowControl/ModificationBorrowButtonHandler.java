@@ -1,8 +1,7 @@
 package control.borrowControl;
 
-
 import abstraction.Borrow;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,9 +12,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Alert.AlertType;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
+
+import java.sql.SQLException;
 
 /**
  * The class to handle the event of the button modifying a borrow
@@ -115,7 +115,7 @@ public class ModificationBorrowButtonHandler implements EventHandler<ActionEvent
 		    				borrowToModify.updateDuration();
 		    				
 				    		// We modify the borrow's informations in the database
-			    			DataBaseManage.modifyBorrowInTable(borrowToModify, date.toString(), returnDate.toString(), borrowToModify.getDuration());
+		    				DataBaseBorrow.modifyBorrowInTable(borrowToModify, date.toString(), returnDate.toString(), borrowToModify.getDuration());
 			    			
 				    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been modified.", ButtonType.OK);
 					    	modificationUserAlert.setTitle("Borrow modified confirmation");
@@ -139,7 +139,7 @@ public class ModificationBorrowButtonHandler implements EventHandler<ActionEvent
 		    				borrowToModify.updateDuration();
 
 				    		// We modify the borrow's informations in the database
-			    			DataBaseManage.modifyBorrowInTable(borrowToModify, date.toString(), returnDate.toString(), effectiveReturnDate.toString(), borrowToModify.getDuration());
+		    				DataBaseBorrow.modifyBorrowInTable(borrowToModify, date.toString(), returnDate.toString(), effectiveReturnDate.toString(), borrowToModify.getDuration());
 				    		
 				    		modificationUserAlert = new Alert(AlertType.CONFIRMATION, "The borrow has been modified.", ButtonType.OK);
 					    	modificationUserAlert.setTitle("Borrow modified confirmation");

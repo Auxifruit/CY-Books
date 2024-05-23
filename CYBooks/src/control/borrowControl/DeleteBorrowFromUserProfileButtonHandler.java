@@ -2,7 +2,8 @@ package control.borrowControl;
 
 import abstraction.Borrow;
 import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
+import abstraction.db.DataBaseProblem;
 import presentation.userPresentation.UserProfile;
 
 import java.util.Optional;
@@ -55,8 +56,11 @@ public class DeleteBorrowFromUserProfileButtonHandler implements EventHandler<Ac
 	    		int usersID = borrowToDelete.getUsersID();
 	    		
 	    		// We remove it from our database, the list of all the borrows and the data 
-	    		DataBaseManage.deleteBorrowInTable(borrowToDelete);
+	    		DataBaseBorrow.deleteBorrowInTable(borrowToDelete);
 	    		Borrow.getAllBorrow().remove(borrowToDelete);
+	    		
+	    		// We also remove the borrow's problem
+	    		DataBaseProblem.deleteProblemInTable(borrowToDelete.getId());
 	    			    		
 	    		// We check if the cancellation change the user's status
 	    		User u = User.getUserById(usersID);

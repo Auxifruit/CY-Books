@@ -4,8 +4,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import abstraction.Borrow;
-import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -51,7 +50,7 @@ public class CancelBorrowButtonHandler implements EventHandler<ActionEvent> {
 		    		borrowToCancel.checkBorrowLate();
 		    		
 		    		// We modify the Borrow's effective return date in the text file
-		    		DataBaseManage.modifyBorrowInTable(borrowToCancel, borrowToCancel.getDateBorrow(), borrowToCancel.getReturnDate(), borrowToCancel.getEffectiveReturnDate(), borrowToCancel.getDuration());
+		    		DataBaseBorrow.modifyBorrowInTable(borrowToCancel, borrowToCancel.getDateBorrow(), borrowToCancel.getReturnDate(), borrowToCancel.getEffectiveReturnDate(), borrowToCancel.getDuration());
 		    		
 		    		borrowsTable.getSelectionModel().select(null);
 		    		

@@ -1,13 +1,10 @@
 package control.borrowControl;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-
 import abstraction.Borrow;
-import abstraction.User;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
+
+import java.time.LocalDate;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -15,6 +12,8 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
+
+import java.sql.SQLException;
 
 public class ReturnBorrowButtonHandler implements EventHandler<ActionEvent> {
 	private TableView<Borrow> borrowsTable;
@@ -52,7 +51,7 @@ public class ReturnBorrowButtonHandler implements EventHandler<ActionEvent> {
 		    		borrowToValidate.checkBorrowLate();
 		    		
 		    		// We modify the Borrow's effective return date in the text file
-		    		DataBaseManage.modifyBorrowInTable(borrowToValidate, borrowToValidate.getDateBorrow(), borrowToValidate.getReturnDate(), LocalDate.now().toString(), borrowToValidate.getDuration());
+		    		DataBaseBorrow.modifyBorrowInTable(borrowToValidate, borrowToValidate.getDateBorrow(), borrowToValidate.getReturnDate(), LocalDate.now().toString(), borrowToValidate.getDuration());
 		    		
 		    		borrowsTable.getSelectionModel().select(null);
 		    		
