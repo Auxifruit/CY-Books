@@ -14,7 +14,7 @@ L'application utilise l'API Gallica de la BNF pour récupérer les informations 
 
 ## LISTE DES TÂCHES
 
-Pour le suivi de la liste des tâches, nous avons décidé d'utiliser l'outil Jira, un site internet qui permet de gérer un task board contenant trois colonnes : To do / In progress / Done.
+Pour le suivi de la liste des tâches, nous avons décidé d'utiliser l'outil Jira, un site internet qui permet de gérer un task board contenant trois colonnes : To do / In progress / Done. <br />
 Lien pour la liste des tâches : https://cy-tech-java.atlassian.net/jira/software/projects/KAN/boards/1
 
 ## CRÉATEURS
