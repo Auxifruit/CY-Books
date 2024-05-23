@@ -2,7 +2,7 @@ package presentation.bookPresentation;
 
 import abstraction.API;
 import abstraction.Book;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -182,7 +182,7 @@ public class MostBorrowedBook {
 
 		try {
 			// We get the Map of the most borrowed book of the last 30 days
-			Map<String, Integer> bookList = DataBaseManage.mostBorrowBookLastThirtyDays();
+			Map<String, Integer> bookList = DataBaseBorrow.mostBorrowBookLastThirtyDays();
 			
 			// We add them to our data
 			for(String key : bookList.keySet()) {

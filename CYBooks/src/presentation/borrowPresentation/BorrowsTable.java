@@ -1,31 +1,27 @@
 package presentation.borrowPresentation;
 
 import abstraction.Borrow;
-import abstraction.db.DataBaseManage;
+import abstraction.db.DataBaseBorrow;
 import control.borrowControl.DeleteBorrowFromBorrowsTableButtonHandler;
 import control.borrowControl.ReturnBorrowButtonHandler;
 import control.borrowControl.CancelBorrowButtonHandler;
+import control.TablePagination;
 
-import java.time.temporal.ChronoUnit;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -37,9 +33,10 @@ import java.sql.SQLException;
  */
 public class BorrowsTable {
 	private VBox borrowsTableVBox;
+	
+	private VBox borrowTableButtonsCheckBoxes;
 		
-	private Pagination borrowsTablePagination;
-	private final static int ROWS_PER_PAGE = 15;
+	private TablePagination<Borrow> borrowTablePagination;
 	
 	private CheckBox lateBorrowCheckBox;
 	private CheckBox onGoingBorrowCheckBox;
@@ -89,9 +86,10 @@ public class BorrowsTable {
 	 * Getter to get the pagination for the table view of borrows
 	 * @return the pagination for the table view of borrows
 	 */
+    /*
     public Pagination getBorrowsTablePagination() {
-        return borrowsTablePagination;
-    }
+        return ;
+    }*/
     
     /**
 	 * Getter to get the VBox containing all the element for the borrows table
@@ -130,8 +128,7 @@ public class BorrowsTable {
 	 * @return the pane for the users table
 	 */
 	private void createBorrowsTablePane() {
-		borrowsTablePagination = new Pagination((data.size() / ROWS_PER_PAGE + 1), 0);
-		borrowsTablePagination.setPageFactory(this::createPage);
+		borrowTablePagination = new TablePagination<Borrow>(borrowsTable, data);
 		
 	    Label labelUserTable = new Label("BORROWS TABLE :");
 		labelUserTable.setFont(new Font("Arial", 24));
@@ -155,20 +152,13 @@ public class BorrowsTable {
 	    cancelReturnBorrowButton.setOnAction(new CancelBorrowButtonHandler(borrowsTable));
 	    // If no borrow is selected, the button is disable
 	    cancelReturnBorrowButton.disableProperty().bind(Bindings.isEmpty(borrowsTable.getSelectionModel().getSelectedItems()));
-	    
-	    // We change the number of pages
-	    changingNumberOfPages();
-	    
-	    // We update the tableView to display 15 borrow starting from index 0
-        changeTableView(0, ROWS_PER_PAGE);
         
         // If we check it we display the late borrows and if not we display all the borrows
 	    ChangeListener<Boolean> borrowCheckChange = new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
 				filterData();
-		        changingNumberOfPages();
-		        changeTableView(borrowsTablePagination.getCurrentPageIndex(), ROWS_PER_PAGE);
+				borrowTablePagination.updatePagination();
 			}
 	    };
 	    
@@ -185,69 +175,21 @@ public class BorrowsTable {
 	    HBox buttonsContainer = new HBox(10);
 	    buttonsContainer.getChildren().addAll(deleteBorrowButton, returnBorrowButton, cancelReturnBorrowButton);
 	    
-	    // VBox containing the borrowsTable and the delete button
+	    // VBox containing the borrowsTable and the buttons
 	 	VBox tableViewVBox = new VBox(20);
-	    tableViewVBox.getChildren().addAll(borrowsTablePagination, buttonsContainer);
+	    tableViewVBox.getChildren().addAll(borrowTablePagination.getPagination(), buttonsContainer);
+	    
+	    // VBox containing the borrowsTable, the buttons and the checkboxes
+	    borrowTableButtonsCheckBoxes = new VBox(20);
+	    borrowTableButtonsCheckBoxes.getChildren().addAll(checkBoxContainer, tableViewVBox);
 	    
 	    // VBox containing the nodes for the users table
         borrowsTableVBox = new VBox(20);
         borrowsTableVBox.setPadding(new Insets(10, 10, 10, 10));
-        borrowsTableVBox.getChildren().addAll(labelUserTable, checkBoxContainer, tableViewVBox);
+        borrowsTableVBox.getChildren().addAll(labelUserTable, borrowTableButtonsCheckBoxes);
         borrowsTableVBox.setAlignment(Pos.TOP_CENTER);
     }
-	
-	/**
-	 * Method to create pages
-	 * @param pageIndex the index of the page
-	 * @return the BorderPane containing the borrowsTable with the correct items 
-	 */
-	private Node createPage(int pageIndex) {
-		// We calculate the first index and the last index a the page 
-        int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, data.size());
-        
-        // We use a sublist and set it to the table view
-        // It allows us to display only the users between the corresponding index
-        borrowsTable.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
 
-        return new BorderPane(borrowsTable);
-    }
-	
-	/**
-	 * Method to change with a certain index and limit in order to display the right element
-	 * @param index represent the index of the current page
-	 * @param limit correspond the limit of element to display
-	 */
-	private void changeTableView(int index, int limit) {
-
-		// We calculate the starting index and check if we don't try to access an element outside the list limits
-        int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, data.size());
-
-        // Ensure that we don't take more elements than are available in filteredData
-        int minIndex = Math.min(toIndex, data.size());
-        
-        // We use a SortedList to keep the order of the element of the subList
-        SortedList<Borrow> sortedData = new SortedList<>(FXCollections.observableArrayList(data.subList(Math.min(fromIndex, minIndex), minIndex)));
-        
-        // We link the element to allow the update of borrowsTable
-        sortedData.comparatorProperty().bind(borrowsTable.comparatorProperty());
-
-        borrowsTable.setItems(sortedData);
-    }
-	
-	/**
-	 * Method to change the number of pages of a pagination depending of the size of our data
-	 */
-	private void changingNumberOfPages() {
-		// We calculate the numbers of pages needed
-	    int totalPage = (int) (Math.ceil(data.size() * 1.0 / ROWS_PER_PAGE));
-	    
-	    // We set the numbers of page for the pagination and go to the first page
-	    borrowsTablePagination.setPageCount(totalPage);
-	    borrowsTablePagination.setCurrentPageIndex(0);
-	}
-	
 	/**
 	 * Method to initialize the TableView userTable
 	 */
@@ -324,7 +266,7 @@ public class BorrowsTable {
 	private void initializeData() {
 		// We load the values of the borrows from the database
 	    try {
-	    	DataBaseManage.readBorrowsTable();
+	    	DataBaseBorrow.readBorrowsTable();
 	    } catch (SQLException e) {
 			System.err.println("Error BDD. (dataWithAllValues)");
 		}
@@ -474,11 +416,7 @@ public class BorrowsTable {
 		// We set the new data
 		getBorrowsTable().setItems(data);
 		
-		// We update the number of pages necessary to display all the data
-	    changingNumberOfPages();
-	    
-	    // We update the tableView to display 15 users starting from index 0
-        changeTableView(0, ROWS_PER_PAGE);
+		borrowTablePagination.updatePagination();
 	}
 	
 }

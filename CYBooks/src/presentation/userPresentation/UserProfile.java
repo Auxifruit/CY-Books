@@ -2,6 +2,7 @@ package presentation.userPresentation;
 
 import abstraction.Borrow;
 import abstraction.User;
+import control.TablePagination;
 import control.borrowControl.DeleteBorrowFromUserProfileButtonHandler;
 
 import javafx.beans.binding.Bindings;
@@ -33,8 +34,7 @@ import javafx.scene.text.Font;
 public class UserProfile {
 	private VBox usersProfileVBox;
 	
-	private Pagination usersBorrowTablePagination;
-	private final static int ROWS_PER_PAGE = 7;
+	private TablePagination<Borrow> usersBorrowTablePagination;
 	
 	private User userToDisplay;
 	
@@ -104,14 +104,6 @@ public class UserProfile {
     public TableView<Borrow> getUsersBorrowsTable() {
         return usersBorrowTable;
     }
-
-    /**
-	 * Getter to get the pagination for the table view of the user's borrows
-	 * @return the pagination for the table view of the user's borrows
-	 */
-    public Pagination getUsersBorrowsTablePagination() {
-        return usersBorrowTablePagination;
-    }
     
     /**
 	 * Getter to get the VBox containing all the element for the user's profile
@@ -126,8 +118,7 @@ public class UserProfile {
 	 * @return the pane to display the user's profile
 	 */
 	protected void createUserProfilePane() {
-		usersBorrowTablePagination = new Pagination((data.size() / ROWS_PER_PAGE + 1), 0);
-		usersBorrowTablePagination.setPageFactory(this::createPage);
+		usersBorrowTablePagination = new TablePagination<Borrow>(usersBorrowTable, data);
 		
 		// VBox containing all the old user's informations
 	    VBox usersInfosContainer = new VBox(15);
@@ -169,12 +160,6 @@ public class UserProfile {
 	    
 	    // We add the node useful for the old user's information
 	    usersInfosContainer.getChildren().addAll(usersInfosLabel, usersIDAndValue, usersFirsnameAndValue, usersLastnameAndValue, usersEmailAndValue, usersStatusAndValue);
-	    
-	    // We change the number of pages
-	    changingNumberOfPages();
-	    
-	    // We update the tableView to display the wanted numbers of borrows starting from index 0
-        changeTableView(0, ROWS_PER_PAGE);
         
         Label usersBorrowLabel = new Label("User's borrow :");
         usersBorrowLabel.setFont(new Font("Arial", 16));
@@ -193,8 +178,7 @@ public class UserProfile {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
 				filterData();
-		        changingNumberOfPages();
-		        changeTableView(usersBorrowTablePagination.getCurrentPageIndex(), ROWS_PER_PAGE);
+				usersBorrowTablePagination.updatePagination();
 			}
 	    };
 	    
@@ -209,65 +193,13 @@ public class UserProfile {
 	    
 	    // The VBox containing all we need for the user's borrow
 	    VBox usersBorrowContainer = new VBox(10);
-	    usersBorrowContainer.getChildren().addAll(usersBorrowLabel, checkBoxContainer, usersBorrowTablePagination, deleteBorrowButton);
+	    usersBorrowContainer.getChildren().addAll(usersBorrowLabel, checkBoxContainer, usersBorrowTablePagination.getPagination(), deleteBorrowButton);
 	    
 	    // VBox containing the nodes for the user modification
 	    usersProfileVBox = new VBox(25);
 	    usersProfileVBox.setPadding(new Insets(10, 10, 10, 10));
 	    usersProfileVBox.getChildren().addAll(usersProfileLabel, usersInfosContainer, usersBorrowContainer);
 	    usersProfileVBox.setAlignment(Pos.TOP_CENTER);
-	}
-	
-	/**
-	 * Method to create pages
-	 * @param pageIndex the index of the page
-	 * @return the BorderPane containing the usersTable with the correct items 
-	 */
-	private Node createPage(int pageIndex) {
-		// We calculate the first index and the last index a the page 
-        int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, data.size());
-        
-        // We use a sublist and set it to the table view
-        // It allows us to display only the users between the corresponding index
-        usersBorrowTable.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
-
-        return new BorderPane(usersBorrowTable);
-    }
-	
-	/**
-	 * Method to change with a certain index and limit in order to display the right element
-	 * @param index represent the index of the on going page
-	 * @param limit correspond the limit of element to display
-	 */
-	private void changeTableView(int index, int limit) {
-
-		// We calculate the starting index and check if we don't try to access an element outside the list limits
-        int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, data.size());
-
-        // Ensure that we don't take more elements than are available in filteredData
-        int minIndex = Math.min(toIndex, data.size());
-        
-        // We use a SortedList to keep the order of the element of the subList
-        SortedList<Borrow> sortedData = new SortedList<>(FXCollections.observableArrayList(data.subList(Math.min(fromIndex, minIndex), minIndex)));
-        
-        // We link the element to allow the update of usersTable
-        sortedData.comparatorProperty().bind(usersBorrowTable.comparatorProperty());
-
-        usersBorrowTable.setItems(sortedData);
-    }
-	
-	/**
-	 * Method to change the number of pages of a pagination depending of the size of our data
-	 */
-	private void changingNumberOfPages() {
-		// We calculate the numbers of pages needed
-	    int totalPage = (int) (Math.ceil(data.size() * 1.0 / ROWS_PER_PAGE));
-	    
-	    // We set the numbers of page for the pagination and go to the first page
-	    usersBorrowTablePagination.setPageCount(totalPage);
-	    usersBorrowTablePagination.setCurrentPageIndex(0);
 	}
 
 	/**
@@ -490,11 +422,6 @@ public class UserProfile {
 			
 			// To update the labels
         	updateInfo();
-          	
-          	dataWithAllUsersBorrow();
-          	usersBorrowTable.setItems(data);
-          	
-          	changingNumberOfPages();
 			
 			// We clear the data
 			data.clear();
@@ -508,11 +435,7 @@ public class UserProfile {
 			// We set the new data
 			getUsersBorrowsTable().setItems(data);
 			
-			// We update the number of pages necessary to display all the data
-		    changingNumberOfPages();
-		    
-		    // We update the tableView to display 15 users starting from index 0
-	        changeTableView(0, ROWS_PER_PAGE);
+			usersBorrowTablePagination.updatePagination();
 		}
 	}
 	
