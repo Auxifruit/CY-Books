@@ -16,8 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The class to handle the event of the button modifying an user

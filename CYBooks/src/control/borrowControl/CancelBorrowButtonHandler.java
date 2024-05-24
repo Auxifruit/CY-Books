@@ -13,6 +13,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Class for the cancellation of a borrow
+ */
 public class CancelBorrowButtonHandler implements EventHandler<ActionEvent> {
 	private TableView<Borrow> borrowsTable;
 	
@@ -24,6 +27,9 @@ public class CancelBorrowButtonHandler implements EventHandler<ActionEvent> {
         this.borrowsTable = borrowsTable;
     }
     
+    /**
+     * Method to handle the cancellation of a borrow
+     */
 	@Override
 	public void handle(ActionEvent event) {
 		// We get the selected borrow we want to validate the return

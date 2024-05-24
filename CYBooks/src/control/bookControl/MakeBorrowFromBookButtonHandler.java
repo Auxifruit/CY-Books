@@ -35,6 +35,9 @@ public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent
 		this.booksTable = booksTable;
 	}
 
+	/**
+	 * Method to handle the creation of a borrow
+	 */
 	@Override
 	public void handle(ActionEvent event) {
 		// We get the selected book
@@ -117,24 +120,6 @@ public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent
 			idTypeErrorAlert.setTitle("User's selection error");
 			idTypeErrorAlert.showAndWait();
 		}
-	}
-	
-	/**
-	 * Method to check if a String is an Integer or not
-	 * @param numberString the String we want to check
-	 * @return true if the String is an Integer and false if not 
-	 */
-	public static boolean isNumeric(String numberString) {
-	    if (numberString == null) {
-	        return false;
-	    }
-	    try {
-	        Integer.parseInt(numberString);
-	    } catch (NumberFormatException nfe) {
-	    	// If an exception was caught the String was not an Integer
-	        return false;
-	    }
-	    return true;
 	}
 
 }

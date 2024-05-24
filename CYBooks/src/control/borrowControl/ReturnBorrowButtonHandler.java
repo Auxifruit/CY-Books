@@ -15,6 +15,9 @@ import javafx.scene.control.Alert.AlertType;
 
 import java.sql.SQLException;
 
+/**
+ * Class for the return of a borrow
+ */
 public class ReturnBorrowButtonHandler implements EventHandler<ActionEvent> {
 	private TableView<Borrow> borrowsTable;
 	
@@ -26,6 +29,9 @@ public class ReturnBorrowButtonHandler implements EventHandler<ActionEvent> {
         this.borrowsTable = borrowsTable;
     }
     
+    /**
+     * Method to handle the return of a borrow
+     */
 	@Override
 	public void handle(ActionEvent event) {
 		// We get the selected borrow we want to validate the return

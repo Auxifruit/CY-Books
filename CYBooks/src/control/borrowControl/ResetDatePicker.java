@@ -10,7 +10,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Alert.AlertType;
 
 /**
- * The class to handle the event of the button reseting the DatePickers' values
+ * Class to handle the event of the button reseting the DatePickers' values
  */
 public class ResetDatePicker implements EventHandler<ActionEvent> {
 	private DatePicker newBorrowsDatePicker;

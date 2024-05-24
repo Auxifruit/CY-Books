@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.sql.SQLException;
 
 /**
- * The class to handle the event of the button modifying a borrow
+ * Class for the modification of a borrow
  */
 public class ModificationBorrowButtonHandler implements EventHandler<ActionEvent> {
 	private Label oldBorrowsDate;

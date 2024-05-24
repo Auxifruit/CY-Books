@@ -17,7 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 import java.sql.SQLException;
 
 /**
- * The class to handle the event of the button deleting a borrow
+ * Class for the deletion of a borrow from the borrow's table
  */
 public class DeleteBorrowFromBorrowsTableButtonHandler implements EventHandler<ActionEvent> {
     private BorrowsTable borrowsTable;
@@ -31,7 +31,7 @@ public class DeleteBorrowFromBorrowsTableButtonHandler implements EventHandler<A
     }
 
     /**
-     * Method to handle the deletion of an borrow
+     * Method to handle the deletion of an borrow from the borrow's table
      */
     @Override
     public void handle(ActionEvent event) {
