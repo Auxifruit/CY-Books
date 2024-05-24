@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * The class that allows us to manage the Users in the database
+ */
 public class DataBaseUser {
 	// Constants declared to save the tables names
 	public final static String USER_TABLE = "users";
@@ -134,12 +137,10 @@ public class DataBaseUser {
 	/**
 	 * Method to modify an User in the database
 	 * @param userToModify the user we want to modify
-	 * @param oldLastname the user's old last name
-	 * @param oldFirstname the user's old first name
-	 * @param oldEmail the user's old e-mail
 	 * @param newLastname the user's new last name
 	 * @param newFirstname the user's new first name
 	 * @param newEmail the user's new email
+	 * @param newStatus the user's new status
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void modifyUserInTable(User userToModify, String newLastname, String newFirstname, String newEmail, String newStatus) throws SQLException {

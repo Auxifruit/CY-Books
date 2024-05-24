@@ -12,6 +12,9 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * The class that allows us to manage the Borrows in the database
+ */
 public class DataBaseBorrow {
 	// Constants declared to save the tables names
 	protected final static String BORROW_TABLE = "borrow";
@@ -78,7 +81,7 @@ public class DataBaseBorrow {
 	}
 	
 	/**
-	 * Method to add a Borrow to the database
+	 * Method to add a Borrow in the database
 	 * @param borrowToAdd the Borrow we want to add
 	 * @throws SQLException if we have an exception about SQL
 	 */
@@ -189,6 +192,7 @@ public class DataBaseBorrow {
 	 * @param newBorrowDate the borrow's new date
 	 * @param newReturnDate the borrow's new return date
 	 * @param newEffectiveReturnDate the borrow's new effective return date
+	 * @param newDuration the borro's new duration
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void modifyBorrowInTable(Borrow borrowToModify, String newBorrowDate, String newReturnDate, String newEffectiveReturnDate, long newDuration) throws SQLException {
@@ -224,6 +228,7 @@ public class DataBaseBorrow {
 	 * @param borrowToModifythe borrow we want to modify
 	 * @param newBorrowDate the borrow's new date
 	 * @param newReturnDate the borrow's new return date
+	 * @param newDuration the borro's new duration
 	 * @throws SQLException if we have an exception about SQL
 	 */
 	public static void modifyBorrowInTable(Borrow borrowToModify, String newBorrowDate, String newReturnDate, long newDuration) throws SQLException {

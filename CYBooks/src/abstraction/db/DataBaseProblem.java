@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * The class that allows us to manage the Problems in the database
+ */
 public class DataBaseProblem {
 	// Constants declared to save the tables names
 	protected final static String PROBLEM_TABLE = "problem";
