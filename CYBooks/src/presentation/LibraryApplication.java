@@ -22,10 +22,12 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 
@@ -35,6 +37,8 @@ import javafx.stage.Stage;
 public class LibraryApplication extends Application {
 	// The main pane of the application
 	private BorderPane mainBorderPane;
+	// The VBox for the home page of the application
+	private VBox homePage;
 	// The VBox containing the buttons to change between the center and bottom of the main BorderPane
 	private HBox containerButtonChangeCenterAndBottomApp;
 	
@@ -81,6 +85,9 @@ public class LibraryApplication extends Application {
 	    DataBaseManage.createTables();
 	    
 		mainBorderPane = new BorderPane();
+
+		// Home page
+		homePage = createHomePage();
 		
 		// HBox containing all the button to change between User oriented scenes
 		containerButtonChangeCenterAndBottomApp = createButtonChangeCenterAndBottomApp();
@@ -127,11 +134,99 @@ public class LibraryApplication extends Application {
  		containerButtonChangeCenterBorrowsApp = createButtonChangeCenterBorrows();
  		
 	    // Main scene of the application
+ 		mainBorderPane.setCenter(homePage);
 	    mainBorderPane.setLeft(containerButtonChangeCenterAndBottomApp);
 	    stage.setScene(new Scene(mainBorderPane));
 	    stage.show();
 	}	
 	
+	/**
+	 * Method to create the home page of the application
+	 * @return the home page of the application
+	 */
+	private VBox createHomePage() {	
+		Label labelFirstPage = new Label("CY-BOOKS");
+		labelFirstPage.setFont(new Font("Arial", 24));
+		labelFirstPage.setUnderline(true);
+		labelFirstPage.setStyle("-fx-font-weight: bold;");
+		
+		// The VBox containing all the labels
+		VBox allLabels = new VBox(15);
+		allLabels.setAlignment(Pos.CENTER);
+		
+		Label generalLabel = new Label("In the CY-Books application, you can manage users, their borrows and research for books using the BNF API.");
+		Label pagesLabel = new Label("The application is divided into three main sections : users, borrows and books.");
+		Label usageLabel = new Label("You can add, modify or delete users, as well as borrowers. In addition, you can filter their information.");
+		Label plusLabel = new Label("You can also access a list of the most borrowed books over the last 30 days on the book page.");
+		Label startLabel = new Label("Begin by selecting a page at the left of the application.");
+		
+		generalLabel.setFont(new Font("Arial", 14));
+		pagesLabel.setFont(new Font("Arial", 14));
+		usageLabel.setFont(new Font("Arial", 14));
+		plusLabel.setFont(new Font("Arial", 14));
+		startLabel.setFont(new Font("Arial", 18));
+		
+		allLabels.getChildren().addAll(generalLabel, pagesLabel, usageLabel, plusLabel);
+		
+		// The VBox containing all the element
+		VBox mainContainer = new VBox(25);
+		mainContainer.setPadding(new Insets(10, 10, 10, 10));
+		mainContainer.getChildren().addAll(labelFirstPage, allLabels, startLabel);
+		mainContainer.setAlignment(Pos.CENTER);
+		
+		return mainContainer;
+	}
+	
+	/**
+	 * Method to create a HBox containing the buttons to change the center and the bottom of the main BorderPane 
+	 * @return the HBox with the buttons to change the center and the bottom of the main BorderPane
+	 */
+	private HBox createButtonChangeCenterAndBottomApp() {
+		HBox allContainer = new HBox(10);
+		
+		Separator sep = new Separator();
+		sep.setOrientation(Orientation.VERTICAL);
+		
+		VBox buttonContainer = new VBox(50);
+		buttonContainer.setAlignment(Pos.CENTER);
+		buttonContainer.setPrefHeight(50);
+		
+		// Buttons to change the BorderPane's center and bottom
+		Button goToHome = new Button("Home page");
+		goToHome.setOnAction(e -> {
+			mainBorderPane.setCenter(homePage);
+			mainBorderPane.setBottom(null);
+		});
+		
+		Button goToUsers = new Button("Users");
+		goToUsers.setOnAction(e -> {
+			mainBorderPane.setCenter(usersTable.getUsersTableVBox());
+			mainBorderPane.setBottom(containerButtonChangeCenterUsersApp);
+			usersTable.updateData();
+			userProfile.updateData();
+		});
+		
+		Button goToBorrow = new Button("Borrows");
+		goToBorrow.setOnAction(e -> {
+			mainBorderPane.setCenter(borrowsTable.getBorrowsTableVBox());
+			mainBorderPane.setBottom(containerButtonChangeCenterBorrowsApp);
+			borrowsTable.updateData();
+		});
+		
+		Button goToBooks = new Button("Books");
+		goToBooks.setOnAction(e -> {
+			mainBorderPane.setCenter(bookSearch.getCommandContainer());
+			mainBorderPane.setBottom(containerButtonChangeCenterBooksApp);
+		});
+		
+		buttonContainer.getChildren().addAll(goToHome, goToUsers, goToBorrow, goToBooks);
+		
+		allContainer.getChildren().addAll(buttonContainer, sep);
+		allContainer.setPadding(new Insets(10, 10, 10, 10));
+		   
+		return allContainer;
+	}
+
 	/**
 	 * Method to create a VBox containing the buttons to change the center of the main BorderPane to Users oriented Pane
 	 * @return the VBox with the buttons to change the center of the main BorderPane to Users oriented Pane
@@ -271,50 +366,6 @@ public class LibraryApplication extends Application {
 		allContainer.getChildren().addAll(sep, buttonsContainer);
 		allContainer.setPadding(new Insets(10, 10, 10, 10));
 		
-		return allContainer;
-	}
-	
-	/**
-	 * Method to create a HBox containing the buttons to change the center and the bottom of the main BorderPane 
-	 * @return the HBox with the buttons to change the center and the bottom of the main BorderPane
-	 */
-	private HBox createButtonChangeCenterAndBottomApp() {
-		HBox allContainer = new HBox(10);
-		
-		Separator sep = new Separator();
-		sep.setOrientation(Orientation.VERTICAL);
-		
-		VBox buttonContainer = new VBox(50);
-		buttonContainer.setAlignment(Pos.CENTER);
-		buttonContainer.setPrefHeight(50);
-		
-		// Buttons to change the BorderPane's center and bottom
-		Button goToUsers = new Button("Users");
-		goToUsers.setOnAction(e -> {
-			mainBorderPane.setCenter(usersTable.getUsersTableVBox());
-			mainBorderPane.setBottom(containerButtonChangeCenterUsersApp);
-			usersTable.updateData();
-			userProfile.updateData();
-		});
-		
-		Button goToBorrow = new Button("Borrows");
-		goToBorrow.setOnAction(e -> {
-			mainBorderPane.setCenter(borrowsTable.getBorrowsTableVBox());
-			mainBorderPane.setBottom(containerButtonChangeCenterBorrowsApp);
-			borrowsTable.updateData();
-		});
-		
-		Button goToBooks = new Button("Books");
-		goToBooks.setOnAction(e -> {
-			mainBorderPane.setCenter(bookSearch.getCommandContainer());
-			mainBorderPane.setBottom(containerButtonChangeCenterBooksApp);
-		});
-		
-		buttonContainer.getChildren().addAll(goToUsers, goToBorrow, goToBooks);
-		
-		allContainer.getChildren().addAll(buttonContainer, sep);
-		allContainer.setPadding(new Insets(10, 10, 10, 10));
-		   
 		return allContainer;
 	}
 
