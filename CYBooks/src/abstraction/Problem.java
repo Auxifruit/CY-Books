@@ -98,7 +98,7 @@ public class Problem {
 	}
 	
     /**
-	 * Setter for the counterId of the class Problem
+	 * Setter method for the counterId of the class Problem
 	 */
 	public static void setCounterId(int newCounterId) {
 		counterId = newCounterId;

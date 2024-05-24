@@ -54,6 +54,7 @@ public class Borrow {
      * @param bookIdentifier the Identifier of the borrowed book
      * @param dateBorrow the borrow's date
      * @param returnDate the borrow's return date
+     * @param duration the borrow's duration
      * @param late the statue of the borrow
      */
     public Borrow(int id, int usersID, String booksIdentifier, LocalDate dateBorrow, LocalDate returnDate, long duration, boolean late) {
@@ -71,6 +72,7 @@ public class Borrow {
      * @param dateBorrow the borrow's date
      * @param returnDate the borrow's return date
      * @param effectiveReturnDate the borrow's effective return date
+     * @param duration the borrow's duration
      * @param late the statue of the borrow
      */
     public Borrow(int id, int usersID, String booksIdentifier, LocalDate dateBorrow, LocalDate returnDate, LocalDate effectiveReturnDate, long duration, boolean late) {
@@ -83,7 +85,7 @@ public class Borrow {
     }
 
     /**
-     * Get the borrow's ID
+     * Getter method for the borrow's ID
      * @return the borrow's ID
      */
     public int getId() {
@@ -91,7 +93,7 @@ public class Borrow {
     }
 
     /**
-     * id setter method
+     * Setter method for the borrow's id 
      * @param id the borrow's id
      */
     public void setId(int id) {
@@ -107,7 +109,7 @@ public class Borrow {
     }
     
     /**
-     * Get the id of the user who borrowed the book
+     * Getter method for the id of the user who borrowed the book
      * @return the id of the user who borrowed the book
      */
     public int getUsersID() {
@@ -115,7 +117,7 @@ public class Borrow {
     }
 
     /**
-     * user setter method
+     * Setter method for the user who borrowed the book
      * @param user the user who borrowed the book
      */
     public void setUsersID(User user) {
@@ -131,7 +133,7 @@ public class Borrow {
     }
 
     /**
-     * Get the Identifier of the borrowed book
+     * Getter method for the Identifier of the borrowed book
      * @return the Identifier of the borrowed book
      */
     public String getBooksIdentifier() {
@@ -139,7 +141,7 @@ public class Borrow {
     }
 
     /**
-     * Book's Identifier setter method
+     * Setter method for book's Identifier 
      * @param book new the borrowed book
      */
     public void setBook(Book book) {
@@ -155,7 +157,7 @@ public class Borrow {
     }
 
     /**
-     * Get the borrow's date in String
+     * Getter method for the borrow's date in String
      * @return the borrow's date in String
      */
     public String getDateBorrow() {
@@ -163,7 +165,7 @@ public class Borrow {
     }
     
     /**
-     * Get the borrow's date in LocalDate
+     * Getter method for the borrow's date in LocalDate
      * @return the borrow's date in LocalDate
      */
     public LocalDate getDateBorrowLocalDate() {		
@@ -171,7 +173,7 @@ public class Borrow {
     }
 
     /**
-     * borrowDate setter method
+     * Setter method for borrowDate
      * @param borrowDate the date of the creation of the borrow
      */
     public void setDateBorrow(LocalDate borrowDate) {
@@ -187,7 +189,7 @@ public class Borrow {
     }
 
     /**
-     * Get the borrow's return date in String
+     * Getter method for the borrow's return date in String
      * @return returnDate the date of which the book need to be return in String
      */
     public String getReturnDate() {
@@ -195,7 +197,7 @@ public class Borrow {
     }
     
     /**
-     * Get the borrow's return date in LocalDate
+     * Getter method for the borrow's return date in LocalDate
      * @return the borrow's return date in LocalDate
      */
     public LocalDate getReturnDateLocalDate() {
@@ -203,7 +205,7 @@ public class Borrow {
     }
 
     /**
-     * returnDate setter method
+     * Setter method for returnDate 
      * @param returnDate the borrow's return date
      */
     public void setReturnDate(LocalDate returnDate) {
@@ -219,7 +221,7 @@ public class Borrow {
     }
     
     /**
-     * Get the borrow's effective return date in String
+     * Getter method for the borrow's effective return date in String
      * @return effectiveReturnDate the date of which the book have been returned in String
      */
     public String getEffectiveReturnDate() {
@@ -227,7 +229,7 @@ public class Borrow {
 	}
     
     /**
-     * Get the borrow's effective return date in LocalDate
+     * Getter method for the borrow's effective return date in LocalDate
      * @return the borrow's effective return date in LocalDate
      */
     public LocalDate getEffectiveReturnDateLocalDate() {
@@ -242,7 +244,7 @@ public class Borrow {
     }
 
     /**
-     * effectiveReturnDate setter method
+     * Setter method for effectiveReturnDate 
      */
 	public void setEffectiveReturnDate(LocalDate effectiveReturnDate) {
 		if(effectiveReturnDate != null) {
@@ -262,7 +264,7 @@ public class Borrow {
     }
     
     /**
-     * duration getter method
+     * Getter method for the borrow's duration 
      * @return the borrow's duration in days
      */
     public long getDuration() {
@@ -270,7 +272,7 @@ public class Borrow {
     }
     
     /**
-     * duration setter method
+     * Setter method for duration 
      * @param duration the borrow's duration in days
      */
     public void setDuration(long duration) {
@@ -286,7 +288,7 @@ public class Borrow {
     }
 
 	/**
-	 * Get the borrow's state : late or not
+	 * Getter method for the borrow's state : late or not
 	 * @return true if the borrow is late and false if not
 	 */
 	public boolean isLate() {
@@ -294,7 +296,7 @@ public class Borrow {
 	}
     
     /**
-     * late setter method
+     * Setter method for the borrow's state : late or not
      * @param late true or false if the borrow is late or not
      */
     public void setLate(boolean late) {
@@ -310,7 +312,7 @@ public class Borrow {
     }
 	
 	/**
-	 * Get the list of all the users
+	 * Getter method for the list of all the borrows
 	 * @return the list of all the users
 	 */
 	public static List<Borrow> getAllBorrow() {
@@ -318,7 +320,7 @@ public class Borrow {
 	}
 	
 	/**
-	 * Get the counterId of the class Borrow
+	 * Getter method for the counterId of the class Borrow
 	 * @return the counterId of the class Borrow
 	 */
 	public static int getCounterId() {
@@ -326,7 +328,7 @@ public class Borrow {
 	}
 	
 	/**
-	 * Setter for the counterId of the class Borrow
+	 * Setter method for the counterId of the class Borrow
 	 */
 	public static void setCounterId(int newCounterId) {
 		counterId = newCounterId;
@@ -370,7 +372,6 @@ public class Borrow {
 	
 	/**
 	 * Method to check the statue of all the borrows
-	 * @return 
 	 */
 	public static void checkAllborrowsLate() {
 		for(Borrow b : Borrow.getAllBorrow()) {
@@ -430,9 +431,9 @@ public class Borrow {
 	}
 	
 	/**
-	 * Method to see if an User can borrow another book
-	 * @param userID the user's ID
-	 * @return true if the user can borrow another book and false if not
+	 * Method to see if an Book can be borrowed
+	 * @param bookID the book ID
+	 * @return true if the book can be borrowed and false if not
 	 */
 	public static boolean canBookBeBorrowed(String bookID) {
 		int count = 0;
@@ -476,7 +477,7 @@ public class Borrow {
     	}
     	Borrow b = (Borrow) obj;
     	return this.getUsersID() == b.getUsersID() && this.getBooksIdentifier().equals(b.getBooksIdentifier()) && this.getDateBorrow().equals(b.getDateBorrow()) &&
-    			this.getReturnDate().equals(b.getReturnDate()) && this.getEffectiveReturnDate().equals(b.getEffectiveReturnDate()) && this.isLate() == b.isLate();
+    			this.getReturnDate().equals(b.getReturnDate()) && this.getEffectiveReturnDate().equals(b.getEffectiveReturnDate()) && this.getDuration() == b .getDuration() && this.isLate() == b.isLate();
     }
   
 }

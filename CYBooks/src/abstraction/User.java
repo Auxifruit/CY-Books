@@ -29,8 +29,8 @@ public class User {
 
     /**
      * User constructor without the id
-     * @param lastname the lastname of the user
-     * @param firstname the firstname of the user
+     * @param lastname the last name of the user
+     * @param firstname the first name of the user
      * @param email the email of the user
      */
     public User(String lastname, String firstname, String email) {
@@ -45,8 +45,8 @@ public class User {
     /**
      * User constructor with all fields as parameters
      * @param id the id of the user
-     * @param lastname the lastname of the user
-     * @param firstname the firstname of the user
+     * @param lastname the last name of the user
+     * @param firstname the first name of the user
      * @param email the email of the user
      * @param status the status of the user
      */
@@ -57,21 +57,7 @@ public class User {
     }
 
     /**
-     * Method to search an user in the user list
-     * @param id the user's id we want to find
-     * @return a user if we found it or null if not
-     */
-    public static User searchUserWithId(int id) {
-        for (User user : allUser) {
-            if (user.getId() == id) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get the user's ID
+     * Getter method for the user's ID
      * @return the user's ID
      */
     public int getId() {
@@ -79,7 +65,7 @@ public class User {
     }
 
     /**
-     * id setter method
+     * Setter method for the user's id 
      * @param id the user's id
      */
     public void setId(int id) {
@@ -95,55 +81,55 @@ public class User {
     }
     
     /**
-     * Get the user's lastname
-     * @return the user's lastname
+     * Getter method for the user's last name
+     * @return the user's last name
      */
     public String getLastname() {
         return lastname.get();
     }
 
     /**
-     * astname setter method
-     * @param lastname the user's lastname
+     * Setter method for last name 
+     * @param lastname the user's last name
      */
     public void setLastname(String lastname) {
         this.lastname.set(lastname);
     }
 
     /**
-     * Method to return the StringProperty of the user's lastname for the TableView
-     * @return the StringProperty of the user's lastname 
+     * Method to return the StringProperty of the user's last name for the TableView
+     * @return the StringProperty of the user's last name 
      */
     public StringProperty lastnameProperty() { 
     	return lastname;
     }
     
     /**
-     * Get the user's firstname
-     * @return the user's firstname
+     * Getter method for the user's first name
+     * @return the user's first name
      */
     public String getFirstname() {
         return firstname.get();
     }
 
     /**
-     * firstname setter method
-     * @param firstname the user's firstname
+     * Setter method for the user's first name 
+     * @param firstname the user's first name
      */
     public void setFirstname(String firstname) {
         this.firstname.set(firstname);
     }
 
     /**
-     * Method to return the StringProperty of the user's firstname for the TableView
-     * @return the StringProperty of the user's firstname 
+     * Method to return the StringProperty of the user's first name for the TableView
+     * @return the StringProperty of the user's first name 
      */
     public StringProperty firstnameProperty() { 
     	return firstname;
     }
     
     /**
-     * Get the user's email
+     * Getter method for the user's email
      * @return the user's email
      */
     public String getEmail() {
@@ -151,7 +137,7 @@ public class User {
 	}
     
     /**
-     * email setter method
+     * Getter method for the user's email 
      * @param email the user's email
      */
 	public void setEmail(String email) {
@@ -166,10 +152,18 @@ public class User {
     	return email;
     }
     
+    /**
+     * Getter method for the user' status
+     * @return the user' status
+     */
     public String getStatus() {
     	return status.get();
     }
     
+    /**
+     * Setter method for for the user' status
+     * @param status the user' status
+     */
     public void setStatus(Status status) {
     	this.status.set(status.getText());
     }
@@ -183,7 +177,7 @@ public class User {
     }
 	
 	/**
-	 * Get the list of all the users
+	 * Getter method for the list of all the users
 	 * @return the list of all the users
 	 */
 	public static List<User> getAllUser() {
@@ -191,7 +185,7 @@ public class User {
 	}
 	
 	/**
-	 * Get the counterId of the class User
+	 * Getter method for the counterId of the class User
 	 * @return the counterId of the class User
 	 */
 	public static int getCounterId() {
@@ -199,14 +193,14 @@ public class User {
 	}
 	
 	/**
-	 * Setter for the counterId of the class User
+	 * Setter method for the counterId of the class User
 	 */
 	public static void setCounterId(int newCounterId) {
 		counterId = newCounterId;
 	}
 	
 	/**
-	 * Get the maximum number of borrow an user can make
+	 * Getter method for the maximum number of borrow an user can make
 	 * @return the maximum number of borrow an user can make
 	 */
 	public static int getMaxBorrowNumber() {

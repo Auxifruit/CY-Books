@@ -26,22 +26,6 @@ public class GeneralUtils {
 		// We use these element to return our LocalDate
 		return LocalDate.of(year, month, day);
 	}
-	/**
-	 * Change date format to "dd-mm-yyyy" to "yyyy-mm-dd"
-	 * @param dateString the date we want to change the format
-	 * @return the date in the new format
-	 */
-	public String changeDateFormat(String dateString) {
-		// We split the date's String to get the day, month and year
-		String[] dateParsed = dateString.split("-");
-		
-		// We get the values of the parsing
-		int year = Integer.valueOf(dateParsed[2]);
-		int month = Integer.valueOf(dateParsed[1]);
-		int day = Integer.valueOf(dateParsed[0]);
-		
-		return year + "-" + month + "-" + day;
-	}
 	
 	/**
 	 * Method to check if a String matches the e-mail format

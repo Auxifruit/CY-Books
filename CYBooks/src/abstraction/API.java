@@ -18,6 +18,9 @@ import org.xml.sax.InputSource;
 
 import abstraction.exception.APIException;
 
+/**
+ * Class containing the method to call the API
+ */
 public final class API {
 	private final static String SPACE = "%20";
 	private final static String QUOTE = "%22";

@@ -43,7 +43,7 @@ public class Book {
 	}
 
 	/**
-     * get the book's identifier
+     * Getter method for the book's identifier
      * @return the book's identifier
      */
 	public String getIdentifier() {
@@ -51,7 +51,7 @@ public class Book {
 	}
 
 	/**
-     * identifier setter method
+     * Setter method for the book's identifier
      * @param identifier the book's identifier
      */
 	public void setIdentifier(String identifier) {
@@ -67,7 +67,7 @@ public class Book {
     }
 
 	/**
-     * get the book's title
+     * Getter method for the book's title
      * @return the book's title
      */
 	public String getTitle() {
@@ -75,7 +75,7 @@ public class Book {
 	}
 
 	/**
-     * title setter method
+     * Setter method for book's title
      * @param title the book's title
      */
 	public void setTitle(String title) {
@@ -91,7 +91,7 @@ public class Book {
     }
 
 	/**
-     * get the book's author
+     * Getter method for the book's author
      * @return the book's author
      */
 	public String getAuthor() {
@@ -99,7 +99,7 @@ public class Book {
 	}
 
 	/**
-     * author setter method
+     * Setter method for the book's author
      * @param author the book's author
      */
 	public void setAuthor(String author) {
@@ -115,7 +115,7 @@ public class Book {
     }
 
 	/**
-     * get the book's published date
+     * Getter method for the book's published date
      * @return the book's published date
      */
 	public String getPublishedDate() {
@@ -123,7 +123,7 @@ public class Book {
 	}
 
 	/**
-     * published date setter method
+     * Setter method for the book's published date
      * @param publishedDate the book's published date
      */
 	public void setPublishedDate(String publishedDate) {
@@ -139,7 +139,7 @@ public class Book {
     }
 
 	/**
-     * get the book's format
+     * Getter method for the book's format
      * @return the book's format
      */
 	public String getFormat() {
@@ -147,7 +147,7 @@ public class Book {
 	}
 
 	/**
-     * format setter method
+     * Setter method for the book's format
      * @param format the book's format
      */
 	public void setFormat(String format) {
@@ -163,7 +163,7 @@ public class Book {
     }
 
 	/**
-     * get the book's type
+     * Getter method for the book's type
      * @return the book's type
      */
 	public String getType() {
@@ -171,7 +171,7 @@ public class Book {
 	}
 
 	/**
-     * type setter method
+     * Getter method for the book's type
      * @param type the book's type
      */
 	public void setType(String type) {
@@ -187,7 +187,7 @@ public class Book {
     }
 
 	/**
-     * get the book's publisher
+     * Getter method for the book's publisher
      * @return the book's publisher
      */
 	public String getPublisher() {
@@ -195,7 +195,7 @@ public class Book {
 	}
 
 	/**
-     * publisher setter method
+     * Getter method for for the book's publisher
      * @param publisher the book's publisher
      */
 	public void setPublisher(String publisher) {
@@ -210,15 +210,25 @@ public class Book {
         return publisher;
     }
     
-    
+    /**
+     * Getter method for the number of time a book has been borrowed
+     * @return the number of time a book has been borrowed
+     */
     public int getNbBorrowed() {
     	return nbBorrowed.get();
     }
     
+    /**
+     * G=Setter method for the number of time a book has been borrowed
+     */
     public void setNbBorrowed(int nbBorrowed) {
     	this.nbBorrowed.set(nbBorrowed);
     }
     
+    /**
+     * Method to return the IntegerProperty of the book's number of time it has been borrowed
+     * @return the StringProperty of the book's number of time it has been borrowed
+     */
     public IntegerProperty nbBorrowed() {
         return nbBorrowed;
     }
@@ -268,7 +278,7 @@ public class Book {
     	Book b = (Book) obj;
     	return this.getIdentifier() == b.getIdentifier() && this.getTitle().equals(b.getTitle()) && this.getAuthor().equals(b.getAuthor())
     			&& this.getPublishedDate().equals(b.getPublishedDate()) && this.getFormat().equals(b.getFormat()) && this.getType().equals(b.getType())
-    			&& this.getPublisher().equals(b.getPublisher());
+    			&& this.getPublisher().equals(b.getPublisher()) && this.getNbBorrowed() == b.getNbBorrowed();
     }
 	
 }

@@ -20,8 +20,8 @@ public enum Status {
     }
 
     /**
-     * Getter to get each value's text
-     * @return the text of one value
+     * Getter to get the Status' text
+     * @return the Status' text
      */
     public String getText() {
         return text;
