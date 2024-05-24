@@ -3,32 +3,31 @@ package presentation.bookPresentation;
 import abstraction.API;
 import abstraction.Book;
 import abstraction.db.DataBaseBorrow;
+import control.TablePagination;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import java.util.Map;
 
 import java.sql.SQLException;
 
+/**
+ * The class containing the pane and the table for the most borrowed books of the last 30 days
+ */
 public class MostBorrowedBook {
 	private VBox booksTableVBox;
 	
-	private Pagination booksTablePagination;
-	private final static int ROWS_PER_PAGE = 15;
+	private TablePagination<Book> booksTablePagination;
 	
 	private TableView<Book> booksTable;
 	private TableColumn<Book, Integer> idCol;
@@ -51,87 +50,25 @@ public class MostBorrowedBook {
     }
     
     /**
-	 * Method to create a pane for the books table
-	 * @return the pane for the books table
+	 * Method to create a pane for the most borrowed books of the last 30 days
+	 * @return the pane for the most borrowed books of the last 30 days
 	 */
 	protected void createBooksTablePane() {
-		booksTablePagination = new Pagination((data.size() / ROWS_PER_PAGE + 1), 0);
-		booksTablePagination.setPageFactory(this::createPage);
-	    
-		// VBox containing all the node for the books table expect the main label
-		VBox searchTableVBox = new VBox(20);
+		booksTablePagination = new TablePagination<Book>(booksTable, data);
 		
 	    Label labelBookTable = new Label("MOST BORROWED BOOKS FOR THE LAST 30 DAYS :");
 		labelBookTable.setFont(new Font("Arial", 24));
 		labelBookTable.setUnderline(true);
 		labelBookTable.setStyle("-fx-font-weight: bold;");
 	    
-	    // We update the number of pages necessary to display all the data
-	    changingNumberOfPages();
-	    
-	    // We update the tableView to display 15 books starting from index 0
-        changeTableView(0, ROWS_PER_PAGE);
-        
-        // If we go to page n, it will display 15 books starting from index n
-        booksTablePagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> changeTableView(newValue.intValue(), ROWS_PER_PAGE));
+	    // We update the pagination to display the right elements
+	    booksTablePagination.updatePagination();
 	    
 	    // VBox containing the nodes for the books table
         booksTableVBox = new VBox(20);
         booksTableVBox.setPadding(new Insets(10, 10, 10, 10));
         booksTableVBox.getChildren().addAll(labelBookTable, booksTable);
         booksTableVBox.setAlignment(Pos.TOP_CENTER);
-	}
-
-	/**
-	 * Method to create pages
-	 * @param pageIndex the index of the page
-	 * @return the BorderPane containing the booksTable with the correct items 
-	 */
-	private Node createPage(int pageIndex) {
-		// We calculate the first index and the last index a the page 
-        int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, data.size());
-        
-        // We use a sublist and set it to the table view
-        // It allows us to display only the books between the corresponding index
-        booksTable.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
-
-        return new BorderPane(booksTable);
-    }
-	
-	/**
-	 * Method to change with a certain index and limit in order to display the right element
-	 * @param index represent the index of the current page
-	 * @param limit correspond the limit of element to display
-	 */
-	private void changeTableView(int index, int limit) {
-
-		// We calculate the starting index and check if we don't try to access an element outside the list limits
-        int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, data.size());
-
-        // Ensure that we don't take more elements than are available in filteredData
-        int minIndex = Math.min(toIndex, data.size());
-        
-        // We use a SortedList to keep the order of the element of the subList
-        SortedList<Book> sortedData = new SortedList<>(FXCollections.observableArrayList(data.subList(Math.min(fromIndex, minIndex), minIndex)));
-        
-        // We link the element to allow the update of booksTable
-        sortedData.comparatorProperty().bind(booksTable.comparatorProperty());
-
-        booksTable.setItems(sortedData);
-    }
-	
-	/**
-	 * Method to change the number of pages of a pagination depending of the size of our data
-	 */
-	private void changingNumberOfPages() {
-		// We calculate the numbers of pages needed
-	    int totalPage = (int) (Math.ceil(data.size() * 1.0 / ROWS_PER_PAGE));
-	    
-	    // We set the numbers of page for the pagination and go to the first page
-	    booksTablePagination.setPageCount(totalPage);
-	    booksTablePagination.setCurrentPageIndex(0);
 	}
 
 	/**

@@ -46,7 +46,6 @@ public class BorrowInformation {
      */
     public BorrowInformation() {
     	this.borrowToDisplay = null;
-
         createBorrowInformationPane();
     }
     
@@ -151,8 +150,7 @@ public class BorrowInformation {
 	    booksFormat.setStyle("-fx-font-weight: bold;");
 	    booksType.setStyle("-fx-font-weight: bold;");
 	    booksPublisher.setStyle("-fx-font-weight: bold;");
-	    
-	   
+
 	    
 	    // We had in each HBox the info's name and its value
 	    booksIDAndValue.getChildren().addAll(booksID, booksIDValue);

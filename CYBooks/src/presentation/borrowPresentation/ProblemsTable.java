@@ -23,7 +23,9 @@ import javafx.scene.text.Font;
 
 import java.sql.SQLException;
 
-
+/**
+ * The class containing the pane to display the borrow's problem
+ */
 public class ProblemsTable {
 	private VBox problemsTableVBox;
 	
@@ -38,6 +40,9 @@ public class ProblemsTable {
 	private TableColumn<Problem, String> textCol;
 	private final ObservableList<Problem> data = FXCollections.observableArrayList();
 	
+	/**
+	 * The constructor of the ProblemsTable class
+	 */
 	public ProblemsTable() {
 		this.borrowToDisplay = null;
     	initializeData();
@@ -45,6 +50,10 @@ public class ProblemsTable {
         createProblemsTablePane();
     }
 	
+	/**
+	 * The setter method for the borrow to display
+	 * @param borrowToDisplay the borrow to display
+	 */
 	public void setBorrowToDisplay(Borrow borrowToDisplay) {
 		this.borrowToDisplay = borrowToDisplay;
 		createProblemButton.setOnAction(new CreateProblemButtonHandler(this, borrowToDisplay.getId()));
@@ -65,15 +74,6 @@ public class ProblemsTable {
     public TableView<Problem> getProblemsTable() {
         return problemsTable;
     }
-
-    /**
-	 * Getter to get the pagination for the table view of problems
-	 * @return the pagination for the table view of problems
-	 */
-    /*
-    public Pagination getProblemsTablePagination() {
-        return ;
-    }*/
     
     /**
 	 * Getter to get the VBox containing all the element for the problem table
@@ -201,6 +201,7 @@ public class ProblemsTable {
    		// We set the new data
    		getProblemsTable().setItems(data);
    		
+   		// We update the pagination to display the right elements
    		problemsTablePagination.updatePagination();
    	}
 }

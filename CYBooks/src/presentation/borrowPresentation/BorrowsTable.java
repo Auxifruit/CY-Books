@@ -81,15 +81,6 @@ public class BorrowsTable {
     public TableView<Borrow> getBorrowsTable() {
         return borrowsTable;
     }
-
-    /**
-	 * Getter to get the pagination for the table view of borrows
-	 * @return the pagination for the table view of borrows
-	 */
-    /*
-    public Pagination getBorrowsTablePagination() {
-        return ;
-    }*/
     
     /**
 	 * Getter to get the VBox containing all the element for the borrows table
@@ -263,6 +254,9 @@ public class BorrowsTable {
 	    borrowsTable.setItems(data);
 	}
 	
+	/**
+	 * Method to initialize the data with all the borrows
+	 */
 	private void initializeData() {
 		// We load the values of the borrows from the database
 	    try {
@@ -416,6 +410,7 @@ public class BorrowsTable {
 		// We set the new data
 		getBorrowsTable().setItems(data);
 		
+		// We update the pagination to display the right elements
 		borrowTablePagination.updatePagination();
 	}
 	

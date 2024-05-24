@@ -60,9 +60,6 @@ public class UserProfile {
 
 	/**
      * Constructor of the UserCreation class
-     * @param data the list containing all the informations
-     * @param usersTable the table view displaying the informations
-     * @param usersTablePagination the pagination of the table view
      */
     public UserProfile() {
     	this.userToDisplay = null;
@@ -203,7 +200,7 @@ public class UserProfile {
 	}
 
 	/**
-	 * Method to initialize the TableView userTable
+	 * Method to initialize the TableView usersBorrowTable
 	 */
 	private void initializeTable() {
 		// We initialize the ObservableList data
@@ -435,6 +432,7 @@ public class UserProfile {
 			// We set the new data
 			getUsersBorrowsTable().setItems(data);
 			
+			// We update the pagination to display the right elements
 			usersBorrowTablePagination.updatePagination();
 		}
 	}

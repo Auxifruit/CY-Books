@@ -12,11 +12,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * The class containing the pane to modify an user
+ */
 public class UserModification {
 	private VBox usersModificationVBox;
 	
     private TableView<User> usersTable;
 
+    /**
+     * Constructor for the UserModification class
+     * @param usersTable the TableView containing the users
+     */
     public UserModification(TableView<User> usersTable) {
         this.usersTable = usersTable;
         createUserModificationPane();

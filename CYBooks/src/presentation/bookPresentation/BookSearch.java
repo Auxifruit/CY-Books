@@ -13,11 +13,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * The class containing the pane to enter a book's information to search it
+ */
 public class BookSearch {
 	private VBox commandContainer;
 		
 	private BooksTable booksTable;
 
+	/**
+	 * Constructor for the BookSearch class
+	 * @param booksTable the TableView containing the book
+	 */
 	public BookSearch(BooksTable booksTable) {
 		this.booksTable = booksTable;
 		createBookSearch();
@@ -31,6 +38,9 @@ public class BookSearch {
 		return commandContainer;
 	}
 	
+	/**
+	 * Method to create the pane containing all the node used to search a book
+	 */
 	public void createBookSearch() {
 		commandContainer = new VBox(10);
 		commandContainer.setAlignment(Pos.TOP_CENTER);
@@ -108,22 +118,22 @@ public class BookSearch {
 		
 		dateCommand.getChildren().addAll(dateLabel, buttonAnyDate, buttonAllDate, dateTextField);
 		
-		// Language
-		HBox languageCommand = new HBox(10);
-		Label languageLabel = new Label("Language : ");
-		TextField languageTextField = new TextField();
-		ToggleGroup anyOrAllLanguage = new ToggleGroup();
-	    RadioButton buttonAnyLanguage = new RadioButton("any");
-	    RadioButton buttonAllLanguage = new RadioButton("all");
+		// Format
+		HBox formatCommand = new HBox(10);
+		Label formatLabel = new Label("Format : ");
+		TextField formatTextField = new TextField();
+		ToggleGroup anyOrAllFormat = new ToggleGroup();
+	    RadioButton buttonAnyFormat = new RadioButton("any");
+	    RadioButton buttonAllFormat = new RadioButton("all");
 		
-	    languageLabel.setStyle("-fx-font-weight: bold;");
-	    languageTextField.setPromptText("Book's language");		
+	    formatLabel.setStyle("-fx-font-weight: bold;");
+	    formatTextField.setPromptText("Book's language");		
 		
-		buttonAnyLanguage.setToggleGroup(anyOrAllLanguage);
-		buttonAnyLanguage.setSelected(true);
-		buttonAllLanguage.setToggleGroup(anyOrAllLanguage);
+		buttonAnyFormat.setToggleGroup(anyOrAllFormat);
+		buttonAnyFormat.setSelected(true);
+		buttonAllFormat.setToggleGroup(anyOrAllFormat);
 		
-		languageCommand.getChildren().addAll(languageLabel, buttonAnyLanguage, buttonAllLanguage, languageTextField);
+		formatCommand.getChildren().addAll(formatLabel, buttonAnyFormat, buttonAllFormat, formatTextField);
 		
 		// Identifier
 		HBox identifierCommand = new HBox(10);
@@ -143,10 +153,10 @@ public class BookSearch {
 		identifierCommand.getChildren().addAll(identifierLabel, buttonAnyIdentifier, buttonAllIdentifier, identifierTextField);
 		
 		Button confirmButton = new Button("Confirm");
-		confirmButton.setOnAction(new ConfirmSearchButtonHandler(booksTable, titleTextField, authorTextField, typeTextField, dateTextField, languageTextField, identifierTextField, anyOrAllTitle, anyOrAllAuthor, anyOrAllType, anyOrAllDate, anyOrAllLanguage, anyOrAllIdentifier));
+		confirmButton.setOnAction(new ConfirmSearchButtonHandler(booksTable, titleTextField, authorTextField, typeTextField, dateTextField, formatTextField, identifierTextField, anyOrAllTitle, anyOrAllAuthor, anyOrAllType, anyOrAllDate, anyOrAllFormat, anyOrAllIdentifier));
 		
 		VBox vbox = new VBox(50);
-		vbox.getChildren().addAll(bookSearchLabel, titleCommand, authorCommand, typeCommand, dateCommand, languageCommand, identifierCommand, confirmButton);
+		vbox.getChildren().addAll(bookSearchLabel, titleCommand, authorCommand, typeCommand, dateCommand, formatCommand, identifierCommand, confirmButton);
 		
 		commandContainer.getChildren().addAll(bookSearchLabel, vbox, confirmButton);
 		commandContainer.setPadding(new Insets(10, 10, 10, 10));

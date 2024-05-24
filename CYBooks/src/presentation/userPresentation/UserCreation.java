@@ -11,7 +11,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * The class containing the pane to create an user
+ */
 public class UserCreation {
+	
 	private VBox userCreationVBox;
 	
     private UsersTable usersTable;

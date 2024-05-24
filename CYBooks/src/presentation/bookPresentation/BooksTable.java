@@ -20,6 +20,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * The class containing the pane and the table for the books
+ */
 public class BooksTable {
 	private VBox booksTableVBox;
 	
@@ -139,11 +142,13 @@ public class BooksTable {
 	            return true;
 	    		
 	    	});
+	    	// We update the pagination to display the right elements after filtering it
 	    	booksTablePagination.updatePaginationSearch();
 	    });
 	    
 	    searchTableVBox.getChildren().addAll(filteredField, booksTablePagination.getPagination(), makeBorrowFromBookButton);
 	    
+	    // We update the pagination to display the right elements
 	    booksTablePagination.updatePaginationSearch();
 	    
 	    // VBox containing the nodes for the books table

@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 
 
 /**
- * The class of the users management application
+ * The class of the library application
  */
 public class LibraryApplication extends Application {
 	// The main pane of the application

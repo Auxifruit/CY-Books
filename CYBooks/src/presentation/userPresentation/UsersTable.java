@@ -134,11 +134,13 @@ public class UsersTable {
 	            return true;
 	    		
 	    	});
+	    	// We update the pagination to display the right elements after filtering it
 	    	usersTablePagination.updatePaginationSearch();
 	    });
 	    
 	    searchTableVBox.getChildren().addAll(filteredField, usersTablePagination.getPagination(), deleteUserButton);
 	    
+	    // We update the pagination to display the right elements
 	    usersTablePagination.updatePaginationSearch();
 	    
 	    // VBox containing the nodes for the users table
@@ -246,6 +248,7 @@ public class UsersTable {
    		// We set the new data
    		getUsersTable().setItems(data);
    		
+   		// We update the pagination to display the right elements
    		usersTablePagination.updatePaginationSearch();
         
    	}

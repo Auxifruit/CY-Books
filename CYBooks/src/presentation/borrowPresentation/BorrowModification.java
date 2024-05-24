@@ -13,6 +13,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+/**
+ * The class containing the pane to modify a borrow
+ */
 public class BorrowModification {
 	private VBox borrowsModificationVBox;
 	
