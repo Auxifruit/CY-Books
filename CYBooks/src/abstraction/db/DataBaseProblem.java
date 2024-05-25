@@ -125,7 +125,7 @@ public class DataBaseProblem {
 	 * @param borrowsID the borrow's ID
 	 * @throws SQLException if we have an exception about SQL
 	 */
-	public static void deleteProblemInTable(int borrowsID) throws SQLException {
+	public static void deleteProblemInTableByBorrowsID(int borrowsID) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
 		final String query = "DELETE FROM " + PROBLEM_TABLE + " WHERE " + BORROW_ID + " = ?";
 
