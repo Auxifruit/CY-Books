@@ -12,11 +12,11 @@ import javafx.beans.property.StringProperty;
  * Class to represent a borrow's problem
  */
 public class Problem {
-	protected static int counterId = 1;
-	protected static List<Problem> allProblems = new ArrayList<>();
-	protected IntegerProperty id;
-	protected IntegerProperty borrowsID;
-	protected StringProperty text;
+	private static int counterId = 1;
+	private static List<Problem> allProblems = new ArrayList<>();
+	private IntegerProperty id;
+	private IntegerProperty borrowsID;
+	private StringProperty text;
 	
 	/**
 	 * Constructor for the class Problem with some fields
