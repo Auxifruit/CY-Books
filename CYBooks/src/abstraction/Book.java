@@ -10,16 +10,16 @@ import javafx.beans.property.SimpleIntegerProperty;
  * @author CYTech Student
  */
 public class Book {
-	protected static long MAX_BORROW_TIME = 30;
-	protected static long NUMBER_BORROW_POSSIBLE = 1;
-	protected StringProperty identifier;
-	protected StringProperty title;
-	protected StringProperty author;
-	protected StringProperty publishedDate;
-	protected StringProperty format;
-	protected StringProperty type;
-	protected StringProperty publisher;
-	protected IntegerProperty nbBorrowed;
+	private static long MAX_BORROW_TIME = 30;
+	private static long NUMBER_BORROW_POSSIBLE = 1;
+	private StringProperty identifier;
+	private StringProperty title;
+	private StringProperty author;
+	private StringProperty publishedDate;
+	private StringProperty format;
+	private StringProperty type;
+	private StringProperty publisher;
+	private IntegerProperty nbBorrowed;
 	
 	/**
 	 * book constructor with all fields as parameters

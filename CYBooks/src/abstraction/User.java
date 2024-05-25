@@ -18,13 +18,13 @@ import javafx.scene.control.ButtonType;
  */
 
 public class User {
-	protected static int MAX_BORROW_NUMBER = 3;
-	protected static int counterId = 1;
-	protected static List<User> allUser = new ArrayList<>();
-	protected IntegerProperty id;
-	protected StringProperty lastname;
-	protected StringProperty firstname;
-	protected StringProperty email;
+	private static int MAX_BORROW_NUMBER = 3;
+	private static int counterId = 1;
+	private static List<User> allUser = new ArrayList<>();
+	private IntegerProperty id;
+	private StringProperty lastname;
+	private StringProperty firstname;
+	private StringProperty email;
 	private StringProperty status;
 
     /**

@@ -19,16 +19,16 @@ import javafx.beans.property.StringProperty;
  * @author CYTech Student
  */
 public class Borrow {
-	protected static int counterId = 1;
-	protected static List<Borrow> allBorrows = new ArrayList<>();
-	protected IntegerProperty id;
-	protected IntegerProperty usersID;
-	protected StringProperty booksIdentifier;
-	protected StringProperty borrowDate;
-	protected StringProperty returnDate;
-	protected StringProperty effectiveReturnDate;
-	protected LongProperty duration;
-	protected SimpleBooleanProperty late;
+	private static int counterId = 1;
+	private static List<Borrow> allBorrows = new ArrayList<>();
+	private IntegerProperty id;
+	private IntegerProperty usersID;
+	private StringProperty booksIdentifier;
+	private StringProperty borrowDate;
+	private StringProperty returnDate;
+	private StringProperty effectiveReturnDate;
+	private LongProperty duration;
+	private SimpleBooleanProperty late;
 	
     /**
      * Borrow constructor without all the fields
@@ -40,7 +40,7 @@ public class Borrow {
         this.usersID = new SimpleIntegerProperty(usersID);
         this.booksIdentifier =new SimpleStringProperty(booksIdentifier);
         this.borrowDate = new SimpleStringProperty(dateBorrow.toString());
-        this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.MAX_BORROW_TIME).toString());
+        this.returnDate = new SimpleStringProperty(dateBorrow.plusDays(Book.getMaxTimeBorrow()).toString());
         this.effectiveReturnDate = new SimpleStringProperty("");
         this.late = new SimpleBooleanProperty(false);
         this.id = new SimpleIntegerProperty(counterId++);
@@ -439,7 +439,7 @@ public class Borrow {
 		int count = 0;
 		
 		for(Borrow b : getAllBorrow()) {
-			if(b.getBooksIdentifier().equals(bookID)) {
+			if(b.getBooksIdentifier().equals(bookID) && b.getEffectiveReturnDate().equals("")) {
 				count++;
 			}
 			if(count == Book.getNumberBorrowPossible()) {
