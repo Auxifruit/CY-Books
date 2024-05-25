@@ -59,7 +59,7 @@ public class DeleteBorrowFromBorrowsTableButtonHandler implements EventHandler<A
 	    		Borrow.getAllBorrow().remove(borrowToDelete);
 	    		
 	    		// We also remove the borrow's problem
-	    		DataBaseProblem.deleteProblemInTable(borrowToDelete.getId());
+	    		DataBaseProblem.deleteProblemInTableByBorrowsID(borrowToDelete.getId());
 	    		
 	    		// We check if the cancellation change the user's status
 	    		User.getUserById(usersID).checkUserStatus();
