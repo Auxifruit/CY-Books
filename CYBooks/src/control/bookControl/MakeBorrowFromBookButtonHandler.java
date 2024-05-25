@@ -70,7 +70,7 @@ public class MakeBorrowFromBookButtonHandler implements EventHandler<ActionEvent
 			User u = User.getUserById(usersIDInt);
 			
 			// We check is the user exist
-			if(User.isExisting(u)) {
+			if(User.isExisting(u.getId())) {
 				if(u.getStatus().equals(Status.PUNCTUAL.getText())) {
 					try {
 						// We count the user's number of borrows to see if he can borrow another book
