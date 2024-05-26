@@ -93,7 +93,7 @@ public class ProblemsTable {
 		// VBox containing all the node for the problems table expect the main label
 		VBox searchTableVBox = new VBox(20);
 		
-	    Label labelProblemTable = new Label("BORROW'S TABLE PROBLEMS TABLE :");
+	    Label labelProblemTable = new Label("BORROW'S PROBLEMS TABLE :");
 		labelProblemTable.setFont(new Font("Arial", 24));
 		labelProblemTable.setUnderline(true);
 		labelProblemTable.setStyle("-fx-font-weight: bold;");
