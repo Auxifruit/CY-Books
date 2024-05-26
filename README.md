@@ -20,23 +20,23 @@ The application uses BNF's Gallica API to retrieve book information.
 Before launching the application, please install the JAVAFX and SQLITE libraries to ensure that the application works correctly.
 
 ### HOME PAGE
-![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/homepage.png)
+![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/homepage.png)<br>
 When you launch the application, you'll be taken to the home page, which introduces the application and explains how to use it. You can change pages using the buttons on the left and at the bottom of the window.
 
 ### USER
-![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/user.png)
+![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/user.png)<br>
 On the user page, you can view a list of all users of the application. You can also search for a specific user.
-You can delete a user by selecting it. You can also create, edit and access a user's profile. On a user's profile, you can view their borrowing history.
+You can delete a user by selecting it. You can also create, edit and access a user's profile. On a user's profile, you can view their borrowing history.<br>
 ![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/userProfile.png)
 
 ### BORROW
-![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/borrow.png)
-On the Borrow page, you can display a list of all the borrows and filter them according to various criteria, such as overdue or finished items. As with users, you can delete a borrow, create or modify one, and view the borrow information. You can also validate or cancel the return of a book. You can also view problems concerning a borrow other than overdue, and add or delete problems.
+![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/borrow.png)<br>
+On the Borrow page, you can display a list of all the borrows and filter them according to various criteria, such as overdue or finished items. As with users, you can delete a borrow, create or modify one, and view the borrow information. You can also validate or cancel the return of a book. You can also view problems concerning a borrow other than overdue, and add or delete problems.<br>
 ![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/borrowProblem.png)
 
 ### BOOK
-![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/book.png)
-On the book page, you can perform a search using several criteria, using the BNF API. When the search is complete, simply go to the list of books found. From this list you can create a BORROW by selecting a user id.
+![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/book.png)<br>
+On the book page, you can perform a search using several criteria, using the BNF API. When the search is complete, simply go to the list of books found. From this list you can create a BORROW by selecting a user id.<br>
 ![alt_text](https://github.com/Auxifruit/CY-Books/blob/Livrable/Ressources/bookTable.png)
 
 ## TASK LIST
