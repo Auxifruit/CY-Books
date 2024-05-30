@@ -29,6 +29,7 @@ public class Borrow {
 	private StringProperty effectiveReturnDate;
 	private LongProperty duration;
 	private SimpleBooleanProperty late;
+	private String isLost;
 	
     /**
      * Borrow constructor without all the fields
@@ -46,6 +47,7 @@ public class Borrow {
         this.id = new SimpleIntegerProperty(counterId++);
         this.duration = new SimpleLongProperty(ChronoUnit.DAYS.between(getDateBorrowLocalDate(), LocalDate.now()));
         allBorrows.add(this);
+        this.isLost = "false";
     }
     
     /**
@@ -332,6 +334,11 @@ public class Borrow {
 	 */
 	public static void setCounterId(int newCounterId) {
 		counterId = newCounterId;
+	}
+	
+	// IS LOST MODIFICATION
+	public String isLost() {
+		return isLost;
 	}
 	
 	/**

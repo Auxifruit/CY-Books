@@ -16,6 +16,9 @@ public class DataBaseManage {
 	protected final static String USER_TABLE = "users";
 	protected final static String BORROW_TABLE = "borrow";
 	protected final static String PROBLEM_TABLE = "problem";
+	
+	// MODIFICATION LOST
+	protected final static String LOST_TABLE = "lostbook";
 
 	// Constant used to avoid spelling mistakes when retrieving the results of
 	// queries
@@ -35,6 +38,9 @@ public class DataBaseManage {
 	protected final static String BORROW_REAL_END = "borrow_real_end";
 	protected final static String BORROW_DURATION = "duration";
 	protected final static String BORROW_LATE = "late";
+	// MODIFICATION  LOST
+	protected final static String BORROW_LATE_LOST = "lost";
+	
 	
 	// USED BY PROBLEM
 	protected final static String BORROW_ID = "borrow_id";
@@ -46,19 +52,27 @@ public class DataBaseManage {
 			+ " TEXT NOT NULL,\r\n" + EMAIL + " TEXT UNIQUE NOT NULL,\r\n" + STATUS + " TEXT NOT NULL);";
 
 	protected final static String BORROW_TABLE_STRUCTURE = "CREATE TABLE " + BORROW_TABLE + " (\r\n" + ID
-			+ " INTEGER PRIMARY KEY,\r\n" + USER_ID + " INTEGER NOT NULL,\r\n" + BOOK_ID
+			+ " INTEGER PRIMARY KEY,\r\n" + USER_ID + " INTEGER NOT NULL,\r\n" + BOOK_ID + ""
 			+ " TEXT NOT NULL,\r\n" + BORROW_START + " TEXT NOT NULL,\r\n" + BORROW_END + " TEXT,\r\n"
 			+ BORROW_REAL_END + " TEXT,\r\n" + BORROW_DURATION + " INTEGER,\r\n" + BORROW_LATE + " TEXT, \r\n"
 			+ "FOREIGN KEY (" + USER_ID + ") REFERENCES " + USER_TABLE + "(" + ID + "));";
 	
 	protected final static String PROBLEM_TABLE_STRUCTURE = "CREATE TABLE " + PROBLEM_TABLE + " (\r\n" + ID
 			+ " INTEGER PRIMARY KEY,\r\n" + BORROW_ID + " INTEGER NOT NULL,\r\n" + PROBLEM_TEXT
-			+ " TEXT NOT NULL,\r\n"
+			+ " TEXT NOT NULL,\r\n" + BORROW_LATE_LOST + " TEXT, "
 			+ "FOREIGN KEY (" + BORROW_ID + ") REFERENCES " + BORROW_TABLE + "(" + ID + "));";
+	
+	// MODIFICATION LOST
+	protected final  static String LOST_TABLE_STRUCTURE = "CREATE TABLE " + LOST_TABLE + " (\r\n"
+			+ BORROW_ID + " TEXT NOT NULL,\r\n"
+	        + ID + " INTEGER PRIMARY KEY,\r\n" + USER_ID + " INTEGER NOT NULL,\r\n" + BOOK_ID
+			+ ", FOREIGN KEY (" + USER_ID + ") REFERENCES " + USER_TABLE + "(" + ID + ")"
+			+ " FOREIGN KEY (" + BORROW_ID + ") REFERENCES " + BORROW_TABLE + "(" + ID + "));";
+			
 
 	// Regroup all of these constants into variables
-	private final static String[] tables = { USER_TABLE, BORROW_TABLE, PROBLEM_TABLE };
-	private final static String[] creationQuery = { USER_TABLE_STRUCTURE, BORROW_TABLE_STRUCTURE, PROBLEM_TABLE_STRUCTURE };
+	private final static String[] tables = { USER_TABLE, BORROW_TABLE, PROBLEM_TABLE, LOST_TABLE };
+	private final static String[] creationQuery = { USER_TABLE_STRUCTURE, BORROW_TABLE_STRUCTURE, PROBLEM_TABLE_STRUCTURE, LOST_TABLE_STRUCTURE };
 
 	/**
 	 * Try to connect to the database (WILL AUTOMATICALLY CREATE THE DATABASE IF IT
@@ -106,6 +120,11 @@ public class DataBaseManage {
 			e.printStackTrace();
 			throw new SQLException("Problem while creating the tables");
 		}
+		
+	}
+	
+	public static void main(String[] args) throws SQLException {
+		createTables();
 	}
 
 }

@@ -28,6 +28,7 @@ public class DataBaseBorrow {
 	protected final static String BORROW_REAL_END = "borrow_real_end";
 	protected final static String BORROW_DURATION = "duration";
 	protected final static String BORROW_LATE = "late";
+	protected final static String BORROW_LOST = "false";
 		
 	/**
 	 * Method to read all the values of the table borrows
@@ -87,9 +88,10 @@ public class DataBaseBorrow {
 	 */
 	public static void addBorrowInTable(Borrow borrowToAdd) throws SQLException {
 		// String for the query, the ? correspond to the values we want to assign
+		// MODIFICATION  LOST
 		final String query = "INSERT INTO " + BORROW_TABLE + " (" + ID + ", " + USER_ID + ", " + BOOK_ID + ", " 
-	            + BORROW_START + ", " + BORROW_END + ", " + BORROW_REAL_END + ", " + BORROW_DURATION + ", " + BORROW_LATE + ") "
-	            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	            + BORROW_START + ", " + BORROW_END + ", " + BORROW_REAL_END + ", " + BORROW_DURATION + ", " + BORROW_LATE + ", "  + BORROW_LOST + ") "
+	            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try {
 			Connection co = DataBaseManage.quickconnect();
@@ -105,6 +107,7 @@ public class DataBaseBorrow {
 			String effectiveReturnDate = borrowToAdd.getEffectiveReturnDate();
 			String duration = String.valueOf(borrowToAdd.getDuration());
 			String late = String.valueOf(borrowToAdd.isLate());
+			String lost  = String.valueOf(borrowToAdd.isLost());
 
 			// We set the values of the query
 			ps.setInt(1, id);
@@ -115,6 +118,7 @@ public class DataBaseBorrow {
 			ps.setString(6, effectiveReturnDate);
 			ps.setString(7, duration);
 			ps.setString(8, late);
+			ps.setString(9, lost);
 			
 			ps.executeUpdate();
 			
